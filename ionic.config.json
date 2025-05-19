@@ -1,0 +1,7 @@
+{
+  "name": "Savenger",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
