@@ -1,0 +1,14 @@
+:host {
+
+  &.ng-invalid {
+    input {
+      border-bottom-color: #f8bd4b;
+    }
+
+    &.ng-dirty {
+      input {
+        border-bottom-color: darkred;
+      }
+    }
+  }
+}

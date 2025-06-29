@@ -1,0 +1,12 @@
+<div>
+  <app-copy-icon
+    class="me-1"
+    *ngIf="enableCopy"
+    (onCopy)="onTextCopy($event)"
+    [copyText]="tooltipText"></app-copy-icon>
+  <div
+    matTooltip="{{ tooltipText }}"
+    class="tooltip-container">
+    {{ displayText }}
+  </div>
+</div>

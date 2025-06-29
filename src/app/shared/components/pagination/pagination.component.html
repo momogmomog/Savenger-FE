@@ -1,0 +1,25 @@
+<nav>
+  <ul class="pagination">
+    <li class="page-item"
+        (click)="changePage(getPrevPage())"
+        [ngClass]="{disabled: isFirstPage()}">
+      <span class="page-link" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </span>
+    </li>
+    <li *ngFor="let page of getPageNumbers()"
+        class="page-item"
+        (click)="changePage(page)"
+        [ngClass]="{active: page === pagination.page}">
+      <span style="cursor:pointer;" class="page-link">{{page + 1}}</span>
+    </li>
+    <li class="page-item"
+        (click)="changePage(getNextPage())"
+        [ngClass]="{disabled: isLastPage()}">
+      <span class="page-link" href="#" aria-label="Next">
+        <span style="cursor:pointer;" aria-hidden="true">&raquo;</span>
+      </span>
+    </li>
+  </ul>
+  <small>Total items: {{ pagination.totalElements }}</small>
+</nav>

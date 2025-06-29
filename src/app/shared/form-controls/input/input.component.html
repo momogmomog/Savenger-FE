@@ -1,0 +1,12 @@
+<div class="form-floating">
+  <input (touchend)="inputTouched($event)"
+         (change)="inputChanged($event); changeEnded($event);"
+         (keyup)="inputChanged($event)"
+         [value]="value || ''"
+         [disabled]="disabled"
+         [name]="formControlName"
+         [type]="type" class="form-control"
+         [id]="inputId" [placeholder]="placeholder">
+  <label [for]="inputId">{{ placeholder }}</label>
+  <app-field-error *ngIf="formControlName" [errors]="errors" [fieldName]="formControlName + ''"></app-field-error>
+</div>

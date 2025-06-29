@@ -1,0 +1,17 @@
+<div class="form-floating">
+  <select (touchend)="inputTouched($event)"
+          (change)="inputChanged($event)"
+          (keyup)="inputChanged($event)"
+          [value]="value"
+          [name]="formControlName"
+          class="form-control"
+          [disabled]="disabled"
+          [id]="elementId">
+    <option [disabled]="opt.disabled"
+            *ngFor="let opt of options"
+            [attr.selected]="value === opt.value ? true : null"
+            [value]="opt.value">{{opt.key}}</option>
+  </select>
+  <label [for]="elementId">{{ placeholder }}</label>
+  <app-field-error *ngIf="formControlName" [errors]="errors" [fieldName]="formControlName"></app-field-error>
+</div>

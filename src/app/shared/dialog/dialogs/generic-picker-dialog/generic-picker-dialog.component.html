@@ -1,0 +1,39 @@
+<div>
+  <div style="overflow-y: auto; max-height: 500px;">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">Option</th>
+        <th scope="col">Actions</th>
+        <th scope="col">
+          <app-checkbox
+            (onChange)="onSelectAllChange($event)"
+            label="All"></app-checkbox>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let option of payload; let i = index">
+        <th scope="row">{{ option.displayName }}</th>
+        <td>
+          <div class="m-1">
+            <button class="btn btn-outline-info" (click)="showObjDetails(option)">
+              <i class="fa fa-info"></i>
+            </button>
+          </div>
+        </td>
+        <td>
+          <app-checkbox *ngIf="!selectAll"
+                        [value]="selectedObjs.has(i)"
+                        (onChange)="onOptionSelect($event, i, option)"></app-checkbox>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="payload?.length" class="text-end">
+    <button (click)="closeWithSelection()" class="btn btn-outline-dark">
+      Select ({{ getSelectionNumber() }})
+    </button>
+  </div>
+</div>

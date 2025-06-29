@@ -1,0 +1,39 @@
+<div class="w-100 select-search-container">
+  <div class="form-floating">
+    <input (touchend)="inputTouched($event)"
+           (change)="onKeyUp();"
+           (keyup)="onKeyUp(); searchChanged($event)"
+           (keydown)="onKeyDown()"
+           [value]="currentDisplaySelection"
+           [name]="formControlName || inputId"
+           type="text" class="form-control select-search-input"
+           [id]="inputId" [placeholder]="placeholder">
+    <div class="select-search-options-container">
+      <div class="select-search-options">
+        <div class="select-search-pagination" *ngIf="payload.totalPages && payload.totalPages > 1 && payload.pageable.pageNumber > 0">
+          <span style="cursor: pointer" (click)="pageChanged(payload.pageable.pageNumber - 1)">Load Previous</span>
+        </div>
+
+        <option *ngIf="nullSelectText"
+                (click)="optionChosen(null, $event)">{{ nullSelectText }}
+        </option>
+
+        <option
+          *ngFor="let opt of payload.content"
+          (click)="optionChosen(opt, $event)">{{ opt.key }}
+        </option>
+
+        <div class="select-search-pagination"
+             *ngIf="payload.totalPages && payload.totalPages > 1 && payload.pageable.pageNumber + 1 < payload.totalPages">
+          <span style="cursor: pointer" (click)="pageChanged(payload.pageable.pageNumber + 1)">Load More</span>
+        </div>
+        <div class="select-search-pagination"
+             *ngIf="payload.totalPages && payload.totalPages > 1 && payload.pageable.pageNumber + 1 === payload.totalPages">
+          <span style="cursor: pointer">Last Page</span>
+        </div>
+      </div>
+    </div>
+    <label [for]="inputId">{{ placeholder }}</label>
+    <app-field-error *ngIf="errors?.length" [errors]="errors" [fieldName]="formControlName"></app-field-error>
+  </div>
+</div>
