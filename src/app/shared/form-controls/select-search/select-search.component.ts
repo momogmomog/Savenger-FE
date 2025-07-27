@@ -69,7 +69,7 @@ export class SelectSearchComponent implements OnInit, ControlValueAccessor {
     new EventEmitter<any>();
 
   @Output()
-  readonly search: EventEmitter<string> = new EventEmitter<string>();
+  readonly onSearch: EventEmitter<string> = new EventEmitter<string>();
 
   @Output()
   readonly pageChange: EventEmitter<number> = new EventEmitter<number>();
@@ -153,6 +153,6 @@ export class SelectSearchComponent implements OnInit, ControlValueAccessor {
   }
 
   searchChanged(ev: any): void {
-    this.search.next(ev?.target?.value);
+    this.onSearch.next(ev?.target?.value);
   }
 }

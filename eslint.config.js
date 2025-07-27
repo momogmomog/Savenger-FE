@@ -4,6 +4,9 @@ const typescriptParser = require("@typescript-eslint/parser");
 const tsPlugin = require("@typescript-eslint/eslint-plugin");
 const angularPlugin = require("@angular-eslint/eslint-plugin");
 const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
+
+// Since this is JS, you can write scripts to determine which rules go and which don't
+
 module.exports = [
   {
     ignores: [
@@ -66,6 +69,7 @@ module.exports = [
       "@typescript-eslint/naming-convention": 0,
       "@angular-eslint/no-host-metadata-property": "off",
       "@angular-eslint/no-output-on-prefix": "off",
+      "@angular-eslint/prefer-inject": "off",
       "@typescript-eslint/ban-types": "off",
       "@typescript-eslint/no-inferrable-types": "error",
       "@typescript-eslint/explicit-function-return-type": "error",

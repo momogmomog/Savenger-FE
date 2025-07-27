@@ -85,6 +85,7 @@ export class InputComponent implements OnInit, ControlValueAccessor {
     this.onTouch.emit(event);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   changeEnded(event: any): void {
     this.onChangeEnd.emit(this.value);
     if (this.clearOnChangeEnd) {

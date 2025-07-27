@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { DialogComponent } from './dialog.component';
 import { Observable } from 'rxjs';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DialogComponentPayload } from './dialog.component.payload';
 
 @Component({
   template: '',

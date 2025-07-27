@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DialogContentBaseComponent } from '../dialog-content-base.component';
 import { GenericPickerOption } from './generic-picker.option';
 import { Observable } from 'rxjs';
@@ -12,10 +12,9 @@ import { CheckboxComponent } from '../../../form-controls/checkbox/checkbox.comp
   templateUrl: './generic-picker-dialog.component.html',
   imports: [NgIf, NgForOf, CheckboxComponent],
 })
-export class GenericPickerDialogComponent
-  extends DialogContentBaseComponent<GenericPickerOption<any>[]>
-  implements OnInit
-{
+export class GenericPickerDialogComponent extends DialogContentBaseComponent<
+  GenericPickerOption<any>[]
+> {
   selectedObjs: Map<number, GenericPickerOption<any>> = new Map<
     number,
     GenericPickerOption<any>
@@ -29,8 +28,6 @@ export class GenericPickerDialogComponent
   getIcon(): Observable<string> {
     return super.noIcon();
   }
-
-  ngOnInit(): void {}
 
   showObjDetails(opt: GenericPickerOption<any>): void {
     this.dialogService.openShowCodeDialog(

@@ -16,7 +16,8 @@ export class FileUtils {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
-      reader.onload = (e: ProgressEvent<FileReader>) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      reader.onload = (e: ProgressEvent<FileReader>): void => {
         if (typeof reader.result === 'string') {
           resolve(reader.result);
         } else {
@@ -24,7 +25,7 @@ export class FileUtils {
         }
       };
 
-      reader.onerror = () => {
+      reader.onerror = (): void => {
         reject(new Error('Error reading file.'));
       };
 

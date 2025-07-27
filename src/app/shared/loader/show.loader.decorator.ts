@@ -8,7 +8,7 @@ export const ShowLoader = (): any => {
   ): PropertyDescriptor => {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: any[]): Promise<any> {
       // access the loader
       const loader = LoaderService.instance;
 

@@ -4,7 +4,6 @@ import {
   ComponentFactoryResolver,
   ComponentRef,
   Inject,
-  OnInit,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -28,7 +27,7 @@ import { NgIf } from '@angular/common';
   `,
   imports: [NgIf],
 })
-export class DialogComponent implements OnInit, AfterViewInit {
+export class DialogComponent implements AfterViewInit {
   @ViewChild('placeholder', { read: ViewContainerRef })
   private viewRef!: ViewContainerRef;
 
@@ -45,8 +44,6 @@ export class DialogComponent implements OnInit, AfterViewInit {
     this.title = this.payload.title;
   }
 
-  ngOnInit(): void {}
-
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.viewRef.clear();
@@ -57,7 +54,7 @@ export class DialogComponent implements OnInit, AfterViewInit {
         this.viewRef.createComponent(componentFactory);
       dataComponent.instance.payload = this.payload.contentPayload;
       dataComponent.instance.dialogRef = this.dialogRef;
-      dataComponent.instance.setTitle = (title) => {
+      dataComponent.instance.setTitle = (title): void => {
         setTimeout(() => {
           this.title = title;
         });
