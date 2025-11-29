@@ -1,3 +1,4 @@
-<p *ngFor="let error of errors | filterFieldError:fieldName"
-   class="text-danger font-weight-light m-0 ml-1">{{ error.message }}
-</p>
+<div>
+  <ion-text *ngFor="let error of errors | filterFieldError:fieldName"
+            color="danger">{{ error.message }}</ion-text>
+</div>

@@ -16,11 +16,18 @@ import {
 import { NgIf } from '@angular/common';
 import { ObjectUtils } from '../../util/object-utils';
 import { StringUtils } from '../../util/string-utils';
+import { IonInput, IonItem } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [ErrorMessageComponent, ReactiveFormsModule, NgIf],
+  imports: [
+    ErrorMessageComponent,
+    ReactiveFormsModule,
+    NgIf,
+    IonInput,
+    IonItem,
+  ],
   templateUrl: './input.component.html',
   styleUrl: './input.component.scss',
   providers: [

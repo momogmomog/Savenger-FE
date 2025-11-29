@@ -1,15 +1,33 @@
-<div class="container d-flex justify-content-center align-items-center vh-100">
-  <form [formGroup]="form" class="login-form">
-    <h1>Login</h1>
-    <app-field-error [errors]="errors" fieldName=""></app-field-error>
-    <div class="m-1 mt-3">
-      <app-input placeholder="Username" formControlName="username" [errors]="errors"></app-input>
-    </div>
-    <div class="m-1 mt-3">
-      <app-input placeholder="Password" formControlName="password" [errors]="errors" type="password"></app-input>
-    </div>
-    <div class="form-group pt-2 text-end">
-      <button (click)="onFormSubmit()" [disabled]="!form.valid" class="btn btn-outline-dark">Login</button>
-    </div>
-  </form>
-</div>
+<ion-grid style="width: 100%; height: 100vh;">
+  <ion-row
+    style="height: 100%;"
+    class="ion-justify-content-center ion-align-items-center">
+    <ion-col size="3">
+      <form [formGroup]="form" class="login-form">
+        <h1>Login</h1>
+        <div>
+          <app-field-error
+            [errors]="errors"
+            fieldName=""></app-field-error>
+          <div class="ion-margin-top">
+            <app-input placeholder="Username"
+                       formControlName="username"
+                       [errors]="errors"></app-input>
+          </div>
+          <div class="ion-margin-top">
+            <app-input placeholder="Password"
+                       formControlName="password"
+                       [errors]="errors"
+                       type="password"></app-input>
+          </div>
+          <div class="ion-margin-top ion-text-end">
+            <ion-button
+              (click)="onFormSubmit()"
+              [disabled]="!form.valid">Login
+            </ion-button>
+          </div>
+        </div>
+      </form>
+    </ion-col>
+  </ion-row>
+</ion-grid>

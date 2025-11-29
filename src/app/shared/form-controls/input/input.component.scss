@@ -1,14 +1,17 @@
 :host {
-
   &.ng-invalid {
-    input {
-      border-bottom-color: #f8bd4b;
+    ion-input {
+      border-bottom: 1px #f8bd4b solid;
     }
 
     &.ng-dirty {
-      input {
-        border-bottom-color: darkred;
+      ion-input {
+        border-bottom: 1px darkred solid;
       }
     }
   }
+}
+
+ion-input {
+  width: 100%;
 }

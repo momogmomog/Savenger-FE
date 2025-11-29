@@ -13,6 +13,7 @@ import { FieldError } from '../../shared/field-error/field-error';
 import { RouteNavigator } from '../../shared/routing/route-navigator.service';
 import { AppRoutingPath } from '../../app-routing.path';
 import { ErrorMessageComponent } from '../../shared/field-error/error-message/error-message.component';
+import { IonButton, IonCol, IonGrid, IonRow } from '@ionic/angular/standalone';
 
 interface LoginForm {
   username: FormControl<string>;
@@ -22,7 +23,15 @@ interface LoginForm {
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [InputComponent, ReactiveFormsModule, ErrorMessageComponent],
+  imports: [
+    InputComponent,
+    ReactiveFormsModule,
+    ErrorMessageComponent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
