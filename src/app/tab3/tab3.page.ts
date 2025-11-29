@@ -22,7 +22,7 @@ import { User } from '../api/user/user';
   ],
 })
 export class Tab3Page implements OnInit {
-  currentUser!: User;
+  currentUser?: User;
 
   constructor(private userService: UserService) {}
 
