@@ -7,16 +7,11 @@ import {
 import { inject } from '@angular/core';
 import { catchError } from 'rxjs/operators';
 import { RouteNavigator } from '../../shared/routing/route-navigator.service';
-import { EMPTY, switchMap, throwError } from 'rxjs';
-import { AuthenticationService } from './authentication.service';
-import {
-  HEADER_AUTH_TOKEN_NAME,
-  STORAGE_LOGGED_IN_FLAG_NAME,
-} from '../../shared/general.constants';
+import { EMPTY, throwError } from 'rxjs';
+// import { EMPTY, switchMap, throwError } from 'rxjs';
+import { STORAGE_LOGGED_IN_FLAG_NAME } from '../../shared/general.constants';
 import { AppRoutingPath } from '../../app-routing.path';
-import { AuthTokenDto } from './dto/auth-token.dto';
 import { HttpStatus } from '../../shared/http/http-status';
-import { ObjectUtils } from '../../shared/util/object-utils';
 import { LoaderService } from '../../shared/loader/loader.service';
 
 export const authInterceptor: HttpInterceptorFn = (
@@ -24,7 +19,7 @@ export const authInterceptor: HttpInterceptorFn = (
   next: HttpHandlerFn,
 ) => {
   const nav = inject(RouteNavigator);
-  const authService = inject(AuthenticationService);
+  // const authService = inject(AuthenticationService);
   const loaderService = inject(LoaderService);
 
   const goToLogin = (): void => {
