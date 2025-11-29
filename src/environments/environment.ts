@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  backendUrl: '',
+  backendUrl: 'https://savanger-be.cyecize.fun',
   apiUrl: '',
 };
 

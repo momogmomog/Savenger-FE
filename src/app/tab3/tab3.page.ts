@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -6,6 +6,8 @@ import {
   IonContent,
 } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
+import { UserService } from '../api/user/user.service';
+import { User } from '../api/user/user';
 
 @Component({
   selector: 'app-tab3',
@@ -19,6 +21,14 @@ import { ExploreContainerComponent } from '../explore-container/explore-containe
     ExploreContainerComponent,
   ],
 })
-export class Tab3Page {
-  constructor() {}
+export class Tab3Page implements OnInit {
+  currentUser!: User;
+
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.userService.currentUser$.subscribe((user) => {
+      this.currentUser = user!;
+    });
+  }
 }

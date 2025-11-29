@@ -37,7 +37,7 @@ export class FieldErrorWrapper<T> {
 export interface WrappedResponse<T> {
   isSuccess: boolean;
   errors: FieldError[];
-  response?: T;
+  response: T;
 }
 
 export class WrappedResponseImpl<T> implements WrappedResponse<T> {
