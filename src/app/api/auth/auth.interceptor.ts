@@ -30,7 +30,7 @@ export const authInterceptor: HttpInterceptorFn = (
   const goToLogin = (): void => {
     localStorage.setItem(STORAGE_LOGGED_IN_FLAG_NAME, false + '');
     nav.navigate(AppRoutingPath.LOGIN);
-    loaderService.hide();
+    loaderService.hide({});
   };
 
   return next(req).pipe(

@@ -2,9 +2,10 @@
   <ion-row
     style="height: 100%;"
     class="ion-justify-content-center ion-align-items-center">
-    <ion-col size="3">
-      <form [formGroup]="form" class="login-form">
+    <ion-col size-sm="12" size-md="4">
+      <form #loginForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
         <h1>Login</h1>
+        <app-loader loaderName="login-loader"></app-loader>
         <div>
           <app-field-error
             [errors]="errors"
@@ -21,9 +22,10 @@
                        type="password"></app-input>
           </div>
           <div class="ion-margin-top ion-text-end">
-            <ion-button
-              (click)="onFormSubmit()"
-              [disabled]="!form.valid">Login
+
+            <ion-button [form]="loginForm"
+                        type="submit"
+                        [disabled]="!form.valid">Login
             </ion-button>
           </div>
         </div>

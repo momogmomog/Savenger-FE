@@ -14,6 +14,7 @@ import { RouteNavigator } from '../../shared/routing/route-navigator.service';
 import { AppRoutingPath } from '../../app-routing.path';
 import { ErrorMessageComponent } from '../../shared/field-error/error-message/error-message.component';
 import { IonButton, IonCol, IonGrid, IonRow } from '@ionic/angular/standalone';
+import { LoaderComponent } from '../../shared/loader/loader.component';
 
 interface LoginForm {
   username: FormControl<string>;
@@ -31,6 +32,7 @@ interface LoginForm {
     IonRow,
     IonCol,
     IonButton,
+    LoaderComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -57,8 +59,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  @ShowLoader()
+  @ShowLoader({ name: 'login-loader' })
   async onFormSubmit(): Promise<void> {
+    this.errors = [];
     const res = await this.authenticationService.login(this.form.getRawValue());
 
     console.log(res);

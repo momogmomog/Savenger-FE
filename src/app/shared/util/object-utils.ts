@@ -35,4 +35,13 @@ export class ObjectUtils {
 
     return 'No';
   }
+
+  static allNil(values: any[]): boolean {
+    for (let value of values) {
+      if (!ObjectUtils.isNil(value)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }

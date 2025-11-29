@@ -1,6 +1,7 @@
 import { LoaderService } from './loader.service';
+import { LoaderOptions } from './loader.options';
 
-export const ShowLoader = (): any => {
+export const ShowLoader = (opts: LoaderOptions): any => {
   return (
     target: object,
     key: string | symbol,
@@ -12,11 +13,11 @@ export const ShowLoader = (): any => {
       // access the loader
       const loader = LoaderService.instance;
 
-      loader.show();
+      loader.show(opts);
       try {
         return await originalMethod.apply(this, args);
       } finally {
-        loader.hide();
+        loader.hide(opts);
       }
     };
 

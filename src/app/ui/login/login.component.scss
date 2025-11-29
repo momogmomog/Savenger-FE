@@ -1,11 +1,7 @@
-//@import "../../../assets/styles/variables";
-//
-//.login-form {
-//  min-width: 600px;
-//  margin: 0 auto;
-//
-//  @media screen and (max-width: $screen-md) {
-//    min-width: unset;
-//    width: 100%;
-//  }
-//}
+
+ion-grid {
+
+  --ion-grid-column-padding-xs: 20px;
+  --ion-grid-column-padding-sm: 50px;
+  --ion-grid-column-padding-md: 10px;
+}
