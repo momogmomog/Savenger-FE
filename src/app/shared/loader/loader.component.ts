@@ -1,7 +1,13 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { LoaderService } from './loader.service';
 import { NgIf } from '@angular/common';
-import { filter } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { ObjectUtils } from '../util/object-utils';
 import { IonSpinner } from '@ionic/angular/standalone';
 import { LoaderType } from './loader.type';
@@ -13,7 +19,8 @@ import { LoaderType } from './loader.type';
   styleUrls: ['./loader.component.scss'],
   imports: [NgIf, IonSpinner],
 })
-export class LoaderComponent implements OnInit {
+export class LoaderComponent implements OnInit, OnDestroy {
+  private subscriptions: Subscription[] = [];
   active = false;
 
   @Input()
@@ -28,13 +35,14 @@ export class LoaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loaderService.loading$
+    const sub = this.loaderService.loading$
       .pipe(
-        filter(
-          (val) =>
+        filter((val) => {
+          return (
             ObjectUtils.allNil([val.name, this.loaderName]) ||
-            val.name === this.loaderName,
-        ),
+            val.name === this.loaderName
+          );
+        }),
       )
       .subscribe((value) => {
         if (this.active === value.visible) {
@@ -44,5 +52,11 @@ export class LoaderComponent implements OnInit {
         this.active = value.visible;
         this.ref.detectChanges();
       });
+
+    this.subscriptions.push(sub);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }
