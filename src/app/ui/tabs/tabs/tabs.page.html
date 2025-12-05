@@ -1,16 +1,22 @@
 <ion-tabs>
   <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="tab1" href="/tabs/tab1">
-      <ion-icon aria-hidden="true"  name="timer-outline"></ion-icon>
+    <ion-tab-button
+      tab="{{ Routes.TAB_1_REVISIONS.path }}"
+      href="{{ Routes.TAB_1_REVISIONS.toString() }}">
+      <ion-icon aria-hidden="true" name="timer-outline"></ion-icon>
       <ion-label>Revision</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="tab2" href="/tabs/tab2">
+    <ion-tab-button
+      tab="{{ Routes.TAB_2_ANALYTICS.path }}"
+      href="{{ Routes.TAB_2_ANALYTICS.toString() }}">
       <ion-icon aria-hidden="true" name="bar-chart-outline"></ion-icon>
       <ion-label>Analytics</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="tab3" href="/tabs/tab2">
+    <ion-tab-button
+      tab="{{Routes.TAB_3_TRANSACTIONS.path }}"
+      href="{{ Routes.TAB_3_TRANSACTIONS.toString() }}">
       <ion-icon aria-hidden="true" name="swap-horizontal-outline"></ion-icon>
       <ion-label>Transactions</ion-label>
     </ion-tab-button>

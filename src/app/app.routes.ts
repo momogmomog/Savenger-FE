@@ -1,10 +1,59 @@
 import { Routes } from '@angular/router';
 import { AppRoutingPath } from './app-routing.path';
+import { TabsPage } from './ui/tabs/tabs/tabs.page';
+
+const tab1Routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./ui/tabs/tab1/tab1.page').then((m) => m.Tab1Page),
+  },
+];
+
+const tab2Routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./ui/tabs/tab2/tab2.page').then((m) => m.Tab2Page),
+  },
+];
+
+const tab3Routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./ui/tabs/tab3/tab3.page').then((m) => m.Tab3Page),
+  },
+];
 
 export const routes: Routes = [
   {
+    path: AppRoutingPath.TABS.path,
+    component: TabsPage,
+    children: [
+      {
+        path: AppRoutingPath.TAB_1_REVISIONS.path,
+        children: tab1Routes,
+      },
+      {
+        path: AppRoutingPath.TAB_2_ANALYTICS.path,
+        children: tab2Routes,
+      },
+      {
+        path: AppRoutingPath.TAB_3_TRANSACTIONS.path,
+        children: tab3Routes,
+      },
+      {
+        path: '',
+        redirectTo: AppRoutingPath.TAB_1_REVISIONS.absolutePath,
+        pathMatch: 'full',
+      },
+    ],
+  },
+  {
     path: '',
-    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+    redirectTo: AppRoutingPath.TAB_1_REVISIONS.absolutePath,
+    pathMatch: 'full',
   },
   {
     path: AppRoutingPath.LOGIN.path,
