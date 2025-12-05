@@ -33,14 +33,17 @@ export const routes: Routes = [
     children: [
       {
         path: AppRoutingPath.TAB_1_REVISIONS.path,
+        title: 'Revisions',
         children: tab1Routes,
       },
       {
         path: AppRoutingPath.TAB_2_ANALYTICS.path,
+        title: 'Analytics',
         children: tab2Routes,
       },
       {
         path: AppRoutingPath.TAB_3_TRANSACTIONS.path,
+        title: 'Transactions',
         children: tab3Routes,
       },
       {

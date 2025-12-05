@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  appName: 'Savanger Local',
   backendUrl: 'https://savanger-be.cyecize.fun',
   apiUrl: '',
 };

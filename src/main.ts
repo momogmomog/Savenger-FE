@@ -4,6 +4,7 @@ import {
   provideRouter,
   withPreloading,
   PreloadAllModules,
+  TitleStrategy,
 } from '@angular/router';
 import {
   IonicRouteStrategy,
@@ -18,6 +19,7 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { authInterceptor } from './app/api/auth/auth.interceptor';
+import { BasicTitleStrategy } from './app/shared/routing/title-strategy.service';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -25,5 +27,6 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+    { provide: TitleStrategy, useClass: BasicTitleStrategy },
   ],
 });
