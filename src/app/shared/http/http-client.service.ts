@@ -80,6 +80,25 @@ export class HttpClientService {
     );
   }
 
+  public deleteBody<TData, TResponse>(
+    url: string,
+    data: TData,
+    options = {},
+  ): Observable<TResponse> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    options['body'] = data;
+    return this.getHeaders().pipe(
+      switchMap((headers) => {
+        return this.httpClient.request<TResponse>(
+          'DELETE',
+          this.getFullUrl(url),
+          ObjectUtils.merge<HttpOptions>([options, { headers: headers }]),
+        );
+      }),
+    );
+  }
+
   protected getHeaders(): Observable<HttpHeader> {
     return new Observable<HttpHeader>((subscriber) => subscriber.next({}));
   }
