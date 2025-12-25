@@ -18,7 +18,7 @@ export abstract class DialogContentBaseComponent<TData> {
   abstract getIcon(): Observable<string>;
 
   noIcon(): Observable<string> {
-    return new Observable<string>((subscriber) => subscriber.next());
+    return new Observable<string>((subscriber) => subscriber.next(null!));
   }
 
   checkIcon(): Observable<string> {

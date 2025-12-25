@@ -8,8 +8,6 @@ import { DialogContentBaseComponent } from './dialogs/dialog-content-base.compon
 import { DialogComponent } from './dialogs/dialog.component';
 import { DialogComponentPayload } from './dialogs/dialog.component.payload';
 import { ShowCodeDialogComponent } from './dialogs/show-code-dialog/show-code-dialog.component';
-import { WrappedResponse } from '../util/field-error-wrapper';
-import { RequestResultDialogComponent } from './dialogs/request-result-dialog/request-result-dialog.component';
 import { ShowCodePayload } from './dialogs/show-code-dialog/show-code-payload.model';
 import { ConfirmDialogPayload } from './dialogs/confirm-dialog/confirm-dialog-payload.model';
 import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
@@ -56,20 +54,6 @@ export class DialogService {
     );
 
     return dialogComponentMatDialogRef.afterClosed();
-  }
-
-  public openRequestResultDialog(
-    response: WrappedResponse<any>,
-  ): Observable<boolean> {
-    const dialogComponentMatDialogRef = this.open(
-      RequestResultDialogComponent,
-      'Bees Response',
-      response,
-    );
-
-    return dialogComponentMatDialogRef
-      .afterClosed()
-      .pipe(map((value) => value || false));
   }
 
   public async openGenericMultiselect<T>(
