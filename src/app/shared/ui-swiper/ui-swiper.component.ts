@@ -45,6 +45,7 @@ export interface SwiperTemplateContext<T> {
           </ng-container>
         </swiper-slide>
       }
+      <div class="swiper-pagination"></div>
     </swiper-container>
   `,
   styles: [
@@ -83,8 +84,9 @@ export class UiSwiperComponent<T> implements AfterViewInit {
     Object.assign(swiperEl, {
       initialSlide: this.initialSlide,
       slidesPerView: this.slidesPerView,
+      pagination: '.swiper-pagination',
     });
-    swiperEl.initialize();
+    swiperEl.initialize({});
 
     this.swiperInstance = swiperEl.swiper;
   }

@@ -6,18 +6,16 @@
 
 <ion-content>
 
-  <app-ui-swiper
-    [items]="budgets"
-    [itemTemplate]="budgetCardTemplate"
-    (swipe)="handleAccountSwipe($event)">
-  </app-ui-swiper>
+  <div style="height: 150px;">
+    <app-ui-swiper
+      [items]="budgets"
+      [itemTemplate]="budgetCardTemplate"
+      (swipe)="handleAccountSwipe($event)">
+    </app-ui-swiper>
 
-  <ng-template #budgetCardTemplate let-item let-i="index">
-
-    <p>Item #{{ i }}: {{ item.name }} gadna pesen</p>
-
-<!--    <app-budget-slider-card [budget]="budget"></app-budget-slider-card>-->
-
-  </ng-template>
+    <ng-template #budgetCardTemplate let-item let-i="index">
+      <app-budget-slider-item [budget]="item"></app-budget-slider-item>
+    </ng-template>
+  </div>
 
 </ion-content>

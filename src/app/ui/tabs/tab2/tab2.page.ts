@@ -5,13 +5,14 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
-} from '@ionic/angular/standalone'; // Update path
+} from '@ionic/angular/standalone';
+import { BudgetSliderItemComponent } from '../../budget/budget-slider-item/budget-slider-item.component'; // Update path
 
 // Define your interface
 export interface Budget {
   id: number;
-  name: string;
-  amount: number;
+  budgetName: string;
+  budgetCap: number;
 }
 
 @Component({
@@ -22,16 +23,18 @@ export interface Budget {
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonContent /* Ionic Modules */,
+    IonContent,
+    BudgetSliderItemComponent,
+    /* Ionic Modules */
   ],
   templateUrl: './tab2.page.html',
 })
 export class Tab2Page {
   // Your data
   budgets: Budget[] = [
-    { id: 1, name: 'Personal', amount: 500 },
-    { id: 2, name: 'Business', amount: 1200 },
-    { id: 3, name: 'Savings', amount: 3000 },
+    { id: 1, budgetName: 'Personal', budgetCap: 500 },
+    { id: 2, budgetName: 'Business', budgetCap: 1200 },
+    { id: 3, budgetName: 'Savings', budgetCap: 3000 },
   ];
 
   // The simplified handler

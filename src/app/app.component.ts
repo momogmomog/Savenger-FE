@@ -8,7 +8,7 @@ import { filter } from 'rxjs';
 import { User } from './api/user/user';
 import { register } from 'swiper/element/bundle';
 
-register();
+// register();
 
 @Component({
   selector: 'app-root',
