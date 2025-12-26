@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AppRoutingPath } from './app-routing.path';
 import { TabsPage } from './ui/tabs/tabs/tabs.page';
+import { BudgetPageComponent } from './ui/budget/budget-page/budget-page.component';
 
 const tab1Routes: Routes = [
   {
@@ -26,6 +27,29 @@ const tab3Routes: Routes = [
   },
 ];
 
+const tab4Routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./ui/tabs/tab4/tab4.page').then((m) => m.Tab4Page),
+    children: [
+      {
+        path: '',
+        component: BudgetPageComponent,
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./ui/budget/list-budgets/list-budgets.component').then(
+                (c) => c.ListBudgetsComponent,
+              ),
+          },
+        ],
+      },
+    ],
+  },
+];
+
 export const routes: Routes = [
   {
     path: AppRoutingPath.TABS.path,
@@ -45,6 +69,11 @@ export const routes: Routes = [
         path: AppRoutingPath.TAB_3_TRANSACTIONS.path,
         title: 'Transactions',
         children: tab3Routes,
+      },
+      {
+        path: AppRoutingPath.TAB_4_BUDGETS.path,
+        title: 'Budgets',
+        children: tab4Routes,
       },
       {
         path: '',

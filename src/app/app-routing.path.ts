@@ -9,5 +9,6 @@ export class AppRoutingPath {
   public static readonly TAB_1_REVISIONS = new RouteConfig('revisions', AppRoutingPath.TABS);
   public static readonly TAB_2_ANALYTICS = new RouteConfig('analytics', AppRoutingPath.TABS);
   public static readonly TAB_3_TRANSACTIONS = new RouteConfig('transactions', AppRoutingPath.TABS);
+  public static readonly TAB_4_BUDGETS = new RouteConfig('budgets', AppRoutingPath.TABS);
 
 }

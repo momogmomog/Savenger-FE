@@ -1,0 +1,52 @@
+import { Injectable } from '@angular/core';
+import { CreateBudgetPayload } from './dto/create-budget.payload';
+import { Observable } from 'rxjs';
+import { Budget } from './budget';
+import { Endpoints } from '../../shared/http/endpoints';
+import { RouteUtils } from '../../shared/routing/route-utils';
+import { BudgetQuery } from './budget.query';
+import { Page } from '../../shared/util/page';
+import { AssignUnassignParticipantPayload } from './dto/assign-unassign-participant.payload';
+import { HttpClientSecuredService } from '../../shared/http/http-client-secured.service';
+
+@Injectable({ providedIn: 'root' })
+export class BudgetRepository {
+  constructor(private http: HttpClientSecuredService) {}
+
+  public create(payload: CreateBudgetPayload): Observable<Budget> {
+    return this.http.post<CreateBudgetPayload, Budget>(
+      Endpoints.BUDGETS,
+      payload,
+    );
+  }
+
+  public get(budgetId: number): Observable<Budget> {
+    return this.http.get<Budget>(
+      RouteUtils.setPathParams(Endpoints.BUDGET, [budgetId]),
+    );
+  }
+
+  public search(query: BudgetQuery): Observable<Page<Budget>> {
+    return this.http.post<BudgetQuery, Page<Budget>>(Endpoints.BUDGETS, query);
+  }
+
+  public assignParticipant(
+    budgetId: number,
+    payload: AssignUnassignParticipantPayload,
+  ): Observable<Budget> {
+    return this.http.post<AssignUnassignParticipantPayload, Budget>(
+      RouteUtils.setPathParams(Endpoints.PARTICIPANTS, [budgetId]),
+      payload,
+    );
+  }
+
+  public unassignParticipant(
+    budgetId: number,
+    payload: AssignUnassignParticipantPayload,
+  ): Observable<Budget> {
+    return this.http.deleteBody<AssignUnassignParticipantPayload, Budget>(
+      RouteUtils.setPathParams(Endpoints.PARTICIPANTS, [budgetId]),
+      payload,
+    );
+  }
+}

@@ -1,0 +1,56 @@
+<form #budgetForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div>
+    <app-field-error
+      [errors]="errors()"
+      fieldName=""></app-field-error>
+    <div class="ion-margin-top">
+      <app-input placeholder="Name"
+                 formControlName="budgetName"
+                 [errors]="errors()"></app-input>
+    </div>
+    <div class="ion-margin-top">
+      <app-checkbox label="Active"
+                    formControlName="active"></app-checkbox>
+      <app-field-error
+        [errors]="errors()"
+        fieldName="active"></app-field-error>
+    </div>
+    <div class="ion-margin-top">
+      <app-checkbox label="Auto Revise"
+                    formControlName="autoRevise"></app-checkbox>
+      <app-field-error
+        [errors]="errors()"
+        fieldName="autoRevise"></app-field-error>
+    </div>
+    <div class="ion-margin-top">
+      <app-select formControlName="recurringRule" [options]="recurrenceOptions"></app-select>
+      <app-field-error [errors]="errors()" fieldName="recurringRule"></app-field-error>
+    </div>
+    <div class="ion-margin-top">
+      <app-input
+        type="number"
+        placeholder="Budget Cap"
+        formControlName="budgetCap"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-input
+        type="number"
+        placeholder="Balance"
+        formControlName="balance"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-date-picker label="Budget Start Date" formControlName="dateStarted"></app-date-picker>
+    </div>
+
+    <div class="ion-margin-top ion-text-end">
+      <ion-button [form]="budgetForm"
+                  type="submit"
+                  [disabled]="!form.valid">Save
+      </ion-button>
+    </div>
+  </div>
+</form>
