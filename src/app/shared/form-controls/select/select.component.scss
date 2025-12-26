@@ -1,13 +1,15 @@
 :host {
 
   &.ng-invalid {
-    select {
-      border-bottom-color: #f8bd4b;
+    ion-item {
+      //border-bottom-color: #f8bd4b;
+      border-bottom: 1px #f8bd4b solid;
     }
 
     &.ng-dirty {
-      select {
-        border-bottom-color: darkred;
+      ion-item {
+        //border-bottom-color: darkred;
+        border-bottom: 1px darkred solid;
       }
     }
   }

@@ -16,11 +16,20 @@ import {
 import { NgForOf, NgIf } from '@angular/common';
 import { SelectOption } from './select.option';
 import { StringUtils } from '../../util/string-utils';
+import { IonItem, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [ErrorMessageComponent, ReactiveFormsModule, NgIf, NgForOf],
+  imports: [
+    ErrorMessageComponent,
+    ReactiveFormsModule,
+    NgIf,
+    NgForOf,
+    IonSelect,
+    IonSelectOption,
+    IonItem,
+  ],
   templateUrl: './select.component.html',
   styleUrl: './select.component.scss',
   providers: [
