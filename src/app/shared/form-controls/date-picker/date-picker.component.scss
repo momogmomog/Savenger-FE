@@ -1,0 +1,13 @@
+:host {
+  &.ng-invalid {
+    ion-item {
+      border-bottom: 1px #f8bd4b solid;
+    }
+
+    &.ng-dirty {
+      ion-item {
+        border-bottom: 1px darkred solid;
+      }
+    }
+  }
+}

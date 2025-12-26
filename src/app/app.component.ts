@@ -6,7 +6,6 @@ import { UserService } from './api/user/user.service';
 import { AppRoutingPath } from './app-routing.path';
 import { filter } from 'rxjs';
 import { User } from './api/user/user';
-import { register } from 'swiper/element/bundle';
 
 // register();
 

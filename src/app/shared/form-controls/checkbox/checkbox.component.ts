@@ -7,14 +7,12 @@ import {
   Output,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ErrorMessageComponent } from '../../field-error/error-message/error-message.component';
-import { NgIf } from '@angular/common';
 import { StringUtils } from '../../util/string-utils';
 
 @Component({
   selector: 'app-checkbox',
   standalone: true,
-  imports: [ErrorMessageComponent, NgIf],
+  imports: [],
   templateUrl: './checkbox.component.html',
   styleUrl: './checkbox.component.scss',
   providers: [

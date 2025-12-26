@@ -20,7 +20,7 @@ export class ObjectUtils {
     }, {});
   }
 
-  public static isNil(obj: unknown): boolean {
+  public static isNil(obj: unknown): obj is null | undefined {
     return obj === undefined || obj === null;
   }
 

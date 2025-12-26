@@ -3,10 +3,10 @@ import { ModalController, ModalOptions } from '@ionic/angular/standalone';
 import { ModalContentBaseComponent } from './modals/modal-content-base.component';
 import { StringUtils } from '../util/string-utils';
 import {
+  SHELL_COMPONENT_MAP,
   ShellConfig,
   ShellType,
-  SHELL_COMPONENT_MAP,
-} from './modals/shells/modal-shell.types';
+} from './shells/modal-shell.types';
 
 export type CustomModalOptions = Omit<
   ModalOptions,
@@ -14,7 +14,7 @@ export type CustomModalOptions = Omit<
 >;
 
 @Injectable({ providedIn: 'root' })
-export class IonicModalService {
+export class ModalService {
   private modalCtrl = inject(ModalController);
 
   async open<TPayload, TResult>(

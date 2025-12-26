@@ -8,7 +8,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
-import { ModalContentBaseComponent } from '../modal-content-base.component';
+import { ModalContentBaseComponent } from '../modals/modal-content-base.component';
 
 @Component({ template: '<ng-template #container></ng-template>' })
 export class ModalShellBase implements OnInit {

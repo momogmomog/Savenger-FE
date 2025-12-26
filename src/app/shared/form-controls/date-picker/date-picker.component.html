@@ -1,0 +1,33 @@
+<ion-item>
+  <ion-label>{{ label() }}</ion-label>
+
+  @if (!currentDateString) {
+    <ion-button [size]="'small'" slot="end" (click)="openModal()">
+      Select
+    </ion-button>
+  }
+
+  <ion-datetime-button
+    [class.ion-hide]="!currentDateString"
+    [disabled]="disabled()"
+    [datetime]="inputId"></ion-datetime-button>
+  <ion-modal #modal [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime
+        (ionChange)="onIonChange()"
+        (touchend)="onTouchEnd()"
+        [(ngModel)]="currentDateString"
+        [id]="inputId"></ion-datetime>
+    </ng-template>
+  </ion-modal>
+
+  @if (currentDateString) {
+    <ion-button color="danger" [size]="'small'" slot="end" (click)="onClear()">
+      Clear
+    </ion-button>
+  }
+
+  @if (formControlName()) {
+    <app-field-error [errors]="errors()" [fieldName]="formControlName()!"></app-field-error>
+  }
+</ion-item>
