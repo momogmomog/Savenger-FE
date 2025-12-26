@@ -1,4 +1,5 @@
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ObjectUtils } from './object-utils';
 
 /**
  * This utility converts every property of T into a FormControl of that property
@@ -64,7 +65,7 @@ export type DeepFormified<T> = FormGroup<{
 
 export class FormUtil {
   public static requiredField<T>(initialValue?: T | null): FormControl<T> {
-    return new FormControl<T>((initialValue || null)!, {
+    return new FormControl<T>(ObjectUtils.nullIfNil(initialValue)!, {
       nonNullable: true,
       validators: [Validators.required],
     });
@@ -91,7 +92,7 @@ export class FormUtil {
   public static optionalField<T>(
     initialValue?: T | null,
   ): FormControl<T | null> {
-    return new FormControl<T | null>(initialValue || null);
+    return new FormControl<T | null>(ObjectUtils.nullIfNil(initialValue));
   }
 
   public static optionalString(

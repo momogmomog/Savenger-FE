@@ -24,6 +24,16 @@ export class ObjectUtils {
     return obj === undefined || obj === null;
   }
 
+  public static nullIfNil<T>(obj: T): Exclude<T, null | undefined> | null {
+    if (ObjectUtils.isNil(obj)) {
+      return null;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return obj;
+  }
+
   public static parseBoolean(string?: string | null): boolean {
     return string?.toLowerCase() === 'true';
   }

@@ -3,7 +3,7 @@
              (change)="inputChanged($event); changeEnded($event);"
              (keyup)="inputChanged($event)"
              labelPlacement="floating"
-             [value]="value || ''"
+             [value]="valueOrEmpty()"
              [disabled]="disabled"
              [label]="placeholder"
              [name]="formControlName"
