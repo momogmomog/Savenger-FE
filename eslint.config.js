@@ -73,6 +73,7 @@ module.exports = [
       "@typescript-eslint/ban-types": "off",
       "@typescript-eslint/no-inferrable-types": "error",
       "@typescript-eslint/explicit-function-return-type": "error",
+      "@angular-eslint/no-empty-lifecycle-method": "off",
     },
   },
   // Lint for HTML files
