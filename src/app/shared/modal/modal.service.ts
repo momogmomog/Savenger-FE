@@ -22,7 +22,7 @@ export class IonicModalService {
     payload: TPayload,
     shellConfig: ShellConfig = { shellType: ShellType.BLANK },
     options: CustomModalOptions = {},
-  ): Promise<TResult | undefined> {
+  ): Promise<HTMLIonModalElement> {
     const modalId = options.id || StringUtils.getUniqueStr();
 
     // Resolve the Shell Component based on the Enum
@@ -48,7 +48,8 @@ export class IonicModalService {
 
     await modal.present();
 
-    const { data } = await modal.onDidDismiss<TResult>();
-    return data;
+    // const { data } = await modal.onDidDismiss<TResult>();
+    // return data;
+    return modal;
   }
 }

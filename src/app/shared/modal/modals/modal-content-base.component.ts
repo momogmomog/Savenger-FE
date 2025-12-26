@@ -8,6 +8,9 @@ export abstract class ModalContentBaseComponent<TData, TResult> {
   public payload = input.required<TData>();
   public modalId = input.required<string>();
 
+  // Depends on what shell was used when creating the modal
+  public shellConfig = input.required<any>();
+
   async close(data?: TResult, role = 'confirm'): Promise<void> {
     await this.modalController.dismiss(data, role, this.modalId());
   }

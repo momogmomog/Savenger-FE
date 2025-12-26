@@ -2,15 +2,17 @@ import { Component } from '@angular/core';
 import { ModalShellBase } from './modal-shell.base';
 import { ShellConfigHeader } from './modal-shell.types';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButtons,
   IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
   IonIcon,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular/standalone';
 import { NgIf } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { close } from 'ionicons/icons';
 
 @Component({
   template: ` <ion-header>
@@ -40,6 +42,13 @@ import { NgIf } from '@angular/common';
   ],
 })
 export class ModalShellHeader extends ModalShellBase {
+  override ngOnInit(): void {
+    super.ngOnInit();
+    addIcons({
+      close,
+    });
+  }
+
   get config(): ShellConfigHeader {
     return this.shellConfig as ShellConfigHeader;
   }

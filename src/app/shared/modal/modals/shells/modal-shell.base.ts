@@ -1,11 +1,11 @@
 import {
   Component,
+  inject,
   Input,
   OnInit,
   Type,
   ViewChild,
   ViewContainerRef,
-  inject,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { ModalContentBaseComponent } from '../modal-content-base.component';
@@ -37,5 +37,6 @@ export class ModalShellBase implements OnInit {
     // Pass data to the inner content
     ref.setInput('payload', this.componentPayload);
     ref.setInput('modalId', this.modalId);
+    ref.setInput('shellConfig', this.shellConfig);
   }
 }
