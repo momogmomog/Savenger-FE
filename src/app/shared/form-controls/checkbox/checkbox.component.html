@@ -1,12 +1,8 @@
-<div class="form-check">
-  <input
-    class="form-check-input"
-    type="checkbox"
-    (touchend)="inputTouched($event)"
-    (change)="inputChanged($event); changeEnded($event)"
-    (keyup)="inputChanged($event)"
+<ion-item lines="none">
+  <ion-checkbox
     [checked]="value"
-    [id]="inputId"
-    [name]="formControlName">
-  <label class="form-check-label" [for]="inputId">{{ label }}</label>
-</div>
+    (ionChange)="inputChanged($event);"
+    justify="space-between">
+    {{ label }}
+  </ion-checkbox>
+</ion-item>

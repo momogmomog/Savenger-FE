@@ -2,17 +2,19 @@ import {
   Component,
   EventEmitter,
   forwardRef,
+  input,
   Input,
   OnInit,
   Output,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { StringUtils } from '../../util/string-utils';
+import { IonCheckbox, IonItem } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-checkbox',
   standalone: true,
-  imports: [],
+  imports: [IonItem, IonCheckbox],
   templateUrl: './checkbox.component.html',
   styleUrl: './checkbox.component.scss',
   providers: [
@@ -81,4 +83,6 @@ export class CheckboxComponent implements OnInit, ControlValueAccessor {
   setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
+
+  protected readonly input = input;
 }
