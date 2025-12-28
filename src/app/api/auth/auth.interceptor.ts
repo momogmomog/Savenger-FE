@@ -13,6 +13,7 @@ import { STORAGE_LOGGED_IN_FLAG_NAME } from '../../shared/general.constants';
 import { AppRoutingPath } from '../../app-routing.path';
 import { HttpStatus } from '../../shared/http/http-status';
 import { LoaderService } from '../../shared/loader/loader.service';
+import { ModalService } from '../../shared/modal/modal.service';
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -21,11 +22,13 @@ export const authInterceptor: HttpInterceptorFn = (
   const nav = inject(RouteNavigator);
   // const authService = inject(AuthenticationService);
   const loaderService = inject(LoaderService);
+  const modalService = inject(ModalService);
 
   const goToLogin = (): void => {
     localStorage.setItem(STORAGE_LOGGED_IN_FLAG_NAME, false + '');
     nav.navigate(AppRoutingPath.LOGIN);
     loaderService.hide({});
+    void modalService.closeAllModals();
   };
 
   return next(req).pipe(

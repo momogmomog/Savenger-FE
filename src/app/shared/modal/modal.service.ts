@@ -52,4 +52,15 @@ export class ModalService {
     // return data;
     return modal;
   }
+
+  public async closeAllModals(): Promise<void> {
+    while (true) {
+      const topModal = await this.modalCtrl.getTop();
+      if (!topModal) {
+        return;
+      }
+
+      await topModal.dismiss(undefined, 'force-close');
+    }
+  }
 }
