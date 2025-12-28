@@ -8,6 +8,7 @@ import { BudgetQuery } from './budget.query';
 import { Page } from '../../shared/util/page';
 import { AssignUnassignParticipantPayload } from './dto/assign-unassign-participant.payload';
 import { HttpClientSecuredService } from '../../shared/http/http-client-secured.service';
+import { BudgetStatistics } from './budget.statistics';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetRepository {
@@ -26,8 +27,17 @@ export class BudgetRepository {
     );
   }
 
+  public getStatistics(budgetId: number): Observable<BudgetStatistics> {
+    return this.http.get<BudgetStatistics>(
+      RouteUtils.setPathParams(Endpoints.BUDGET_STATISTICS, [budgetId]),
+    );
+  }
+
   public search(query: BudgetQuery): Observable<Page<Budget>> {
-    return this.http.post<BudgetQuery, Page<Budget>>(Endpoints.BUDGETS, query);
+    return this.http.post<BudgetQuery, Page<Budget>>(
+      Endpoints.BUDGET_SEARCH,
+      query,
+    );
   }
 
   public assignParticipant(

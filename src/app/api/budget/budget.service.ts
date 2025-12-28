@@ -9,6 +9,7 @@ import {
   FieldErrorWrapper,
   WrappedResponse,
 } from '../../shared/util/field-error-wrapper';
+import { BudgetStatistics } from './budget.statistics';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetService {
@@ -25,6 +26,14 @@ export class BudgetService {
   public async get(budgetId: number): Promise<WrappedResponse<Budget>> {
     return await new FieldErrorWrapper(() =>
       this.repository.get(budgetId),
+    ).execute();
+  }
+
+  public async getStatistics(
+    budgetId: number,
+  ): Promise<WrappedResponse<BudgetStatistics>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.getStatistics(budgetId),
     ).execute();
   }
 

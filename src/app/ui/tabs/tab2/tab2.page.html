@@ -8,7 +8,7 @@
 
   <div style="height: 150px;">
     <app-ui-swiper
-      [items]="budgets"
+      [items]="budgets()"
       [itemTemplate]="budgetCardTemplate"
       (swipe)="handleAccountSwipe($event)">
     </app-ui-swiper>

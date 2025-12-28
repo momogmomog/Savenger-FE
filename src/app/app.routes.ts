@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AppRoutingPath } from './app-routing.path';
 import { TabsPage } from './ui/tabs/tabs/tabs.page';
-import { BudgetPageComponent } from './ui/budget/budget-page/budget-page.component';
+import { ListBudgetsComponent } from './ui/budget/list-budgets/list-budgets.component';
 
 const tab1Routes: Routes = [
   {
@@ -35,16 +35,8 @@ const tab4Routes: Routes = [
     children: [
       {
         path: '',
-        component: BudgetPageComponent,
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('./ui/budget/list-budgets/list-budgets.component').then(
-                (c) => c.ListBudgetsComponent,
-              ),
-          },
-        ],
+        component: ListBudgetsComponent,
+        children: [],
       },
     ],
   },

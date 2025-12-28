@@ -50,7 +50,7 @@ export class CreateBudgetModal
     const resp = await this.budgetService.create(payload);
     this.errors.set(resp.errors);
     if (resp.isSuccess) {
-      void this.close();
+      void this.close(true);
     }
   }
 }

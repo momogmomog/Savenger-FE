@@ -1,3 +1,23 @@
-<p>
-  list-budgets works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Budgets</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="false">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-list>
+    @for (item of budgets(); track item.id) {
+      <app-budget-card
+        [budget]="item"
+        (click)="navigateToDetails(item.id)">
+      </app-budget-card>
+    }
+  </ion-list>
+</ion-content>
+<ion-fab horizontal="end" vertical="bottom" slot="fixed">
+  <ion-fab-button (click)="openCreateBudgetModal()">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

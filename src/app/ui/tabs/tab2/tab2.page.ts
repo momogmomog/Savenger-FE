@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { UiSwiperComponent } from '../../../shared/ui-swiper/ui-swiper.component';
 import {
   IonContent,
@@ -6,14 +6,10 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { BudgetSliderItemComponent } from '../../budget/budget-slider-item/budget-slider-item.component'; // Update path
-
-// Define your interface
-export interface Budget {
-  id: number;
-  budgetName: string;
-  budgetCap: number;
-}
+import { BudgetSliderItemComponent } from '../../budget/budget-slider-item/budget-slider-item.component';
+import { BudgetQuery, BudgetQueryImpl } from '../../../api/budget/budget.query';
+import { BudgetService } from '../../../api/budget/budget.service';
+import { Budget } from '../../../api/budget/budget';
 
 @Component({
   selector: 'app-tab2',
@@ -29,13 +25,16 @@ export interface Budget {
   ],
   templateUrl: './tab2.page.html',
 })
-export class Tab2Page {
-  // Your data
-  budgets: Budget[] = [
-    { id: 1, budgetName: 'Personal', budgetCap: 500 },
-    { id: 2, budgetName: 'Business', budgetCap: 1200 },
-    { id: 3, budgetName: 'Savings', budgetCap: 3000 },
-  ];
+export class Tab2Page implements OnInit {
+  private budgetQuery: BudgetQuery = new BudgetQueryImpl();
+  budgets = signal<Budget[]>([]);
+
+  constructor(private budgetService: BudgetService) {}
+
+  async ngOnInit(): Promise<void> {
+    const resp = await this.budgetService.search(this.budgetQuery);
+    this.budgets.set(resp.response.content);
+  }
 
   // The simplified handler
   handleAccountSwipe(event: { index: number; item: Budget }): void {

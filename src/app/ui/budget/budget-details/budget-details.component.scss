@@ -1,0 +1,38 @@
+.balance-hero {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.balance-amount {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--ion-color-dark);
+}
+
+.balance-label {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-card {
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  padding: 10px;
+  height: 100%;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+ion-accordion {
+  background: #fff;
+}
