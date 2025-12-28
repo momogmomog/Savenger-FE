@@ -10,6 +10,7 @@ import { CheckboxComponent } from '../../../shared/form-controls/checkbox/checkb
 import { DatePickerComponent } from '../../../shared/form-controls/date-picker/date-picker.component';
 import { SelectComponent } from '../../../shared/form-controls/select/select.component';
 import { SelectOptions } from '../../../api/common/select-options';
+import { Budget } from '../../../api/budget/budget';
 
 @Component({
   selector: 'app-budget-form',
@@ -30,6 +31,8 @@ export class BudgetFormComponent implements OnInit {
   recurrenceOptions = SelectOptions.budgetRecurrenceOptions();
 
   errors = input.required<FieldError[]>();
+  budget = input<Budget>();
+
   formSubmitted = output<CreateBudgetPayload>();
 
   ngOnInit(): void {
@@ -42,6 +45,19 @@ export class BudgetFormComponent implements OnInit {
       balance: FormUtil.optionalNumber(0),
       dateStarted: FormUtil.requiredField<Date>(null),
     });
+
+    if (this.budget()) {
+      const budget = this.budget()!;
+      this.form.patchValue({
+        budgetName: budget.budgetName,
+        active: budget.active,
+        autoRevise: budget.autoRevise,
+        recurringRule: budget.recurringRule,
+        budgetCap: budget.budgetCap,
+        balance: budget.balance,
+        dateStarted: new Date(budget.dateStarted),
+      });
+    }
   }
 
   protected onFormSubmit(): void {

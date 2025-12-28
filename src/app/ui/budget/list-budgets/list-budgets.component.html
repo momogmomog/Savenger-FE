@@ -1,6 +1,12 @@
-<ion-header>
+
+<ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Budgets</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentBudgetQueryActionSheet()">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="false">
@@ -10,6 +16,7 @@
   <ion-list>
     @for (item of budgets(); track item.id) {
       <app-budget-card
+        (editTriggered)="openEditBudgetModal($event)"
         [budget]="item"
         (click)="navigateToDetails(item.id)">
       </app-budget-card>

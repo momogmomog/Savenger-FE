@@ -1,35 +1,24 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import {
+  IonBadge,
   IonCard,
+  IonCardContent,
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
-  IonCardContent,
-  IonProgressBar,
-  IonBadge,
-  IonItem,
-  IonLabel,
-  IonRow,
   IonCol,
   IonIcon,
+  IonRow,
+  IonButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { calendarOutline, alertCircleOutline } from 'ionicons/icons';
-
-// Define the interface inline or import it
-export interface Budget {
-  id: number;
-  budgetName: string;
-  recurringRule: string;
-  dateStarted: string;
-  dueDate: string;
-  active: boolean;
-  balance: number;
-  budgetCap: number;
-  autoRevise: boolean;
-  ownerId: number;
-}
+import {
+  alertCircleOutline,
+  calendarOutline,
+  pencilOutline,
+} from 'ionicons/icons';
+import { Budget } from '../../../api/budget/budget';
 
 @Component({
   selector: 'app-budget-card',
@@ -43,13 +32,11 @@ export interface Budget {
     IonCardTitle,
     IonCardSubtitle,
     IonCardContent,
-    IonProgressBar,
     IonBadge,
-    IonItem,
-    IonLabel,
     IonRow,
     IonCol,
     IonIcon,
+    IonButton,
   ],
   templateUrl: './budget-card.component.html',
   styles: [
@@ -59,42 +46,43 @@ export interface Budget {
         margin-bottom: 16px;
         border-radius: 16px;
       }
+      .stat-label {
+        font-size: 0.75em;
+        text-transform: uppercase;
+        color: var(--ion-color-medium);
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+      .balance-value {
+        font-weight: 800;
+        font-size: 1.2em;
+        color: var(--ion-color-dark);
+      }
+      .cap-value {
+        font-weight: 600;
+        font-size: 1.2em;
+        color: var(--ion-color-medium-shade);
+      }
       .budget-meta {
-        font-size: 0.9em;
+        font-size: 0.85em;
         color: var(--ion-color-medium);
         display: flex;
         align-items: center;
-        gap: 5px;
-      }
-      .amount-display {
-        font-weight: 700;
-        font-size: 1.2em;
+        gap: 6px;
       }
     `,
   ],
 })
 export class BudgetCardComponent {
-  // Signal Input
   budget = input.required<Budget>();
-
-  // Computed value for progress bar (0 to 1 scale)
-  usageProgress = computed(() => {
-    const b = this.budget();
-    if (!b.budgetCap || b.budgetCap === 0) return 0;
-    // Assuming balance increases as you spend.
-    // TODO: Replace balance with spent amount
-    return Math.min(b.balance / b.budgetCap, 1);
-  });
-
-  // Computed color based on usage
-  progressColor = computed(() => {
-    const progress = this.usageProgress();
-    if (progress > 0.9) return 'danger'; // Red if near cap
-    if (progress > 0.7) return 'warning'; // Yellow if getting close
-    return 'primary'; // Blue/Green otherwise
-  });
+  editTriggered = output<Budget>();
 
   constructor() {
-    addIcons({ calendarOutline, alertCircleOutline });
+    addIcons({ calendarOutline, alertCircleOutline, pencilOutline });
+  }
+
+  onEdit(event: Event): void {
+    event.stopPropagation();
+    this.editTriggered.emit(this.budget());
   }
 }

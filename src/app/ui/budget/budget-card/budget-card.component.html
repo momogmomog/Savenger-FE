@@ -1,40 +1,55 @@
 <ion-card [button]="true">
-  <ion-card-header>
-    <div style="display: flex; justify-content: space-between; align-items: start;">
-      <div>
-        <ion-card-subtitle>
+  <ion-card-header class="ion-no-padding ion-padding-horizontal ion-padding-top">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+
+      <div style="flex: 1; padding-right: 10px;">
+        <ion-card-subtitle class="ion-text-uppercase" style="font-size: 0.75rem; font-weight: 600;">
           {{ budget().recurringRule }}
         </ion-card-subtitle>
-        <ion-card-title>
+        <ion-card-title style="font-size: 1.1rem; margin-top: 2px;">
           {{ budget().budgetName }}
         </ion-card-title>
       </div>
 
-      <ion-badge [color]="budget().active ? 'success' : 'medium'">
-        {{ budget().active ? 'Active' : 'Archived' }}
-      </ion-badge>
+      <div style="display: flex; align-items: center;">
+        @if (!budget().active) {
+          <ion-button
+            fill="clear"
+            size="small"
+            color="dark"
+            (click)="onEdit($event)">
+            <ion-icon slot="icon-only" name="pencil-outline" style="font-size: 1.1em;"></ion-icon>
+          </ion-button>
+        }
+        <ion-badge [color]="budget().active ? 'success' : 'medium'">
+          {{ budget().active ? 'Active' : 'Archived' }}
+        </ion-badge>
+      </div>
     </div>
   </ion-card-header>
 
   <ion-card-content>
-    <div class="ion-margin-bottom">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-        <span class="amount-display text-dark">
+    <ion-row class="ion-margin-vertical">
+
+      <ion-col size="6" class="ion-no-padding">
+        <div class="stat-label">Current Balance</div>
+        <div class="balance-value">
           {{ budget().balance | currency }}
-        </span>
-        <span class="text-medium">
-          of {{ budget().budgetCap | currency }}
-        </span>
-      </div>
+        </div>
+      </ion-col>
 
-      <ion-progress-bar
-        [value]="usageProgress()"
-        [color]="progressColor()">
-      </ion-progress-bar>
-    </div>
+      <ion-col size="6" class="ion-no-padding"
+               style="border-left: 1px solid var(--ion-color-light); padding-left: 16px;">
+        <div class="stat-label">Budget Cap</div>
+        <div class="cap-value">
+          {{ budget().budgetCap | currency }}
+        </div>
+      </ion-col>
 
-    <ion-row class="ion-align-items-center ion-margin-top">
-      <ion-col size="6">
+    </ion-row>
+
+    <ion-row class="ion-align-items-center" style="border-top: 1px solid var(--ion-color-light); padding-top: 10px;">
+      <ion-col size="7" class="ion-no-padding">
         <div class="budget-meta">
           <ion-icon name="calendar-outline"></ion-icon>
           <span>Due {{ budget().dueDate | date:'mediumDate' }}</span>
@@ -42,8 +57,8 @@
       </ion-col>
 
       @if (budget().autoRevise) {
-        <ion-col size="6" class="ion-text-end">
-          <div class="budget-meta" style="justify-content: flex-end;">
+        <ion-col size="5" class="ion-text-end ion-no-padding">
+          <div class="budget-meta" style="justify-content: flex-end; color: var(--ion-color-warning-shade);">
             <ion-icon name="alert-circle-outline"></ion-icon>
             <span>Auto-Revise</span>
           </div>
@@ -52,3 +67,4 @@
     </ion-row>
   </ion-card-content>
 </ion-card>
+

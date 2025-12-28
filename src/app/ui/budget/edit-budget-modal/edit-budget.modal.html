@@ -1,0 +1,6 @@
+<ion-content>
+  <app-loader loaderName="editBudgetLoader"></app-loader>
+  @if (budget()) {
+    <app-budget-form [budget]="budget()" [errors]="errors()" (formSubmitted)="onFormSubmit($event)"></app-budget-form>
+  }
+</ion-content>

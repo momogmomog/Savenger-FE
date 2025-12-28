@@ -2,6 +2,9 @@ import { Component, OnInit, signal } from '@angular/core';
 import { BudgetService } from '../../../api/budget/budget.service';
 import { BudgetQuery, BudgetQueryImpl } from '../../../api/budget/budget.query';
 import {
+  ActionSheetController,
+  IonButton,
+  IonButtons,
   IonContent,
   IonFab,
   IonFabButton,
@@ -22,7 +25,10 @@ import { BudgetDetailsModalPayload } from '../budget-details-modal/budget-detail
 import { CreateBudgetModal } from '../create-budget-modal/create-budget.modal';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
+import { add, archive, ellipsisVertical } from 'ionicons/icons';
+import { AppRoutingPath } from '../../../app-routing.path';
+import { EditBudgetModal } from '../edit-budget-modal/edit-budget.modal';
+import { EditBudgetPayload } from '../edit-budget-modal/edit-budget.payload';
 
 @Component({
   selector: 'app-list-budgets',
@@ -40,6 +46,8 @@ import { add } from 'ionicons/icons';
     IonFab,
     IonFabButton,
     IonIcon,
+    IonButton,
+    IonButtons,
   ],
 })
 export class ListBudgetsComponent implements OnInit {
@@ -49,9 +57,12 @@ export class ListBudgetsComponent implements OnInit {
   constructor(
     private budgetService: BudgetService,
     private modalService: ModalService,
+    private actionSheetCtrl: ActionSheetController,
   ) {
     addIcons({
       add,
+      ellipsisVertical,
+      archive,
     });
   }
 
@@ -97,4 +108,41 @@ export class ListBudgetsComponent implements OnInit {
       void this.updateFilters();
     }
   }
+
+  protected async openEditBudgetModal(budget: Budget): Promise<void> {
+    const modal = await this.modalService.open(
+      EditBudgetModal,
+      new EditBudgetPayload(budget.id),
+      { shellType: ShellType.HEADER, title: '' },
+    );
+
+    const { data } = await modal.onDidDismiss<boolean>();
+    if (data) {
+      void this.updateFilters();
+    }
+  }
+
+  async presentBudgetQueryActionSheet(): Promise<void> {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Search options',
+      buttons: [
+        {
+          text: this.budgetQuery.active ? 'Show inactive' : 'Hide inactive',
+          icon: 'archive',
+          handler: (): void => {
+            this.budgetQuery.active = !this.budgetQuery.active || null;
+            void this.updateFilters();
+          },
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          data: { action: 'cancel' },
+        },
+      ],
+    });
+    await actionSheet.present();
+  }
+
+  protected readonly routes = AppRoutingPath;
 }

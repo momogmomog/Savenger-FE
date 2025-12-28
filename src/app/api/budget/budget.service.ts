@@ -23,9 +23,24 @@ export class BudgetService {
     ).execute();
   }
 
+  public async edit(
+    budgetId: number,
+    payload: CreateBudgetPayload,
+  ): Promise<WrappedResponse<Budget>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.edit(budgetId, payload),
+    ).execute();
+  }
+
   public async get(budgetId: number): Promise<WrappedResponse<Budget>> {
     return await new FieldErrorWrapper(() =>
       this.repository.get(budgetId),
+    ).execute();
+  }
+
+  public async archive(budgetId: number): Promise<WrappedResponse<Budget>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.delete(budgetId),
     ).execute();
   }
 

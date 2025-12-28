@@ -21,7 +21,7 @@ export class BudgetQueryImpl implements BudgetQuery {
   budgetName: string | null = null;
   dateStarted: BetweenQuery<string> = {};
   dueDate: BetweenQuery<string> = {};
-  active: boolean | null = null;
+  active: boolean | null = true;
   balance: BetweenQuery<number> = {};
   budgetCap: BetweenQuery<number> = {};
   autoRevise: boolean | null = null;

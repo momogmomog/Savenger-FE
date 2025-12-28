@@ -21,8 +21,24 @@ export class BudgetRepository {
     );
   }
 
+  public edit(
+    budgetId: number,
+    payload: CreateBudgetPayload,
+  ): Observable<Budget> {
+    return this.http.put<CreateBudgetPayload, Budget>(
+      RouteUtils.setPathParams(Endpoints.BUDGET, [budgetId]),
+      payload,
+    );
+  }
+
   public get(budgetId: number): Observable<Budget> {
     return this.http.get<Budget>(
+      RouteUtils.setPathParams(Endpoints.BUDGET, [budgetId]),
+    );
+  }
+
+  public delete(budgetId: number): Observable<Budget> {
+    return this.http.delete<Budget>(
       RouteUtils.setPathParams(Endpoints.BUDGET, [budgetId]),
     );
   }

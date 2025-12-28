@@ -1,4 +1,4 @@
-import { Component, input, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import {
   CommonModule,
   CurrencyPipe,
@@ -6,42 +6,42 @@ import {
   PercentPipe,
 } from '@angular/common';
 import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonButtons,
+  ActionSheetController,
+  IonAccordion,
+  IonAccordionGroup,
+  IonAvatar,
   IonBackButton,
+  IonBadge,
   IonButton,
-  IonIcon,
+  IonButtons,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardSubtitle,
-  IonGrid,
-  IonRow,
   IonCol,
-  IonProgressBar,
-  IonLabel,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
   IonItem,
+  IonLabel,
   IonList,
-  IonBadge,
-  IonAccordionGroup,
-  IonAccordion,
-  IonAvatar,
-  ActionSheetController,
+  IonProgressBar,
+  IonRow,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   ellipsisVertical,
-  walletOutline,
-  trendingUpOutline,
-  trendingDownOutline,
-  peopleOutline,
-  swapHorizontalOutline,
   pencilOutline,
-  trashOutline,
+  peopleOutline,
   personAddOutline,
+  swapHorizontalOutline,
+  trashOutline,
+  trendingDownOutline,
+  trendingUpOutline,
+  walletOutline,
 } from 'ionicons/icons';
 import { BudgetStatistics } from '../../../api/budget/budget.statistics';
 import { AppRoutingPath } from '../../../app-routing.path';
@@ -88,6 +88,7 @@ export class BudgetDetailsPage {
   stats = input.required<BudgetStatistics>();
 
   navigateAway = output<void>();
+  editTriggered = output<void>();
 
   usagePercentage = computed(() => {
     const cap = this.stats().budget.budgetCap;
@@ -128,7 +129,7 @@ export class BudgetDetailsPage {
           text: 'Edit Budget',
           icon: 'pencil-outline',
           handler: (): void => {
-            console.log('Edit clicked');
+            this.editTriggered.emit();
           },
         },
         {
