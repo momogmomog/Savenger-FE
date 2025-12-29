@@ -99,11 +99,16 @@ export class ListBudgetsComponent implements OnInit {
     }
   }
 
-  protected navigateToDetails(id: number): void {
-    void this.modalService.open(
+  protected async navigateToDetails(id: number): Promise<void> {
+    const modal = await this.modalService.open(
       BudgetDetailsModal,
       new BudgetDetailsModalPayload(id),
     );
+
+    const { data } = await modal.onWillDismiss<boolean>();
+    if (data) {
+      void this.updateFilters();
+    }
   }
 
   protected async handleRefresh($event: RefresherCustomEvent): Promise<void> {

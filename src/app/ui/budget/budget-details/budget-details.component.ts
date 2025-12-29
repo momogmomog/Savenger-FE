@@ -1,10 +1,5 @@
-import { Component, computed, inject, input, output } from '@angular/core';
-import {
-  CommonModule,
-  CurrencyPipe,
-  DatePipe,
-  PercentPipe,
-} from '@angular/common';
+import { Component, computed, inject, model, output } from '@angular/core';
+import { CommonModule, CurrencyPipe, PercentPipe } from '@angular/common';
 import {
   ActionSheetController,
   IonAccordion,
@@ -45,6 +40,9 @@ import {
 } from 'ionicons/icons';
 import { BudgetStatistics } from '../../../api/budget/budget.statistics';
 import { AppRoutingPath } from '../../../app-routing.path';
+import { ModalService } from '../../../shared/modal/modal.service';
+import { ManageParticipantsModal } from '../manage-participants/manage-participants.modal';
+import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 
 @Component({
   selector: 'app-budget-details',
@@ -52,7 +50,6 @@ import { AppRoutingPath } from '../../../app-routing.path';
   imports: [
     CommonModule,
     CurrencyPipe,
-    DatePipe,
     PercentPipe,
     IonContent,
     IonHeader,
@@ -83,12 +80,14 @@ import { AppRoutingPath } from '../../../app-routing.path';
 })
 export class BudgetDetailsPage {
   private actionSheetCtrl = inject(ActionSheetController);
+  private modalService = inject(ModalService);
 
   routes = AppRoutingPath;
-  stats = input.required<BudgetStatistics>();
+  stats = model.required<BudgetStatistics>();
 
   navigateAway = output<void>();
   editTriggered = output<void>();
+  budgetUpdated = output<void>();
 
   usagePercentage = computed(() => {
     const cap = this.stats().budget.budgetCap;
@@ -135,8 +134,25 @@ export class BudgetDetailsPage {
         {
           text: 'Manage Participants',
           icon: 'person-add-outline',
-          handler: (): void => {
-            console.log('Participants clicked');
+          handler: async (): Promise<void> => {
+            const modal = await this.modalService.open(
+              ManageParticipantsModal,
+              this.stats().budget,
+              {
+                shellType: ShellType.HEADER,
+                title: `Manage Participants`,
+                showCloseButton: true,
+              },
+            );
+
+            const { data } = await modal.onDidDismiss();
+            if (data) {
+              this.stats.set({
+                ...this.stats(),
+                budget: data,
+              });
+              this.budgetUpdated.emit();
+            }
           },
         },
         {

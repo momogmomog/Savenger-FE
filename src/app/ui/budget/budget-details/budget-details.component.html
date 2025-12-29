@@ -115,8 +115,7 @@
                 <img [src]="'https://ui-avatars.com/api/?name=' + user.username" alt="avatar" />
               </ion-avatar>
               <ion-label>
-                <h2>{{ user.username }}</h2>
-                <p>Member since {{ user.dateRegistered | date:'shortDate' }}</p>
+                {{ user.username }}
               </ion-label>
             </ion-item>
           } @empty {

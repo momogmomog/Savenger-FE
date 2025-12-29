@@ -1,4 +1,4 @@
-import { User } from '../user/user';
+import { OtherUser } from '../user/user';
 
 export interface Budget {
   id: number;
@@ -14,5 +14,5 @@ export interface Budget {
 }
 
 export interface BudgetFull extends Budget {
-  participants: User[];
+  participants: OtherUser[];
 }

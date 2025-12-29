@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { User } from './user';
+import { OtherUser, User } from './user';
 import { UserRepository } from './user.repository';
+import {
+  FieldErrorWrapper,
+  WrappedResponse,
+} from '../../shared/util/field-error-wrapper';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -15,6 +19,14 @@ export class UserService {
     this.userRepository
       .getUser()
       .subscribe((value) => this.currentUser.next(value));
+  }
+
+  public async fetchOtherUser(
+    username: string,
+  ): Promise<WrappedResponse<OtherUser>> {
+    return await new FieldErrorWrapper(() =>
+      this.userRepository.getOtherUser(username),
+    ).execute();
   }
 
   public clearUser(): void {

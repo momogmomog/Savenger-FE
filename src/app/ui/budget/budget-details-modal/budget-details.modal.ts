@@ -23,6 +23,7 @@ import { EditBudgetPayload } from '../edit-budget-modal/edit-budget.payload';
     @if (statistics(); as stats) {
       <app-budget-details
         (editTriggered)="openEditBudgetModal()"
+        (budgetUpdated)="setDismissalData(true)"
         (navigateAway)="dismiss()"
         [stats]="stats"
       ></app-budget-details>
@@ -31,7 +32,7 @@ import { EditBudgetPayload } from '../edit-budget-modal/edit-budget.payload';
   imports: [FormsModule, BudgetDetailsPage, LoaderComponent],
 })
 export class BudgetDetailsModal
-  extends ModalContentBaseComponent<BudgetDetailsModalPayload, any>
+  extends ModalContentBaseComponent<BudgetDetailsModalPayload, boolean>
   implements OnInit
 {
   statistics = model<BudgetStatistics>();
@@ -81,9 +82,7 @@ export class BudgetDetailsModal
     const { data } = await modal.onDidDismiss<boolean>();
     if (data) {
       void this.loadStatistic();
-      //When closing this modal, consider some interception logic that if budget was edited it will always return true,
-      // so that budget list page can reload.
-      // void this.close(true);
+      this.setDismissalData(true);
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CreateBudgetPayload } from './dto/create-budget.payload';
 import { Observable } from 'rxjs';
-import { Budget } from './budget';
+import { Budget, BudgetFull } from './budget';
 import { Endpoints } from '../../shared/http/endpoints';
 import { RouteUtils } from '../../shared/routing/route-utils';
 import { BudgetQuery } from './budget.query';
@@ -59,8 +59,8 @@ export class BudgetRepository {
   public assignParticipant(
     budgetId: number,
     payload: AssignUnassignParticipantPayload,
-  ): Observable<Budget> {
-    return this.http.post<AssignUnassignParticipantPayload, Budget>(
+  ): Observable<BudgetFull> {
+    return this.http.post<AssignUnassignParticipantPayload, BudgetFull>(
       RouteUtils.setPathParams(Endpoints.PARTICIPANTS, [budgetId]),
       payload,
     );
@@ -69,8 +69,8 @@ export class BudgetRepository {
   public unassignParticipant(
     budgetId: number,
     payload: AssignUnassignParticipantPayload,
-  ): Observable<Budget> {
-    return this.http.deleteBody<AssignUnassignParticipantPayload, Budget>(
+  ): Observable<BudgetFull> {
+    return this.http.deleteBody<AssignUnassignParticipantPayload, BudgetFull>(
       RouteUtils.setPathParams(Endpoints.PARTICIPANTS, [budgetId]),
       payload,
     );

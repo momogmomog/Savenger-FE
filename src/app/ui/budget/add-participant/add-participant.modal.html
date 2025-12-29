@@ -1,0 +1,62 @@
+<ion-item class="search-item" fill="outline" mode="md">
+  <app-input
+    [(ngModel)]="searchQuery"
+    (onChangeEnd)="searchUser()"
+    placeholder="Enter username"></app-input>
+  <ion-button
+    slot="end"
+    fill="clear"
+    (click)="searchUser()"
+    [disabled]="isLoading()"
+  >
+    @if (isLoading()) {
+      <ion-spinner
+        name="crescent"
+        style="width: 20px; height: 20px;"
+      ></ion-spinner>
+    } @else {
+      <ion-icon name="search-outline"></ion-icon>
+    }
+  </ion-button>
+</ion-item>
+
+@if (errorMessage()) {
+  <div class="error-container ion-margin-top">
+    <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+    <ion-note color="danger">{{ errorMessage() }}</ion-note>
+  </div>
+}
+
+@if (foundUser(); as user) {
+  <div class="found-user-card ion-margin-top">
+    <ion-item lines="none" class="user-item">
+      <ion-avatar slot="start">
+        <img
+          [src]="
+                  'https://ui-avatars.com/api/?name=' +
+                  user.username +
+                  '&background=random'
+                "
+          alt="avatar"
+        />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ user.username }}</h2>
+        <p>User ID: {{ user.id }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      (click)="confirmAdd()"
+      [disabled]="isAdding()"
+    >
+      @if (isAdding()) {
+        <ion-spinner name="dots"></ion-spinner>
+      } @else {
+        <ion-icon slot="start" name="person-add-outline"></ion-icon>
+        Add to Budget
+      }
+    </ion-button>
+  </div>
+}

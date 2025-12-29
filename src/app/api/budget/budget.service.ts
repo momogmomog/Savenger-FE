@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BudgetRepository } from './budget.repository';
 import { CreateBudgetPayload } from './dto/create-budget.payload';
-import { Budget } from './budget';
+import { Budget, BudgetFull } from './budget';
 import { BudgetQuery } from './budget.query';
 import { Page } from '../../shared/util/page';
 import { AssignUnassignParticipantPayload } from './dto/assign-unassign-participant.payload';
@@ -10,6 +10,7 @@ import {
   WrappedResponse,
 } from '../../shared/util/field-error-wrapper';
 import { BudgetStatistics } from './budget.statistics';
+import { ObjectUtils } from '../../shared/util/object-utils';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetService {
@@ -63,7 +64,7 @@ export class BudgetService {
   public async assignParticipant(
     budgetId: number,
     payload: AssignUnassignParticipantPayload,
-  ): Promise<WrappedResponse<Budget>> {
+  ): Promise<WrappedResponse<BudgetFull>> {
     return await new FieldErrorWrapper(() =>
       this.repository.assignParticipant(budgetId, payload),
     ).execute();
@@ -72,9 +73,21 @@ export class BudgetService {
   public async unassignParticipant(
     budgetId: number,
     payload: AssignUnassignParticipantPayload,
-  ): Promise<WrappedResponse<Budget>> {
+  ): Promise<WrappedResponse<BudgetFull>> {
     return await new FieldErrorWrapper(() =>
       this.repository.unassignParticipant(budgetId, payload),
     ).execute();
+  }
+
+  public isOwner(budget: Budget, userId: number): boolean {
+    return budget.ownerId === userId;
+  }
+
+  public isParticipant(budget: BudgetFull, userId: number): boolean {
+    return !ObjectUtils.isNil(budget.participants.find((p) => p.id === userId));
+  }
+
+  public isPartOf(budget: BudgetFull, userId: number): boolean {
+    return this.isParticipant(budget, userId) || this.isOwner(budget, userId);
   }
 }

@@ -3,3 +3,8 @@ export interface User {
   username: string;
   dateRegistered: string;
 }
+
+export interface OtherUser {
+  id: number;
+  username: string;
+}

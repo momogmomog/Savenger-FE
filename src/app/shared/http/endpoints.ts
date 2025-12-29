@@ -1,8 +1,9 @@
 export class Endpoints {
   public static readonly LOGIN = '/login';
   public static readonly USER_DETAILS = '/user-details';
+  public static readonly OTHER_USER_DETAILS = '/user-details/:username';
   public static readonly BUDGETS = '/budgets';
-  public static readonly BUDGET_STATISTICS = "/budgets/:id/statistics";
+  public static readonly BUDGET_STATISTICS = '/budgets/:id/statistics';
   public static readonly BUDGET = '/budgets/:id';
   public static readonly BUDGET_SEARCH = '/budgets/search';
   public static readonly CATEGORIES = '/categories';
