@@ -1,5 +1,9 @@
-import { inject, Injectable, Type } from '@angular/core';
-import { ModalController, ModalOptions } from '@ionic/angular/standalone';
+import { inject, Injectable, signal, Type } from '@angular/core';
+import {
+  ModalController,
+  ModalOptions,
+  ToastController,
+} from '@ionic/angular/standalone';
 import { ModalContentBaseComponent } from './modals/modal-content-base.component';
 import { StringUtils } from '../util/string-utils';
 import {
@@ -16,6 +20,7 @@ export type CustomModalOptions = Omit<
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private modalCtrl = inject(ModalController);
+  private toastCtrl = inject(ToastController);
 
   async open<TPayload, TResult>(
     component: Type<ModalContentBaseComponent<TPayload, TResult>>,
@@ -34,6 +39,9 @@ export class ModalService {
       );
     }
 
+    // setting null! but the shell will never see it as null since the modal value is set before shell is initialized
+    const modalProxy = signal<HTMLIonModalElement>(null!);
+
     const modal = await this.modalCtrl.create({
       ...options,
       id: modalId,
@@ -43,9 +51,11 @@ export class ModalService {
         componentPayload: payload,
         shellConfig: shellConfig,
         modalId: modalId,
+        modalProxy: modalProxy,
       },
     });
 
+    modalProxy.set(modal);
     await modal.present();
 
     // const { data } = await modal.onDidDismiss<TResult>();
@@ -62,5 +72,23 @@ export class ModalService {
 
       await topModal.dismiss(undefined, 'force-close');
     }
+  }
+
+  public async showSuccess(msg: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 2000,
+      color: 'success',
+    });
+    await toast.present();
+  }
+
+  public async showDangerToast(msg: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 2000,
+      color: 'danger',
+    });
+    await toast.present();
   }
 }

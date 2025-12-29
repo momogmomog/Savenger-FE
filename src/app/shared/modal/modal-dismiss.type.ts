@@ -1,0 +1,5 @@
+export enum ModalDismissType {
+  USER_CONFIRM = 'USER_CONFIRM',
+  USER_DISMISS = 'USER_DISMISS',
+  OTHER_DISMISS = 'OTHER_DISMISS',
+}

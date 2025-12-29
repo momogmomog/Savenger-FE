@@ -6,6 +6,7 @@ import {
   Type,
   ViewChild,
   ViewContainerRef,
+  WritableSignal,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { ModalContentBaseComponent } from '../modals/modal-content-base.component';
@@ -24,6 +25,8 @@ export class ModalShellBase implements OnInit {
   // Child components can cast to their corresponding configs
   @Input() shellConfig: any;
 
+  @Input() modalProxy!: WritableSignal<HTMLIonModalElement>;
+
   protected modalCtrl = inject(ModalController);
 
   ngOnInit(): void {
@@ -31,12 +34,12 @@ export class ModalShellBase implements OnInit {
   }
 
   private loadComponent(): void {
-    this.container.clear();
     const ref = this.container.createComponent(this.component);
 
     // Pass data to the inner content
     ref.setInput('payload', this.componentPayload);
     ref.setInput('modalId', this.modalId);
+    ref.setInput('modalInstanceSignal', this.modalProxy());
     ref.setInput('shellConfig', this.shellConfig);
   }
 }
