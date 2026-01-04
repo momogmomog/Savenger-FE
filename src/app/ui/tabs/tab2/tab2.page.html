@@ -6,16 +6,9 @@
 
 <ion-content>
 
-  <div style="height: 150px;">
-    <app-ui-swiper
-      [items]="budgets()"
-      [itemTemplate]="budgetCardTemplate"
-      (swipe)="handleAccountSwipe($event)">
-    </app-ui-swiper>
+  <app-budget-slider></app-budget-slider>
 
-    <ng-template #budgetCardTemplate let-item let-i="index">
-      <app-budget-slider-item [budget]="item"></app-budget-slider-item>
-    </ng-template>
+  <div>
+    {{ budget().budgetName }}
   </div>
-
 </ion-content>

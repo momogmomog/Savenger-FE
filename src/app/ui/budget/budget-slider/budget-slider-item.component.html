@@ -1,0 +1,25 @@
+<ion-card class="budget-slide-card primary-card">
+  <ion-card-content class="card-inner">
+    <div class="card-header">
+      <div class="budget-name">
+        <ion-icon name="wallet-outline"></ion-icon>
+        {{ budget().budgetName }}
+      </div>
+
+      <ion-button
+        size="small"
+        fill="solid"
+        color="light"
+        (click)="onDetailsClick($event)"
+      >
+        Details
+        <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="balance-section">
+      <div class="label">Available Balance</div>
+      <div class="amount">{{ budget().balance | currency }}</div>
+    </div>
+  </ion-card-content>
+</ion-card>

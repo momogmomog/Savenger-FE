@@ -9,6 +9,7 @@ import { FieldError } from '../../../shared/field-error/field-error';
 import { CreateBudgetPayload } from '../../../api/budget/dto/create-budget.payload';
 import { ShowLoader } from '../../../shared/loader/show.loader.decorator';
 import { BudgetService } from '../../../api/budget/budget.service';
+import { BudgetSliderService } from '../budget-slider/budget-slider.service';
 
 @Component({
   selector: 'app-create-budget-modal',
@@ -25,6 +26,7 @@ export class CreateBudgetModal
   constructor(
     private modalCtrl: ModalController,
     private budgetService: BudgetService,
+    private budgetSliderService: BudgetSliderService,
   ) {
     super();
   }
@@ -50,6 +52,7 @@ export class CreateBudgetModal
     const resp = await this.budgetService.create(payload);
     this.errors.set(resp.errors);
     if (resp.isSuccess) {
+      this.budgetSliderService.setBudget(resp.response);
       void this.close(true);
     }
   }

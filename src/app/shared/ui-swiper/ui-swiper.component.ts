@@ -2,12 +2,13 @@ import {
   AfterViewInit,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  effect,
   ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  TemplateRef, // Import this
-  ViewChild,
+  input,
+  output,
+  TemplateRef,
+  untracked,
+  viewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -16,11 +17,9 @@ import { register } from 'swiper/element/bundle';
 
 register();
 
-// 1. Define the Context Interface
-// This tells Angular: "Every slide template will have access to an item ($implicit) and an index."
 export interface SwiperTemplateContext<T> {
-  $implicit: T; // The default item (accessed via let-item)
-  index: number; // The index (accessed via let-i="index")
+  $implicit: T;
+  index: number;
 }
 
 @Component({
@@ -34,11 +33,11 @@ export interface SwiperTemplateContext<T> {
       [init]="false"
       (swiperslidechange)="onSlideChange()"
     >
-      @for (item of items; track $index) {
+      @for (item of items(); track $index) {
         <swiper-slide>
           <ng-container
             *ngTemplateOutlet="
-              itemTemplate;
+              itemTemplate();
               context: { $implicit: item, index: $index }
             "
           >
@@ -62,40 +61,68 @@ export interface SwiperTemplateContext<T> {
   encapsulation: ViewEncapsulation.None,
 })
 export class UiSwiperComponent<T> implements AfterViewInit {
-  @Input({ required: true }) items: T[] = [];
+  items = input.required<T[]>();
+  itemTemplate = input.required<TemplateRef<SwiperTemplateContext<T>>>();
+  enablePagination = input<boolean>(true);
 
-  // 2. USE THE INTERFACE HERE
-  // Instead of <any>, we use SwiperTemplateContext<T>
-  @Input({ required: true }) itemTemplate!: TemplateRef<
-    SwiperTemplateContext<T>
-  >;
+  activeIndex = input<number>(0);
+  slidesPerView = input<number | 'auto'>(1);
 
-  @Input() initialSlide = 0;
-  @Input() slidesPerView = 1;
+  swipe = output<{ index: number; item: T }>();
 
-  @Output() swipe = new EventEmitter<{ index: number; item: T }>();
+  swiperRef = viewChild.required<ElementRef>('swiperRef');
 
-  @ViewChild('swiperRef') swiperRef!: ElementRef;
+  private swiperInstance?: Swiper;
 
-  private swiperInstance!: Swiper;
+  constructor() {
+    effect(() => {
+      const index = this.activeIndex();
+      if (this.swiperInstance && this.swiperInstance.activeIndex !== index) {
+        this.swiperInstance.slideTo(index, 300, false);
+      }
+    });
+
+    effect(() => {
+      // Suppress as this is actually required to trigger the effect on item change
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _items = this.items();
+
+      const desiredIndex = untracked(this.activeIndex);
+
+      if (this.swiperInstance) {
+        // Swiper needs a tick to process DOM updates from @for
+        setTimeout(() => {
+          this.swiperInstance?.update();
+          if (this.swiperInstance?.activeIndex !== desiredIndex) {
+            this.swiperInstance?.slideTo(desiredIndex, 300, false);
+          }
+        });
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
-    const swiperEl = this.swiperRef.nativeElement;
-    Object.assign(swiperEl, {
-      initialSlide: this.initialSlide,
-      slidesPerView: this.slidesPerView,
-      pagination: '.swiper-pagination',
-    });
-    swiperEl.initialize({});
+    const swiperEl = this.swiperRef().nativeElement;
 
+    Object.assign(swiperEl, {
+      initialSlide: this.activeIndex(),
+      slidesPerView: this.slidesPerView(),
+      pagination: this.enablePagination(),
+    });
+
+    swiperEl.initialize();
     this.swiperInstance = swiperEl.swiper;
   }
 
   onSlideChange(): void {
+    if (!this.swiperInstance) return;
+
     const index = this.swiperInstance.activeIndex;
 
-    if (this.items && this.items[index]) {
-      this.swipe.emit({ index, item: this.items[index] });
+    const currentItems = this.items();
+
+    if (currentItems && currentItems[index]) {
+      this.swipe.emit({ index, item: currentItems[index] });
     }
   }
 }

@@ -15,7 +15,6 @@ import {
   IonItem,
   IonLabel,
   IonModal,
-  IonNote,
 } from '@ionic/angular/standalone';
 import { StringUtils } from '../../util/string-utils';
 import { FieldError } from '../../field-error/field-error';
@@ -40,7 +39,6 @@ import { ObjectUtils } from '../../util/object-utils';
     IonItem,
     IonLabel,
     FormsModule,
-    IonNote,
     IonButton,
   ],
   providers: [

@@ -16,3 +16,16 @@ export interface Budget {
 export interface BudgetFull extends Budget {
   participants: OtherUser[];
 }
+
+export class EmptyBudget implements Budget {
+  active = false;
+  autoRevise = false;
+  balance = 0;
+  budgetCap = 0;
+  budgetName = 'Empty Budget';
+  dateStarted: string = new Date().toISOString();
+  dueDate: string = new Date().toISOString();
+  id = -1;
+  ownerId = -1;
+  recurringRule = '';
+}

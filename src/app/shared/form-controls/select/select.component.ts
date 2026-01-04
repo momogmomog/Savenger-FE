@@ -13,7 +13,6 @@ import {
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { NgForOf, NgIf } from '@angular/common';
 import { SelectOption } from './select.option';
 import { StringUtils } from '../../util/string-utils';
 import { IonItem, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
@@ -24,8 +23,6 @@ import { IonItem, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
   imports: [
     ErrorMessageComponent,
     ReactiveFormsModule,
-    NgIf,
-    NgForOf,
     IonSelect,
     IonSelectOption,
     IonItem,
