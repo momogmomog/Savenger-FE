@@ -5,6 +5,7 @@ import {
   effect,
   ElementRef,
   input,
+  model,
   output,
   TemplateRef,
   untracked,
@@ -14,12 +15,18 @@ import {
 import { CommonModule } from '@angular/common';
 import { Swiper } from 'swiper';
 import { register } from 'swiper/element/bundle';
+import { ObjectUtils } from '../util/object-utils';
 
 register();
 
 export interface SwiperTemplateContext<T> {
   $implicit: T;
   index: number;
+}
+
+export interface ProgrammaticSwipe {
+  timeout: any;
+  desiredIndex: number;
 }
 
 @Component({
@@ -65,7 +72,7 @@ export class UiSwiperComponent<T> implements AfterViewInit {
   itemTemplate = input.required<TemplateRef<SwiperTemplateContext<T>>>();
   enablePagination = input<boolean>(true);
 
-  activeIndex = input<number>(0);
+  activeIndex = model<number>(0);
   slidesPerView = input<number | 'auto'>(1);
 
   swipe = output<{ index: number; item: T }>();
@@ -74,11 +81,18 @@ export class UiSwiperComponent<T> implements AfterViewInit {
 
   private swiperInstance?: Swiper;
 
+  private activeSwipe: ProgrammaticSwipe | null = null;
+
   constructor() {
     effect(() => {
       const index = this.activeIndex();
-      if (this.swiperInstance && this.swiperInstance.activeIndex !== index) {
-        this.swiperInstance.slideTo(index, 300, false);
+
+      if (index < 0 || !this.swiperInstance) {
+        return;
+      }
+
+      if (this.getActiveIndex() !== index) {
+        this.scheduleSlide(index);
       }
     });
 
@@ -90,13 +104,9 @@ export class UiSwiperComponent<T> implements AfterViewInit {
       const desiredIndex = untracked(this.activeIndex);
 
       if (this.swiperInstance) {
-        // Swiper needs a tick to process DOM updates from @for
-        setTimeout(() => {
-          this.swiperInstance?.update();
-          if (this.swiperInstance?.activeIndex !== desiredIndex) {
-            this.swiperInstance?.slideTo(desiredIndex, 300, false);
-          }
-        });
+        // Schedule with refresh to let the @for in the template populate the items
+        // Otherwise swiper instance doesn't pick the new items
+        this.scheduleSlide(desiredIndex, true);
       }
     });
   }
@@ -115,14 +125,62 @@ export class UiSwiperComponent<T> implements AfterViewInit {
   }
 
   onSlideChange(): void {
-    if (!this.swiperInstance) return;
+    if (!this.swiperInstance || !ObjectUtils.isNil(this.activeSwipe)) return;
 
     const index = this.swiperInstance.activeIndex;
+    this.activeIndex.set(index);
 
     const currentItems = this.items();
 
     if (currentItems && currentItems[index]) {
       this.swipe.emit({ index, item: currentItems[index] });
     }
+  }
+
+  private scheduleSlide(desiredIndex: number, update = false): void {
+    const doSlide = (index: number): void => {
+      if (this.swiperInstance?.activeIndex !== desiredIndex) {
+        this.swiperInstance?.slideTo(index, 0, false);
+      }
+    };
+
+    const activeSwipe = this.activeSwipe;
+
+    if (ObjectUtils.isNil(activeSwipe)) {
+      this.activeSwipe = {
+        desiredIndex,
+        timeout: setTimeout(() => {
+          this.activeSwipe = null;
+        }, 30),
+      };
+
+      if (!update) {
+        doSlide(desiredIndex);
+      } else {
+        setTimeout(() => {
+          this.swiperInstance!.update();
+          setTimeout(() => doSlide(desiredIndex));
+        });
+      }
+
+      return;
+    }
+
+    if (activeSwipe.desiredIndex === desiredIndex && !update) {
+      return;
+    }
+
+    clearInterval(activeSwipe.timeout);
+    this.activeSwipe = null;
+    this.scheduleSlide(desiredIndex, update);
+  }
+
+  private getActiveIndex(): number {
+    const activeSwipe = this.activeSwipe;
+    if (ObjectUtils.isNil(activeSwipe)) {
+      return this.swiperInstance!.activeIndex;
+    }
+
+    return activeSwipe.desiredIndex;
   }
 }

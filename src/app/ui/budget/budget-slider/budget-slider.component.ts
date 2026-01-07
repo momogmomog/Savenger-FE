@@ -42,8 +42,6 @@ export class BudgetSliderComponent implements OnInit {
 
   currentBudget = this.budgetSliderService.currentBudget;
 
-  // budget-slider.component.ts
-
   constructor(
     private budgetSliderService: BudgetSliderService,
     private budgetService: BudgetService,
@@ -51,8 +49,11 @@ export class BudgetSliderComponent implements OnInit {
   ) {
     effect(() => {
       const targetBudget = this.budgetSliderService.currentBudget();
-      const currentList = untracked(this.budgets);
+      if (targetBudget === BudgetSliderService.INITIAL_BUDGET) {
+        return;
+      }
 
+      const currentList = untracked(this.budgets);
       const index = currentList.findIndex((b) => b.id === targetBudget.id);
 
       if (index >= 0) {
@@ -68,12 +69,13 @@ export class BudgetSliderComponent implements OnInit {
       const list = this.budgets();
       const currentBudget = untracked(this.budgetSliderService.currentBudget);
 
-      if (list.length === 0) return;
+      if (list.length === 0 || !this.budgetSliderService.isStorageInitialized())
+        return;
 
       const foundIndex = list.findIndex((b) => b.id === currentBudget.id);
 
       if (foundIndex === -1) {
-        this.budgetSliderService.setBudget(list[0]);
+        void this.budgetSliderService.setBudget(list[0]);
       } else {
         this.activeSlideIndex.set(foundIndex);
       }
@@ -85,26 +87,12 @@ export class BudgetSliderComponent implements OnInit {
     const fetchedBudgets = resp.response.content;
 
     this.budgets.set(fetchedBudgets);
-    this.initializeFromStorage(fetchedBudgets);
-  }
-
-  private initializeFromStorage(budgets: Budget[]): void {
-    if (budgets.length === 0) return;
-
-    const storedId = Number(localStorage.getItem(STORAGE_CURRENT_BUDGET_ID));
-    const found = budgets.find((b) => b.id === storedId);
-
-    if (found) {
-      this.budgetSliderService.setBudget(found);
-    } else {
-      // Default to first if storage is invalid/empty
-      this.budgetSliderService.setBudget(budgets[0]);
-    }
+    void this.budgetSliderService.initializeFromStorage(fetchedBudgets);
   }
 
   handleAccountSwipe(budget: Budget): void {
     localStorage.setItem(STORAGE_CURRENT_BUDGET_ID, budget.id + '');
-    this.budgetSliderService.setBudget(budget);
+    void this.budgetSliderService.setBudget(budget);
   }
 
   async onDetailsClick(): Promise<void> {
