@@ -7,7 +7,9 @@ export class Endpoints {
   public static readonly BUDGET = '/budgets/:id';
   public static readonly BUDGET_SEARCH = '/budgets/search';
   public static readonly CATEGORIES = '/categories';
+  public static readonly CATEGORIES_SEARCH = '/categories/search';
   public static readonly TAGS = '/tags';
+  public static readonly TAGS_SEARCH = '/tags/search';
   public static readonly PARTICIPANTS = '/budgets/:id/participants';
   public static readonly TRANSACTIONS = '/transactions';
   public static readonly TRANSACTIONS_SEARCH = '/transactions/search';
