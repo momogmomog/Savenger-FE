@@ -1,0 +1,49 @@
+<form #transactionForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div>
+    <app-field-error
+      [errors]="errors()"
+      fieldName=""></app-field-error>
+
+    <div class="ion-margin-top">
+      <app-select formControlName="type" [options]="transactionTypeOptions"></app-select>
+      <app-field-error [errors]="errors()" fieldName="type"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-input
+        type="number"
+        placeholder="Amount"
+        formControlName="amount"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-date-picker
+        [errors]="errors()"
+        label="Date of transaction"
+        formControlName="dateCreated"></app-date-picker>
+    </div>
+
+    <div class="ion-margin-top">
+      <!-- Use textarea here -->
+      <!-- Use this for error handling <app-field-error [errors]="errors()" fieldName="comment"></app-field-error> -->
+      <app-input placeholder="Comment"
+                 formControlName="comment"
+                 [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-select formControlName="categoryId" [options]="categoryOptions"></app-select>
+      <app-field-error [errors]="errors()" fieldName="categoryId"></app-field-error>
+    </div>
+
+    <!-- TODO: Add tags  -->
+
+    <div class="ion-margin-top ion-text-end">
+      <ion-button [form]="transactionForm"
+                  type="submit"
+                  [disabled]="!form.valid">Save
+      </ion-button>
+    </div>
+  </div>
+</form>

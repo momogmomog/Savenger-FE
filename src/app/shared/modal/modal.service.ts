@@ -11,11 +11,29 @@ import {
   ShellConfig,
   ShellType,
 } from './shells/modal-shell.types';
+import { ModalDismissType } from './modal-dismiss.type';
 
 export type CustomModalOptions = Omit<
   ModalOptions,
   'component' | 'componentProps'
 >;
+
+export class ModalResponse<TResult> {
+  constructor(
+    public readonly result: TResult,
+    public readonly dismissType: ModalDismissType,
+  ) {}
+
+  public isConfirmed(): boolean {
+    return this.dismissType === ModalDismissType.USER_CONFIRM;
+  }
+
+  public ifConfirmed(callback: (data: TResult) => void): void {
+    if (this.isConfirmed()) {
+      callback(this.result);
+    }
+  }
+}
 
 @Injectable({ providedIn: 'root' })
 export class ModalService {
@@ -61,6 +79,21 @@ export class ModalService {
     // const { data } = await modal.onDidDismiss<TResult>();
     // return data;
     return modal;
+  }
+
+  async openAndWait<TPayload, TResult>(
+    component: Type<ModalContentBaseComponent<TPayload, TResult>>,
+    payload: TPayload,
+    shellConfig: ShellConfig = { shellType: ShellType.BLANK },
+    options: CustomModalOptions = {},
+  ): Promise<ModalResponse<TResult>> {
+    const modal = await this.open(component, payload, shellConfig, options);
+
+    const resp = await modal.onDidDismiss<TResult>();
+    return new ModalResponse<TResult>(
+      resp.data!,
+      resp.role as ModalDismissType,
+    );
   }
 
   public async closeAllModals(): Promise<void> {

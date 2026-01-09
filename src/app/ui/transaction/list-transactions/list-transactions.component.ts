@@ -30,6 +30,11 @@ import {
   TransactionQueryImpl,
 } from '../../../api/transaction/transaction.query';
 import { Transaction } from '../../../api/transaction/transaction';
+import { ModalService } from '../../../shared/modal/modal.service';
+import { CreateTransactionModal } from '../create-transaction-modal/create-transaction.modal';
+import { CreateTransactionModalPayload } from '../create-transaction-modal/create-transaction.modal.payload';
+import { TransactionRepository } from '../../../api/transaction/transaction.repository';
+import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 
 @Component({
   selector: 'app-list-transactions',
@@ -53,6 +58,7 @@ import { Transaction } from '../../../api/transaction/transaction';
   ],
 })
 export class ListTransactionsComponent implements OnInit {
+  readonly TransactionType = TransactionType;
   budget = this.budgetSliderService.currentBudget;
 
   categories = this.budgetSliderService.currentCategories;
@@ -69,6 +75,7 @@ export class ListTransactionsComponent implements OnInit {
     private transactionService: TransactionService,
     private actionSheetCtrl: ActionSheetController,
     private alertCtrl: AlertController,
+    private modalService: ModalService,
   ) {
     addIcons({ ellipsisVertical, add, remove, filter, funnel });
 
@@ -116,9 +123,25 @@ export class ListTransactionsComponent implements OnInit {
     void event.target.complete();
   }
 
-  async openAddTransaction(type: 'EXPENSE' | 'INCOME'): Promise<void> {
-    console.log('Open Modal for:', type);
-    // TODO: Implement ModalService.open(CreateTransactionModal, { type })
+  async openAddTransaction(type: TransactionType): Promise<void> {
+    const resp = await this.modalService.openAndWait(
+      CreateTransactionModal,
+      new CreateTransactionModalPayload(
+        this.budget().id,
+        this.categories(),
+        type,
+      ),
+      {
+        shellType: ShellType.HEADER,
+        title: '',
+      },
+    );
+
+    resp.ifConfirmed((data): void => {
+      if (data?.id) {
+        void this.onFilterChange();
+      }
+    });
   }
 
   async presentFilterOptions(): Promise<void> {
@@ -223,4 +246,6 @@ export class ListTransactionsComponent implements OnInit {
   onTransactionClick(transaction: Transaction): void {
     alert(transaction.id);
   }
+
+  protected readonly TransactionRepository = TransactionRepository;
 }

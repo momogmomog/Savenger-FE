@@ -3,7 +3,11 @@ import { TransactionRepository } from './transaction.repository';
 import { TransactionQuery } from './transaction.query';
 import { EmptyPage, Page } from '../../shared/util/page';
 import { Transaction } from './transaction';
-import { FieldErrorWrapper } from '../../shared/util/field-error-wrapper';
+import {
+  FieldErrorWrapper,
+  WrappedResponse,
+} from '../../shared/util/field-error-wrapper';
+import { CreateTransactionPayload } from './dto/create-transaction.payload';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionService {
@@ -20,5 +24,22 @@ export class TransactionService {
     }
 
     return resp.response;
+  }
+
+  public async create(
+    payload: CreateTransactionPayload,
+  ): Promise<WrappedResponse<Transaction>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.create(payload),
+    ).execute();
+  }
+
+  public async edit(
+    payload: CreateTransactionPayload,
+    transactionId: number,
+  ): Promise<WrappedResponse<Transaction>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.edit(payload, transactionId),
+    ).execute();
   }
 }

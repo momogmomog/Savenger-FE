@@ -5,9 +5,7 @@ export interface CreateTransactionPayload {
   amount: number;
   dateCreated: Date | null;
   comment: string | null;
-  categoryId: number | null;
+  categoryId: number;
   budgetId: number;
-  debtId: number | null;
-  prepaymentId: number | null;
   tagIds: number[];
 }

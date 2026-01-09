@@ -43,7 +43,9 @@
     </div>
 
     <div class="ion-margin-top">
-      <app-date-picker label="Budget Start Date" formControlName="dateStarted"></app-date-picker>
+      <app-date-picker [errors]="errors()"
+                       label="Budget Start Date"
+                       formControlName="dateStarted"></app-date-picker>
     </div>
 
     <div class="ion-margin-top ion-text-end">
