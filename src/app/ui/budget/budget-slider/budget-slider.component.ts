@@ -10,6 +10,8 @@ import { STORAGE_CURRENT_BUDGET_ID } from '../../../shared/general.constants';
 import { BudgetDetailsModal } from '../budget-details-modal/budget-details.modal';
 import { BudgetDetailsModalPayload } from '../budget-details-modal/budget-details.modal.payload';
 import { ModalService } from '../../../shared/modal/modal.service';
+import { AutoUnsubComponent } from '../../../shared/util/auto-unsub.component';
+import { UserService } from '../../../api/user/user.service';
 
 @Component({
   selector: 'app-budget-slider',
@@ -34,7 +36,10 @@ import { ModalService } from '../../../shared/modal/modal.service';
     </div>
   `,
 })
-export class BudgetSliderComponent implements OnInit {
+export class BudgetSliderComponent
+  extends AutoUnsubComponent
+  implements OnInit
+{
   private budgetQuery: BudgetQuery = new BudgetQueryImpl();
 
   budgets = signal<Budget[]>([]);
@@ -46,7 +51,9 @@ export class BudgetSliderComponent implements OnInit {
     private budgetSliderService: BudgetSliderService,
     private budgetService: BudgetService,
     private modalService: ModalService,
+    private userService: UserService,
   ) {
+    super();
     effect(() => {
       const targetBudget = this.budgetSliderService.currentBudget();
       if (targetBudget === BudgetSliderService.INITIAL_BUDGET) {
@@ -83,6 +90,13 @@ export class BudgetSliderComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.sub = this.userService.currentUser$.subscribe((user) => {
+      console.log(user);
+      this.initialize();
+    });
+  }
+
+  private async initialize(): Promise<void> {
     const resp = await this.budgetService.search(this.budgetQuery);
     const fetchedBudgets = resp.response.content;
 

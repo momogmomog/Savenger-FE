@@ -1,0 +1,55 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Transactions</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentFilterOptions()">
+        <ion-icon slot="icon-only" [name]="isFiltering() ? 'funnel' : 'filter'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="slider-container">
+    <app-budget-slider></app-budget-slider>
+  </div>
+
+  <div class="quick-actions ion-padding-vertical">
+    <div class="action-item" (click)="openAddTransaction('EXPENSE')">
+      <div class="action-btn expense">
+        <ion-icon name="remove"></ion-icon>
+      </div>
+      <span>Expense</span>
+    </div>
+
+    <div class="action-item" (click)="openAddTransaction('INCOME')">
+      <div class="action-btn income">
+        <ion-icon name="add"></ion-icon>
+      </div>
+      <span>Income</span>
+    </div>
+
+  </div>
+
+  <ion-list lines="full">
+    @for (item of transactionsList(); track item.id) {
+      <app-transaction-card
+        (onClick)="onTransactionClick($event)"
+        [transaction]="item"
+        [categoryName]="getCategoryName(item.categoryId)">
+      </app-transaction-card>
+    } @empty {
+      <div class="ion-text-center ion-padding ion-margin-top text-medium">
+        <p>No transactions found</p>
+      </div>
+    }
+  </ion-list>
+
+  <ion-infinite-scroll [disabled]="!hasNextPage()" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

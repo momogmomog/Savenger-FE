@@ -38,6 +38,6 @@ export class AppComponent implements OnInit {
       });
 
     this.userService.currentUser$.subscribe((usr) => (this.user = usr));
-    this.userService.fetchUser();
+    // this.userService.fetchUser();
   }
 }

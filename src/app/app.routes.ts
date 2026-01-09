@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AppRoutingPath } from './app-routing.path';
 import { TabsPage } from './ui/tabs/tabs/tabs.page';
 import { ListBudgetsComponent } from './ui/budget/list-budgets/list-budgets.component';
+import { ListTransactionsComponent } from './ui/transaction/list-transactions/list-transactions.component';
 
 const tab1Routes: Routes = [
   {
@@ -24,6 +25,13 @@ const tab3Routes: Routes = [
     path: '',
     loadComponent: () =>
       import('./ui/tabs/tab3/tab3.page').then((m) => m.Tab3Page),
+    children: [
+      {
+        path: '',
+        component: ListTransactionsComponent,
+        children: [],
+      },
+    ],
   },
 ];
 

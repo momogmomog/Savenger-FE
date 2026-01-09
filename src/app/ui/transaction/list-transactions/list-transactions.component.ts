@@ -1,0 +1,226 @@
+import { Component, effect, OnInit, signal } from '@angular/core';
+import { BudgetSliderComponent } from '../../budget/budget-slider/budget-slider.component';
+import {
+  ActionSheetController,
+  AlertController,
+  InfiniteScrollCustomEvent,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonList,
+  IonRefresher,
+  IonRefresherContent,
+  IonTitle,
+  IonToolbar,
+  RefresherCustomEvent,
+} from '@ionic/angular/standalone';
+import { TransactionCardComponent } from '../transaction-card/transaction-card.component';
+import { TransactionType } from '../../../api/transaction/transaction.type';
+import { addIcons } from 'ionicons';
+import { add, ellipsisVertical, filter, funnel, remove } from 'ionicons/icons';
+
+import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
+import { TransactionService } from '../../../api/transaction/transaction.service';
+import {
+  TransactionQuery,
+  TransactionQueryImpl,
+} from '../../../api/transaction/transaction.query';
+import { Transaction } from '../../../api/transaction/transaction';
+
+@Component({
+  selector: 'app-list-transactions',
+  templateUrl: './list-transactions.component.html',
+  styleUrls: ['./list-transactions.component.scss'],
+  imports: [
+    BudgetSliderComponent,
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonList,
+    IonRefresher,
+    IonRefresherContent,
+    IonTitle,
+    IonToolbar,
+    TransactionCardComponent,
+  ],
+})
+export class ListTransactionsComponent implements OnInit {
+  budget = this.budgetSliderService.currentBudget;
+
+  categories = this.budgetSliderService.currentCategories;
+  tags = this.budgetSliderService.currentTags;
+
+  transactionsList = signal<Transaction[]>([]);
+  hasNextPage = signal<boolean>(true);
+  isFiltering = signal<boolean>(false);
+
+  private readonly query: TransactionQuery = new TransactionQueryImpl(null);
+
+  constructor(
+    private budgetSliderService: BudgetSliderService,
+    private transactionService: TransactionService,
+    private actionSheetCtrl: ActionSheetController,
+    private alertCtrl: AlertController,
+  ) {
+    addIcons({ ellipsisVertical, add, remove, filter, funnel });
+
+    effect(() => {
+      const budget = this.budgetSliderService.currentBudget();
+      if (budget.id >= 0) {
+        void this.onFilterChange();
+      }
+    });
+  }
+
+  async ngOnInit(): Promise<void> {}
+
+  async onFilterChange(): Promise<void> {
+    this.query.budgetId = this.budget().id;
+    this.query.page.pageNumber = 0;
+    this.transactionsList.set([]);
+    await this.fetchTransactions();
+  }
+
+  async fetchTransactions(): Promise<void> {
+    const pageData = await this.transactionService.search(this.query);
+
+    if (pageData) {
+      this.transactionsList.update((current) => [
+        ...current,
+        ...pageData.content,
+      ]);
+      this.hasNextPage.set(
+        pageData.page.totalPages - 1 > this.query.page.pageNumber,
+      );
+
+      this.isFiltering.set(!!this.query.type || !!this.query.amount);
+    }
+  }
+
+  async loadMore(event: InfiniteScrollCustomEvent): Promise<void> {
+    this.query.page.pageNumber += 1;
+    await this.fetchTransactions();
+    void event.target.complete();
+  }
+
+  async handleRefresh(event: RefresherCustomEvent): Promise<void> {
+    await this.onFilterChange();
+    void event.target.complete();
+  }
+
+  async openAddTransaction(type: 'EXPENSE' | 'INCOME'): Promise<void> {
+    console.log('Open Modal for:', type);
+    // TODO: Implement ModalService.open(CreateTransactionModal, { type })
+  }
+
+  async presentFilterOptions(): Promise<void> {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Filter Transactions',
+      buttons: [
+        {
+          text: `Type: ${this.query.type || 'All'}`,
+          icon: 'filter',
+          handler: (): void => {
+            void this.presentTypeFilterSheet();
+          },
+        },
+        {
+          text: 'Amount Range',
+          icon: 'cash-outline', // TODO: Make sure to add this icon if used
+          handler: (): void => {
+            void this.presentAmountFilterAlert();
+          },
+        },
+        {
+          text: 'Clear Filters',
+          role: 'destructive',
+          handler: (): void => {
+            this.query.type = null;
+            this.query.amount = null;
+            void this.onFilterChange();
+          },
+        },
+        { text: 'Cancel', role: 'cancel' },
+      ],
+    });
+    await actionSheet.present();
+  }
+
+  async presentTypeFilterSheet(): Promise<void> {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Filter by Type',
+      buttons: [
+        { text: 'All', handler: (): void => this.applyTypeFilter(null) },
+        {
+          text: 'Expense',
+          handler: (): void => this.applyTypeFilter(TransactionType.EXPENSE),
+        },
+        {
+          text: 'Income',
+          handler: (): void => this.applyTypeFilter(TransactionType.INCOME),
+        },
+        { text: 'Cancel', role: 'cancel' },
+      ],
+    });
+    await actionSheet.present();
+  }
+
+  async presentAmountFilterAlert(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      header: 'Filter by Amount',
+      inputs: [
+        {
+          name: 'min',
+          type: 'number',
+          placeholder: 'Min Amount',
+          value: this.query.amount?.min,
+        },
+        {
+          name: 'max',
+          type: 'number',
+          placeholder: 'Max Amount',
+          value: this.query.amount?.max,
+        },
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Apply',
+          handler: (data): void => {
+            const min = data.min ? parseFloat(data.min) : undefined;
+            const max = data.max ? parseFloat(data.max) : undefined;
+
+            if (min !== undefined || max !== undefined) {
+              this.query.amount = { min, max };
+            } else {
+              this.query.amount = null;
+            }
+            void this.onFilterChange();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  private applyTypeFilter(type: TransactionType | null): void {
+    this.query.type = type;
+    void this.onFilterChange();
+  }
+
+  getCategoryName(categoryId: number): string | undefined {
+    return this.categories().find((c) => c.id === categoryId)?.categoryName;
+  }
+
+  onTransactionClick(transaction: Transaction): void {
+    alert(transaction.id);
+  }
+}

@@ -1,23 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import {
+  IonButton,
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
-import { BudgetSliderComponent } from '../../budget/budget-slider/budget-slider.component';
+import { UserService } from '../../../api/user/user.service';
+import { User } from '../../../api/user/user';
+import { STORAGE_LOGGED_IN_FLAG_NAME } from '../../../shared/general.constants';
+import { AppRoutingPath } from '../../../app-routing.path';
+import { RouteNavigator } from '../../../shared/routing/route-navigator.service';
 
 @Component({
   selector: 'app-tab2',
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, BudgetSliderComponent],
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButton],
   templateUrl: './tab2.page.html',
+  styleUrls: ['./tab2.page.scss'],
 })
 export class Tab2Page implements OnInit {
-  constructor(private budgetSliderService: BudgetSliderService) {}
+  currentUser?: User;
 
-  budget = this.budgetSliderService.currentBudget;
+  constructor(
+    private userService: UserService,
+    private nav: RouteNavigator,
+  ) {}
 
-  async ngOnInit(): Promise<void> {}
+  ngOnInit(): void {
+    this.userService.currentUser$.subscribe((user) => {
+      this.currentUser = user!;
+    });
+  }
+
+  protected logout(): void {
+    localStorage.setItem(STORAGE_LOGGED_IN_FLAG_NAME, false + '');
+    this.nav.navigate(AppRoutingPath.LOGIN);
+  }
 }
