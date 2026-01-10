@@ -1,4 +1,4 @@
-import { Component, effect, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, OnInit, signal } from '@angular/core';
 import { BudgetSliderComponent } from '../../budget/budget-slider/budget-slider.component';
 import {
   ActionSheetController,
@@ -6,6 +6,7 @@ import {
   InfiniteScrollCustomEvent,
   IonButton,
   IonButtons,
+  IonCard,
   IonContent,
   IonHeader,
   IonIcon,
@@ -14,6 +15,7 @@ import {
   IonList,
   IonRefresher,
   IonRefresherContent,
+  IonText,
   IonTitle,
   IonToolbar,
   RefresherCustomEvent,
@@ -35,6 +37,7 @@ import { CreateTransactionModal } from '../create-transaction-modal/create-trans
 import { CreateTransactionModalPayload } from '../create-transaction-modal/create-transaction.modal.payload';
 import { TransactionRepository } from '../../../api/transaction/transaction.repository';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-list-transactions',
@@ -55,6 +58,9 @@ import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
     IonTitle,
     IonToolbar,
     TransactionCardComponent,
+    IonText,
+    DatePipe,
+    IonCard,
   ],
 })
 export class ListTransactionsComponent implements OnInit {
@@ -67,6 +73,27 @@ export class ListTransactionsComponent implements OnInit {
   transactionsList = signal<Transaction[]>([]);
   hasNextPage = signal<boolean>(true);
   isFiltering = signal<boolean>(false);
+
+  groupedTransactions = computed(() => {
+    const transactions = this.transactionsList();
+    const groups = new Map<string, Transaction[]>();
+
+    transactions.forEach((t) => {
+      const date = new Date(t.dateCreated);
+      const dateKey = date.toDateString();
+
+      if (!groups.has(dateKey)) {
+        groups.set(dateKey, []);
+      }
+      groups.get(dateKey)!.push(t);
+    });
+
+    return Array.from(groups.entries()).map(([dateLabel, items]) => ({
+      dateLabel,
+      dateObj: items[0].dateCreated,
+      items,
+    }));
+  });
 
   private readonly query: TransactionQuery = new TransactionQueryImpl(null);
 

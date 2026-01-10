@@ -35,19 +35,35 @@
 
   </div>
 
-  <ion-list lines="full">
-    @for (item of transactionsList(); track item.id) {
-      <app-transaction-card
-        (onClick)="onTransactionClick($event)"
-        [transaction]="item"
-        [categoryName]="getCategoryName(item.categoryId)">
-      </app-transaction-card>
-    } @empty {
-      <div class="ion-text-center ion-padding ion-margin-top text-medium">
-        <p>No transactions found</p>
-      </div>
-    }
-  </ion-list>
+  @for (group of groupedTransactions(); track group.dateLabel) {
+
+    <div class="ion-padding-start ion-padding-bottom ion-margin-top">
+      <ion-text color="medium">
+        <small style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem;">
+          {{ group.dateObj | date:'mediumDate' }}
+        </small>
+      </ion-text>
+    </div>
+
+    <ion-card style="border-radius: 24px;">
+
+      <ion-list lines="none" class="ion-no-padding">
+        @for (item of group.items; track item.id; let last = $last) {
+          <app-transaction-card
+            (onClick)="onTransactionClick($event)"
+            [transaction]="item"
+            [categoryName]="getCategoryName(item.categoryId)">
+          </app-transaction-card>
+        }
+      </ion-list>
+
+    </ion-card>
+
+  } @empty {
+    <div class="ion-text-center ion-padding ion-margin-top text-medium">
+      <p>No transactions found</p>
+    </div>
+  }
 
   <ion-infinite-scroll [disabled]="!hasNextPage()" (ionInfinite)="loadMore($event)">
     <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
