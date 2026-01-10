@@ -25,11 +25,11 @@
     </div>
 
     <div class="ion-margin-top">
-      <!-- Use textarea here -->
-      <!-- Use this for error handling <app-field-error [errors]="errors()" fieldName="comment"></app-field-error> -->
-      <app-input placeholder="Comment"
-                 formControlName="comment"
-                 [errors]="errors()"></app-input>
+      <app-input
+        type="textarea"
+        placeholder="Comment"
+        formControlName="comment"
+        [errors]="errors()"></app-input>
     </div>
 
     <div class="ion-margin-top">

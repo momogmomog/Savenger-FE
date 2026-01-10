@@ -1,15 +1,30 @@
 <ng-container>
-  <ion-input (touchend)="inputTouched($event)"
-             (change)="inputChanged($event); changeEnded($event);"
-             (keyup)="inputChanged($event)"
-             labelPlacement="floating"
-             [value]="valueOrEmpty()"
-             [disabled]="disabled"
-             [label]="placeholder"
-             [name]="formControlName"
-             [type]="type"
-             [id]="inputId" [placeholder]="placeholder"></ion-input>
-  <app-field-error *ngIf="formControlName"
-                   [errors]="errors"
-                   [fieldName]="formControlName + ''"></app-field-error>
+  @if (type() === 'textarea') {
+    <ion-textarea
+      (touchend)="inputTouched($event)"
+      (ionChange)="inputChanged($event); changeEnded($event)"
+      (keyup)="inputChanged($event)"
+      labelPlacement="floating"
+      [value]="valueOrEmpty()"
+      [disabled]="disabled()"
+      [label]="placeholder()"
+      [name]="formControlName()"
+      [id]="inputId"
+      [placeholder]="placeholder()"
+      fill="solid"></ion-textarea>
+  } @else {
+    <ion-input (touchend)="inputTouched($event)"
+               (change)="inputChanged($event); changeEnded($event);"
+               (keyup)="inputChanged($event)"
+               labelPlacement="floating"
+               [value]="valueOrEmpty()"
+               [disabled]="disabled()"
+               [label]="placeholder()"
+               [name]="formControlName()"
+               [type]="type()"
+               [id]="inputId" [placeholder]="placeholder()"></ion-input>
+  }
+  <app-field-error *ngIf="formControlName()"
+                   [errors]="errors()"
+                   [fieldName]="formControlName() + ''"></app-field-error>
 </ng-container>

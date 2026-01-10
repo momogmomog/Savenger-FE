@@ -1,17 +1,17 @@
 :host {
-  &.ng-invalid {
-    ion-input {
+  &.ng-invalid  {
+    ion-input, ion-textarea {
       border-bottom: 1px #f8bd4b solid;
     }
 
     &.ng-dirty {
-      ion-input {
+      ion-input, ion-textarea  {
         border-bottom: 1px darkred solid;
       }
     }
   }
 }
 
-ion-input {
+ion-input, ion-textarea {
   width: 100%;
 }

@@ -1,10 +1,10 @@
 import {
   Component,
-  EventEmitter,
   forwardRef,
-  Input,
+  input,
+  model,
   OnInit,
-  Output,
+  output,
 } from '@angular/core';
 import { ErrorMessageComponent } from '../../field-error/error-message/error-message.component';
 import { FieldError } from '../../field-error/field-error';
@@ -16,12 +16,18 @@ import {
 import { NgIf } from '@angular/common';
 import { ObjectUtils } from '../../util/object-utils';
 import { StringUtils } from '../../util/string-utils';
-import { IonInput } from '@ionic/angular/standalone';
+import { IonInput, IonTextarea } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [ErrorMessageComponent, ReactiveFormsModule, NgIf, IonInput],
+  imports: [
+    ErrorMessageComponent,
+    ReactiveFormsModule,
+    NgIf,
+    IonInput,
+    IonTextarea,
+  ],
   templateUrl: './input.component.html',
   styleUrl: './input.component.scss',
   providers: [
@@ -33,47 +39,36 @@ import { IonInput } from '@ionic/angular/standalone';
   ],
 })
 export class InputComponent implements OnInit, ControlValueAccessor {
-  @Input({ required: false })
-  type = 'text';
+  type = input<string>('text');
 
-  @Input()
-  @Output()
-  disabled = false;
+  disabled = model<boolean>(false);
 
-  @Input()
-  placeholder!: string;
+  placeholder = input<string>();
 
-  @Input()
-  formControlName!: string | number;
+  formControlName = model<string | number>();
 
-  @Input()
-  generateUniqueControlName = false;
+  generateUniqueControlName = input<boolean>(false);
 
-  @Input({ required: false })
-  errors: FieldError[] = [];
+  errors = input<FieldError[]>([]);
 
-  @Input({ required: false })
-  clearOnChangeEnd = false;
+  clearOnChangeEnd = input<boolean>(false);
 
   value: any;
 
-  @Output()
-  onChange: EventEmitter<any> = new EventEmitter<any>();
+  onChange = output<any>();
 
-  @Output()
-  onChangeEnd: EventEmitter<any> = new EventEmitter<any>();
+  onChangeEnd = output<any>();
 
-  @Output()
-  onTouch: EventEmitter<any> = new EventEmitter<any>();
+  onTouch = output<any>();
 
   inputId!: string;
 
   ngOnInit(): void {
-    const prefix = this.formControlName || '';
+    const prefix = this.formControlName() || '';
     this.inputId = `${prefix}_${StringUtils.getUniqueStr()}`;
 
-    if (this.generateUniqueControlName) {
-      this.formControlName = StringUtils.getUniqueStr();
+    if (this.generateUniqueControlName()) {
+      this.formControlName.set(StringUtils.getUniqueStr());
     }
   }
 
@@ -89,7 +84,7 @@ export class InputComponent implements OnInit, ControlValueAccessor {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   changeEnded(event: any): void {
     this.onChangeEnd.emit(this.value);
-    if (this.clearOnChangeEnd) {
+    if (this.clearOnChangeEnd()) {
       this.setValue('');
     }
   }
@@ -107,7 +102,7 @@ export class InputComponent implements OnInit, ControlValueAccessor {
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+    this.disabled.set(isDisabled);
   }
 
   valueOrEmpty(): any {
@@ -120,7 +115,7 @@ export class InputComponent implements OnInit, ControlValueAccessor {
 
   private setValue(val: any): void {
     if (
-      this.type === 'number' &&
+      this.type() === 'number' &&
       !ObjectUtils.isNil(val) &&
       (val + '').trim()
     ) {
