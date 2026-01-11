@@ -37,7 +37,7 @@ export class PageImpl<T> implements Page<T> {
   ) {
     this.page = new PageMetadataImpl(
       pageInfo?.pageSize || content.length,
-      pageInfo?.pageNumber || 1,
+      pageInfo?.pageNumber || 0,
       totalItems || content.length,
       totalPages || 1,
     );

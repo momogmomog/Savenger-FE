@@ -82,8 +82,8 @@ export class SelectSearchComponent
   disabled = model<boolean>(false);
   clearOnSelect = input<boolean>(false);
   payload = model<Page<SelectSearchItem<any>>>(new EmptyPage());
+  searchTerm = model('');
 
-  onSearch = output<string>();
   selectionChange = output<SelectSearchItem<any> | null>();
   onTouch = output<void>();
   loadMore = output<number>();
@@ -96,8 +96,6 @@ export class SelectSearchComponent
 
   selectedItem = signal<SelectSearchItem<any> | null>(null);
   isModalOpen = signal(false);
-
-  searchTerm = signal('');
 
   @ViewChild(IonModal) modal!: IonModal;
 
@@ -119,7 +117,6 @@ export class SelectSearchComponent
   onSearchChange(event: any): void {
     const query = event.detail.value;
     this.searchTerm.set(query);
-    this.onSearch.emit(query);
   }
 
   onItemSelect(item: SelectSearchItem<any>): void {

@@ -8,6 +8,7 @@ export interface TagQuery {
   sort: SortQuery;
   budgetId: number;
   tagName: string | null;
+  excludeIds: number[];
   budgetCap: BetweenQuery<number> | null;
 }
 
@@ -17,6 +18,7 @@ export class TagQueryImpl implements TagQuery {
   budgetId: number;
   tagName: string | null = null;
   budgetCap: BetweenQuery<number> | null = {};
+  excludeIds: number[] = [];
   constructor(budgetId: number | null) {
     this.budgetId = budgetId!;
   }

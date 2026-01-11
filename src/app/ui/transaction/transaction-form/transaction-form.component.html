@@ -37,7 +37,28 @@
       <app-field-error [errors]="errors()" fieldName="categoryId"></app-field-error>
     </div>
 
-    <!-- TODO: Add tags  -->
+   <div class="ion-margin-top">
+     <app-select-search
+       label="Tag"
+       placeholder="Pick Tags"
+       [payload]="tagsPayload()"
+       [clearOnSelect]="true"
+       [(searchTerm)]="searchTerm"
+       (selectionChange)="onTagChange($event)"
+       (loadMore)="onTagLoadMore($event)">
+     </app-select-search>
+
+     @if (selectedTags().length > 0) {
+       <div class="ion-padding-top" style="display: flex; flex-wrap: wrap; gap: 4px;">
+         @for (tag of selectedTags(); track tag.id) {
+           <ion-chip (click)="removeTag(tag.id)" [outline]="true" color="medium">
+             <ion-label>{{ tag.tagName }}</ion-label>
+             <ion-icon name="close-circle"></ion-icon>
+           </ion-chip>
+         }
+       </div>
+     }
+   </div>
 
     <div class="ion-margin-top ion-text-end">
       <ion-button [form]="transactionForm"
