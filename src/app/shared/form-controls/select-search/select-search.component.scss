@@ -1,50 +1,22 @@
-@import "../../../../../node_modules/bootstrap/scss/functions";
-@import "../../../../../node_modules/bootstrap/scss/variables";
-@import "../../../../../node_modules/bootstrap/scss/mixins";
-@import "../../../../assets/styles/variables";
+:host {
+  display: block;
+}
 
-.select-search-container {
+.input-display {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 16px;
+  width: 100%;
+}
 
-  .select-search-options-container {
-    position: relative;
-    display: none;
-    z-index: 3;
+ion-modal {
+  --width: 100%;
+  --height: 100%;
 
-    &:hover {
-      display: block;
-    }
-
-    .select-search-options {
-      position: absolute;
-      top: 2px;
-      width: 100%;
-      background: white;
-      box-shadow: -2.5px 5px 5px -3px rgba(0, 0, 0, 0.30),
-      2.5px 5px 5px -3px rgba(0, 0, 0, 0.2);
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-      overflow: hidden;
-
-      option, .select-search-pagination {
-        padding: 5px;
-        cursor: pointer;
-        user-select: none;
-
-        &:hover {
-          background: $primary;
-          color: $white;
-        }
-      }
-
-      .select-search-pagination {
-        text-align: center;
-        padding: 0;
-        font-size: 13px;
-      }
-    }
-  }
-
-  .select-search-input:focus + .select-search-options-container {
-    display: block;
+  @media(min-width: 768px) {
+    --width: 400px;
+    --height: 600px;
+    --border-radius: 16px;
+    --box-shadow: 0 28px 48px rgba(0,0,0,0.4);
   }
 }

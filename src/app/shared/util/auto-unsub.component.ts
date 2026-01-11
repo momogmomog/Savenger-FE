@@ -1,18 +1,21 @@
-import { Subscription } from 'rxjs';
 import { Directive, OnDestroy } from '@angular/core';
+
+interface Unsubscribable {
+  unsubscribe(): void;
+}
 
 @Directive()
 export abstract class AutoUnsubComponent implements OnDestroy {
+  private subscriptions: Unsubscribable[] = [];
+
   // "sink setter"
-  public set sub(subscription: Subscription) {
+  public set sub(subscription: Unsubscribable) {
     this.subscriptions.push(subscription);
   }
 
-  protected addSub(subscription: Subscription): void {
+  protected addSub(subscription: Unsubscribable): void {
     this.sub = subscription;
   }
-
-  private subscriptions: Subscription[] = [];
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());

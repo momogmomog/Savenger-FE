@@ -1,39 +1,74 @@
-<div class="w-100 select-search-container">
-  <div class="form-floating">
-    <input (touchend)="inputTouched($event)"
-           (change)="onKeyUp();"
-           (keyup)="onKeyUp(); searchChanged($event)"
-           (keydown)="onKeyDown()"
-           [value]="currentDisplaySelection"
-           [name]="formControlName || inputId"
-           type="text" class="form-control select-search-input"
-           [id]="inputId" [placeholder]="placeholder">
-    <div class="select-search-options-container">
-      <div class="select-search-options">
-        <div class="select-search-pagination" *ngIf="payload.totalPages && payload.totalPages > 1 && payload.pageable.pageNumber > 0">
-          <span style="cursor: pointer" (click)="pageChanged(payload.pageable.pageNumber - 1)">Load Previous</span>
-        </div>
+<ion-item
+  (click)="openModal()"
+  [class.ion-disabled]="disabled()"
+  [button]="true"
+  [detail]="false"
+  lines="full">
 
-        <option *ngIf="nullSelectText"
-                (click)="optionChosen(null, $event)">{{ nullSelectText }}
-        </option>
+  <ion-label position="stacked" color="medium">{{ label() }}</ion-label>
 
-        <option
-          *ngFor="let opt of payload.content"
-          (click)="optionChosen(opt, $event)">{{ opt.key }}
-        </option>
-
-        <div class="select-search-pagination"
-             *ngIf="payload.totalPages && payload.totalPages > 1 && payload.pageable.pageNumber + 1 < payload.totalPages">
-          <span style="cursor: pointer" (click)="pageChanged(payload.pageable.pageNumber + 1)">Load More</span>
-        </div>
-        <div class="select-search-pagination"
-             *ngIf="payload.totalPages && payload.totalPages > 1 && payload.pageable.pageNumber + 1 === payload.totalPages">
-          <span style="cursor: pointer">Last Page</span>
-        </div>
-      </div>
-    </div>
-    <label [for]="inputId">{{ placeholder }}</label>
-    <app-field-error *ngIf="errors?.length" [errors]="errors" [fieldName]="formControlName"></app-field-error>
+  <div class="input-display">
+    <ion-text [color]="selectedItem() ? 'dark' : 'medium'">
+      {{ selectedItem()?.key || placeholder() }}
+    </ion-text>
   </div>
-</div>
+
+  <ion-icon slot="end" name="chevron-down" color="medium"></ion-icon>
+</ion-item>
+
+<ion-modal
+  [isOpen]="isModalOpen()"
+  (didDismiss)="closeModal()"
+  [initialBreakpoint]="0.75"
+  [breakpoints]="[0, 0.75, 1]">
+
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ label() }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-toolbar>
+        <ion-searchbar
+          [placeholder]="searchPlaceholder()"
+          [value]="searchTerm()"
+          (ionInput)="onSearchChange($event)"
+          [debounce]="400">
+        </ion-searchbar>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+        <ion-item [button]="true" (click)="onItemSelect({key: 'None', value: null!, objRef: null!})" lines="full">
+          <ion-label color="medium">
+            <em>None</em>
+          </ion-label>
+        </ion-item>
+
+        @for (item of items(); track item.value) {
+          <ion-item [button]="true" (click)="onItemSelect(item)" lines="full">
+            <ion-label>
+              {{ item.key }}
+            </ion-label>
+            @if(selectedItem()?.value === item.value) {
+              <ion-icon name="checkmark" slot="end" color="primary"></ion-icon>
+            }
+          </ion-item>
+        } @empty {
+          <div class="ion-padding ion-text-center">
+            <ion-text color="medium">No results found</ion-text>
+          </div>
+        }
+      </ion-list>
+
+      <ion-infinite-scroll
+        [disabled]="!hasNextPage()"
+        (ionInfinite)="onInfinite($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-content>
+  </ng-template>
+</ion-modal>

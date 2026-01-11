@@ -1,30 +1,69 @@
 import {
   Component,
-  EventEmitter,
+  computed,
   forwardRef,
-  Input,
-  OnInit,
-  Output,
+  input,
+  model,
+  output,
+  signal,
+  ViewChild,
 } from '@angular/core';
-import { SelectSearchItem } from './select-search.item';
-
 import {
   ControlValueAccessor,
   FormsModule,
   NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
 } from '@angular/forms';
-import { EmptyPage, Page } from '../../util/page';
-import { NgForOf, NgIf } from '@angular/common';
-import { ErrorMessageComponent } from '../../field-error/error-message/error-message.component';
-import { FieldError } from '../../field-error/field-error';
-import { StringUtils } from '../../util/string-utils';
+import { CommonModule } from '@angular/common';
+import {
+  InfiniteScrollCustomEvent,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonModal,
+  IonSearchbar,
+  IonText,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { checkmark, chevronDown, close, search } from 'ionicons/icons';
+import { EmptyPage, Page } from '../../util/page'; // Your existing Page util
+import { SelectSearchItem } from './select-search.item';
+import { AutoUnsubComponent } from '../../util/auto-unsub.component'; // Your existing Item interface
 
 @Component({
   selector: 'app-select-search',
-  templateUrl: './select-search.component.html',
   standalone: true,
+  templateUrl: './select-search.component.html',
   styleUrls: ['./select-search.component.scss'],
-  imports: [NgIf, NgForOf, FormsModule, ErrorMessageComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonItem,
+    IonLabel,
+    IonIcon,
+    IonModal,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonContent,
+    IonSearchbar,
+    IonList,
+    IonText,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -33,126 +72,113 @@ import { StringUtils } from '../../util/string-utils';
     },
   ],
 })
-export class SelectSearchComponent implements OnInit, ControlValueAccessor {
-  @Input()
-  disabled = false;
+export class SelectSearchComponent
+  extends AutoUnsubComponent
+  implements ControlValueAccessor
+{
+  label = input<string>('Select Item');
+  placeholder = input<string>('Tap to select...');
+  searchPlaceholder = input<string>('Search...');
+  disabled = model<boolean>(false);
+  clearOnSelect = input<boolean>(false);
+  payload = model<Page<SelectSearchItem<any>>>(new EmptyPage());
 
-  @Input()
-  placeholder = '';
+  onSearch = output<string>();
+  selectionChange = output<SelectSearchItem<any> | null>();
+  onTouch = output<void>();
+  loadMore = output<number>();
 
-  @Input()
-  formControlName!: string;
+  items = computed(() => this.payload().content || []);
+  hasNextPage = computed(() => {
+    const p = this.payload();
+    return p.page.totalPages > 1 && p.page.number + 1 < p.page.totalPages;
+  });
 
-  @Input()
-  generateUniqueControlName = false;
+  selectedItem = signal<SelectSearchItem<any> | null>(null);
+  isModalOpen = signal(false);
 
-  @Input()
-  errors: FieldError[] = [];
+  searchTerm = signal('');
 
-  @Input()
-  payload: Page<SelectSearchItem<any>> = new EmptyPage();
+  @ViewChild(IonModal) modal!: IonModal;
 
-  @Input()
-  clearOnSelect = false;
-
-  @Input()
-  nullSelectText?: string;
-
-  @Output()
-  onChange: EventEmitter<any> = new EventEmitter<any>();
-
-  @Output()
-  onTouch: EventEmitter<any> = new EventEmitter<any>();
-
-  @Output()
-  readonly selectionChange: EventEmitter<SelectSearchItem<any>> =
-    new EventEmitter<any>();
-
-  @Output()
-  readonly onSearch: EventEmitter<string> = new EventEmitter<string>();
-
-  @Output()
-  readonly pageChange: EventEmitter<number> = new EventEmitter<number>();
-
-  interval: any;
-
-  inputId!: string;
-
-  @Input()
-  currentDisplaySelection?: string = '';
-
-  constructor() {}
-
-  ngOnInit(): void {
-    const prefix = this.formControlName || '';
-    this.inputId = `${prefix}_${StringUtils.getUniqueStr()}`;
-    this.selectionChange.subscribe((val) => this.onChange.next(val?.value));
-
-    if (this.generateUniqueControlName) {
-      this.formControlName = StringUtils.getUniqueStr();
-    }
+  constructor() {
+    super();
+    addIcons({ chevronDown, search, close, checkmark });
   }
 
-  optionChosen(val: SelectSearchItem<any> | null, ev: MouseEvent): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const optionsContainer = ev.target.parentElement.parentElement;
-    optionsContainer.classList.add('d-none');
-    this.setChosenOption(val);
-    setTimeout(() => optionsContainer.classList.remove('d-none'), 1000);
+  openModal(): void {
+    if (this.disabled()) return;
+    this.isModalOpen.set(true);
   }
 
-  private setChosenOption(val: SelectSearchItem<any> | null): void {
-    this.currentDisplaySelection = val?.key || '';
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore if the user has set up null option, null can be passed
-    this.selectionChange.next(val);
-
-    if (this.clearOnSelect) {
-      this.currentDisplaySelection = '';
-      this.searchChanged(null);
-    }
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    this.onTouch.emit();
   }
 
-  pageChanged(page: number): void {
-    this.pageChange.next(page);
+  onSearchChange(event: any): void {
+    const query = event.detail.value;
+    this.searchTerm.set(query);
+    this.onSearch.emit(query);
   }
 
-  onKeyDown(): void {
-    clearTimeout(this.interval);
+  onItemSelect(item: SelectSearchItem<any>): void {
+    this.setValue(item);
+    this.closeModal();
   }
 
-  onKeyUp(): void {
-    clearTimeout(this.interval);
-  }
-
-  inputTouched(event: any): void {
-    this.onTouch.emit(event);
-  }
-
-  writeValue(obj: any): void {
-    const val = this.payload.content.filter((item) => item.value === obj).at(0);
-
-    if (val) {
-      this.setChosenOption(val);
+  onInfinite(event: InfiniteScrollCustomEvent): void {
+    const p = this.payload();
+    if (this.hasNextPage()) {
+      this.loadMore.emit(p.page.number + 1);
     } else {
-      console.warn(`Search-select cannot display ${obj}.`);
+      void event.target.complete();
+    }
+  }
+
+  writeValue(value: any): void {
+    if (value === null || value === undefined) {
+      this.selectedItem.set(null);
+      return;
+    }
+
+    const found = this.items().find((i) => i.value === value);
+
+    if (found) {
+      this.selectedItem.set(found);
+    } else {
+      // TODO: Test
+      // Logic for when value exists but isn't in the loaded list (e.g. page 1)
+      // Ideally, the parent should pass the full object, or we display the raw value/placeholder
+      // For now, we set a temporary object so the UI isn't empty
+      this.selectedItem.set({ key: 'Loading...', value: value, objRef: null! });
+
+      // OPTIONAL: Emit an event to ask parent to resolve this ID to a name
+      // this.requestItemLabel.emit(value);
     }
   }
 
   registerOnChange(fn: any): void {
-    this.onChange.subscribe((val) => fn(val));
+    this.sub = this.selectionChange.subscribe((val) => {
+      fn(val?.value);
+    });
   }
 
   registerOnTouched(fn: any): void {
-    this.onTouch.subscribe((val) => fn(val));
+    this.sub = this.onTouch.subscribe(() => fn());
   }
 
-  setDisabledState?(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled.set(isDisabled);
   }
 
-  searchChanged(ev: any): void {
-    this.onSearch.next(ev?.target?.value);
+  private setValue(item: SelectSearchItem<any> | null): void {
+    this.selectedItem.set(item);
+    this.selectionChange.emit(item);
+
+    if (this.clearOnSelect()) {
+      this.selectedItem.set(null);
+      this.searchTerm.set('');
+    }
   }
 }

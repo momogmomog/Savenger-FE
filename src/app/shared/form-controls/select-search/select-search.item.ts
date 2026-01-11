@@ -1,13 +1,13 @@
 export interface SelectSearchItem<T> {
   key: string;
   value: string | number | boolean;
-  objRef?: T;
+  objRef: T;
 }
 
 export class SelectSearchItemImpl<T> implements SelectSearchItem<T> {
   constructor(
     public readonly key: string,
     public readonly value: string | number | boolean,
-    public readonly objRef?: T,
+    public readonly objRef: T,
   ) {}
 }
