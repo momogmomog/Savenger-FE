@@ -13,7 +13,7 @@ export class Endpoints {
   public static readonly PARTICIPANTS = '/budgets/:id/participants';
   public static readonly TRANSACTIONS = '/transactions';
   public static readonly TRANSACTIONS_SEARCH = '/transactions/search';
-  public static readonly TRANSACTION = 'transactions/:id';
+  public static readonly TRANSACTION = '/transactions/:id';
   public static readonly REVISIONS = '/revisions';
   public static readonly DEBTS = '/debts';
   public static readonly PAY_DEBT = '/debts/:id/pay-debt';

@@ -4,7 +4,6 @@ import { Tag } from '../../../api/tag/tag';
 import { Category } from '../../../api/category/category';
 import { TagService } from '../../../api/tag/tag.service';
 import { TagQueryImpl } from '../../../api/tag/tag.query';
-import { CategoryQueryImpl } from '../../../api/category/category.query';
 import { CategoryService } from '../../../api/category/category.service';
 import { STORAGE_CURRENT_BUDGET_ID } from '../../../shared/general.constants';
 import { Page } from '../../../shared/util/page';
@@ -42,7 +41,7 @@ export class BudgetSliderService {
 
     const promises: Promise<any>[] = [];
     let tags: Page<Tag>;
-    let categories: Page<Category>;
+    let categories: Category[];
 
     promises.push(
       this.tagService
@@ -51,14 +50,14 @@ export class BudgetSliderService {
     );
     promises.push(
       this.categoryService
-        .search(new CategoryQueryImpl(budget.id))
+        .fetchAllCategories(budget.id)
         .then((res) => (categories = res)),
     );
 
     await Promise.all(promises);
 
     this._currentTags.set(tags!.content);
-    this._currentCategories.set(categories!.content);
+    this._currentCategories.set(categories!);
     this._currentBudget.set(budget);
   }
 

@@ -3,7 +3,7 @@ import { HttpClientSecuredService } from '../../shared/http/http-client-secured.
 import { TransactionQuery } from './transaction.query';
 import { Observable } from 'rxjs';
 import { Page } from '../../shared/util/page';
-import { Transaction } from './transaction';
+import { Transaction, TransactionDetailed } from './transaction';
 import { Endpoints } from '../../shared/http/endpoints';
 import { CreateTransactionPayload } from './dto/create-transaction.payload';
 import { RouteUtils } from '../../shared/routing/route-utils';
@@ -33,6 +33,18 @@ export class TransactionRepository {
     return this.http.put<CreateTransactionPayload, Transaction>(
       RouteUtils.setPathParams(Endpoints.TRANSACTION, [transactionId]),
       payload,
+    );
+  }
+
+  public get(transactionId: number): Observable<TransactionDetailed> {
+    return this.http.get<TransactionDetailed>(
+      RouteUtils.setPathParams(Endpoints.TRANSACTION, [transactionId]),
+    );
+  }
+
+  public delete(transactionId: number): Observable<void> {
+    return this.http.delete<void>(
+      RouteUtils.setPathParams(Endpoints.TRANSACTION, [transactionId]),
     );
   }
 }

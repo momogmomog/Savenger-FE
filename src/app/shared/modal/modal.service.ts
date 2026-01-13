@@ -1,5 +1,6 @@
 import { inject, Injectable, signal, Type } from '@angular/core';
 import {
+  ActionSheetController,
   ModalController,
   ModalOptions,
   ToastController,
@@ -12,6 +13,7 @@ import {
   ShellType,
 } from './shells/modal-shell.types';
 import { ModalDismissType } from './modal-dismiss.type';
+import { ObjectUtils } from '../util/object-utils';
 
 export type CustomModalOptions = Omit<
   ModalOptions,
@@ -29,7 +31,7 @@ export class ModalResponse<TResult> {
   }
 
   public ifConfirmed(callback: (data: TResult) => void): void {
-    if (this.isConfirmed()) {
+    if (this.isConfirmed() || !ObjectUtils.isNil(this.result)) {
       callback(this.result);
     }
   }
@@ -39,6 +41,7 @@ export class ModalResponse<TResult> {
 export class ModalService {
   private modalCtrl = inject(ModalController);
   private toastCtrl = inject(ToastController);
+  private actionSheetCtrl = inject(ActionSheetController);
 
   async open<TPayload, TResult>(
     component: Type<ModalContentBaseComponent<TPayload, TResult>>,
@@ -123,5 +126,31 @@ export class ModalService {
       color: 'danger',
     });
     await toast.present();
+  }
+
+  public async prompt(
+    msg: string,
+    confirmBtn = 'Confirm',
+    declineBtn = 'Cancel',
+  ): Promise<boolean> {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: msg,
+      buttons: [
+        {
+          text: confirmBtn,
+          role: 'confirm',
+        },
+        {
+          text: declineBtn,
+          role: 'cancel',
+        },
+      ],
+    });
+
+    await actionSheet.present();
+
+    const { role } = await actionSheet.onWillDismiss();
+
+    return role === 'confirm';
   }
 }

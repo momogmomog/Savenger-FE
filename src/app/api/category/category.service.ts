@@ -7,7 +7,7 @@ import { EmptyPage, Page } from '../../shared/util/page';
 import { CategoryRepository } from './category.repository';
 import { Category } from './category';
 import { CreateCategoryPayload } from './create-category.payload';
-import { CategoryQuery } from './category.query';
+import { CategoryQuery, CategoryQueryImpl } from './category.query';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
@@ -32,5 +32,21 @@ export class CategoryService {
     }
 
     return resp.response;
+  }
+
+  public async fetchAllCategories(budgetId: number): Promise<Category[]> {
+    const response: Category[] = [];
+
+    const query = new CategoryQueryImpl(budgetId);
+
+    while (true) {
+      const pageResp = await this.search(query);
+      if (pageResp.content.length) {
+        response.push(...pageResp.content);
+        query.page.pageNumber++;
+      } else {
+        return response;
+      }
+    }
   }
 }

@@ -109,17 +109,16 @@ export class TransactionFormComponent
       const searchTerm = this.searchTerm();
       this.onTagSearch(searchTerm);
     });
+
+    effect(() => {
+      const cats = this.categories();
+      this.setCategoryOptions(cats);
+    });
   }
 
   async ngOnInit(): Promise<void> {
     this.tagQuery.budgetId = this.budgetId();
     await this.fetchTags();
-
-    this.categoryOptions = [new SelectOptionKvp('Choose one', null)].concat(
-      ...this.categories().map(
-        (cat) => new SelectOptionKvp(cat.categoryName, cat.id),
-      ),
-    );
 
     this.form.patchValue({ budgetId: this.budgetId() });
 
@@ -141,7 +140,13 @@ export class TransactionFormComponent
     this.sub = this.form.controls.tagIds.valueChanges.subscribe(() =>
       this.refreshTags(),
     );
-    this.refreshTags(false);
+    this.refreshTags();
+  }
+
+  private setCategoryOptions(categories: Category[]): void {
+    this.categoryOptions = [new SelectOptionKvp('Choose one', null)].concat(
+      ...categories.map((cat) => new SelectOptionKvp(cat.categoryName, cat.id)),
+    );
   }
 
   async fetchTags(): Promise<void> {
@@ -219,7 +224,7 @@ export class TransactionFormComponent
     );
   }
 
-  private refreshTags(triggerFetch = true): void {
+  private refreshTags(): void {
     const selectedTags = this.form.controls.tagIds
       .getRawValue()
       .map(
@@ -231,9 +236,8 @@ export class TransactionFormComponent
 
     this.selectedTags.set(selectedTags);
     this.tagQuery.excludeIds = this.form.controls.tagIds.getRawValue();
-    if (triggerFetch) {
-      this.tagQuery.tagName = null;
-      void this.reloadTags();
-    }
+
+    this.tagQuery.tagName = null;
+    void this.reloadTags();
   }
 }

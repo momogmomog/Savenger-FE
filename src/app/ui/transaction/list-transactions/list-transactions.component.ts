@@ -38,6 +38,10 @@ import { CreateTransactionModalPayload } from '../create-transaction-modal/creat
 import { TransactionRepository } from '../../../api/transaction/transaction.repository';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { DatePipe } from '@angular/common';
+import {
+  TransactionDetailsModal,
+  TransactionDetailsModalPayload,
+} from '../transaction-details-modal/transaction-details.modal';
 
 @Component({
   selector: 'app-list-transactions',
@@ -184,7 +188,7 @@ export class ListTransactionsComponent implements OnInit {
         },
         {
           text: 'Amount Range',
-          icon: 'cash-outline', // TODO: Make sure to add this icon if used
+          icon: 'cash-outline',
           handler: (): void => {
             void this.presentAmountFilterAlert();
           },
@@ -270,8 +274,17 @@ export class ListTransactionsComponent implements OnInit {
     return this.categories().find((c) => c.id === categoryId)?.categoryName;
   }
 
-  onTransactionClick(transaction: Transaction): void {
-    alert(transaction.id);
+  async onTransactionClick(transaction: Transaction): Promise<void> {
+    const update = await this.modalService.openAndWait(
+      TransactionDetailsModal,
+      new TransactionDetailsModalPayload(transaction.id, this.budget()),
+    );
+
+    update.ifConfirmed((reload) => {
+      if (reload) {
+        void this.onFilterChange();
+      }
+    });
   }
 
   protected readonly TransactionRepository = TransactionRepository;
