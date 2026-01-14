@@ -1,5 +1,21 @@
 :host {
   display: block;
+
+  &.ng-invalid  {
+    .ctrl {
+      border-bottom: 1px #f8bd4b solid;
+    }
+
+    &.ng-dirty {
+      .ctrl  {
+        border-bottom: 1px darkred solid;
+      }
+    }
+  }
+}
+
+.ctrl {
+  width: 100%;
 }
 
 .input-display {
