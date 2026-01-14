@@ -1,0 +1,8 @@
+<app-select-search
+  (onTouch)="onTouch.emit()"
+  [payload]="payload()"
+  (loadMore)="onLoadMode()"
+  [customValueOverride]="valueOverride()"
+  (selectionChange)="selectionChange.emit($event)"
+  [(searchTerm)]="searchTerm"
+  [(disabled)]="disabled"></app-select-search>

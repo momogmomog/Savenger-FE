@@ -33,7 +33,8 @@
     </div>
 
     <div class="ion-margin-top">
-      <app-select formControlName="categoryId" [options]="categoryOptions"></app-select>
+      <app-category-select-control formControlName="categoryId"
+                                   [budgetId]="budgetId()"></app-category-select-control>
       <app-field-error [errors]="errors()" fieldName="categoryId"></app-field-error>
     </div>
 

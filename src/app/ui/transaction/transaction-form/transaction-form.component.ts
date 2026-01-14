@@ -1,11 +1,4 @@
-import {
-  Component,
-  effect,
-  input,
-  OnInit,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, input, OnInit, output, signal } from '@angular/core';
 import { DeepFormified, FormUtil } from '../../../shared/util/forms.util';
 import { CreateTransactionPayload } from '../../../api/transaction/dto/create-transaction.payload';
 import {
@@ -24,15 +17,11 @@ import { ErrorMessageComponent } from '../../../shared/field-error/error-message
 import { InputComponent } from '../../../shared/form-controls/input/input.component';
 import { IonButton } from '@ionic/angular/standalone';
 import { SelectComponent } from '../../../shared/form-controls/select/select.component';
-import { Category } from '../../../api/category/category';
-import {
-  SelectOption,
-  SelectOptionKvp,
-} from '../../../shared/form-controls/select/select.option';
 import { AutoUnsubComponent } from '../../../shared/util/auto-unsub.component';
 import { addIcons } from 'ionicons';
 import { closeCircle } from 'ionicons/icons';
 import { TagMultiselectControlComponent } from '../../tag/tag-multiselect-control/tag-multiselect-control.component';
+import { CategorySelectControlComponent } from '../../category/category-select-control/category-select-control.component';
 
 @Component({
   selector: 'app-transaction-form',
@@ -47,6 +36,7 @@ import { TagMultiselectControlComponent } from '../../tag/tag-multiselect-contro
     ReactiveFormsModule,
     SelectComponent,
     TagMultiselectControlComponent,
+    CategorySelectControlComponent,
   ],
 })
 export class TransactionFormComponent
@@ -55,13 +45,11 @@ export class TransactionFormComponent
 {
   form: DeepFormified<CreateTransactionPayload>;
   transactionTypeOptions = SelectOptions.transactionTypeOptions();
-  categoryOptions: SelectOption[] = [];
 
   errors = input.required<FieldError[]>();
   transaction = input<TransactionDetailed>();
   budgetId = input.required<number>();
   type = input<TransactionType>();
-  categories = input.required<Category[]>();
 
   initTags = signal<boolean>(false);
 
@@ -80,11 +68,6 @@ export class TransactionFormComponent
     });
 
     addIcons({ closeCircle });
-
-    effect(() => {
-      const cats = this.categories();
-      this.setCategoryOptions(cats);
-    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -105,12 +88,6 @@ export class TransactionFormComponent
     }
 
     this.initTags.set(true);
-  }
-
-  private setCategoryOptions(categories: Category[]): void {
-    this.categoryOptions = [new SelectOptionKvp('Choose one', null)].concat(
-      ...categories.map((cat) => new SelectOptionKvp(cat.categoryName, cat.id)),
-    );
   }
 
   onFormSubmit(): void {

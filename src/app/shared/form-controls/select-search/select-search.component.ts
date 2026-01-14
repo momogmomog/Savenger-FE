@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  effect,
   forwardRef,
   input,
   model,
@@ -38,6 +39,8 @@ import { checkmark, chevronDown, close, search } from 'ionicons/icons';
 import { EmptyPage, Page } from '../../util/page'; // Your existing Page util
 import { SelectSearchItem } from './select-search.item';
 import { AutoUnsubComponent } from '../../util/auto-unsub.component'; // Your existing Item interface
+
+type NonUndefined<T> = T extends undefined ? never : T;
 
 @Component({
   selector: 'app-select-search',
@@ -83,6 +86,7 @@ export class SelectSearchComponent
   clearOnSelect = input<boolean>(false);
   payload = model<Page<SelectSearchItem<any>>>(new EmptyPage());
   searchTerm = model('');
+  customValueOverride = input<NonUndefined<any>>();
 
   selectionChange = output<SelectSearchItem<any> | null>();
   onTouch = output<void>();
@@ -102,6 +106,14 @@ export class SelectSearchComponent
   constructor() {
     super();
     addIcons({ chevronDown, search, close, checkmark });
+
+    effect(() => {
+      const val = this.customValueOverride();
+      if (val === undefined) {
+        return;
+      }
+      this.writeValue(val);
+    });
   }
 
   openModal(): void {
