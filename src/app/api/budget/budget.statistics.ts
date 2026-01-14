@@ -1,4 +1,4 @@
-import { BudgetFull } from './budget';
+import { BudgetFull, EmptyBudget } from './budget';
 
 export interface BudgetStatistics {
   budget: BudgetFull;
@@ -8,4 +8,14 @@ export interface BudgetStatistics {
   debtLendedAmount: number;
   debtReceivedAmount: number;
   realBalance: number;
+}
+
+export class EmptyBudgetStatistics implements BudgetStatistics {
+  budget = new EmptyBudget();
+  balance = 0;
+  expensesAmount = 0;
+  earningsAmount = 0;
+  debtLendedAmount = 0;
+  debtReceivedAmount = 0;
+  realBalance = 0;
 }

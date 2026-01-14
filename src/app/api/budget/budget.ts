@@ -17,7 +17,7 @@ export interface BudgetFull extends Budget {
   participants: OtherUser[];
 }
 
-export class EmptyBudget implements Budget {
+export class EmptyBudget implements BudgetFull {
   active = false;
   autoRevise = false;
   balance = 0;
@@ -28,4 +28,5 @@ export class EmptyBudget implements Budget {
   id = -1;
   ownerId = -1;
   recurringRule = '';
+  participants = [];
 }

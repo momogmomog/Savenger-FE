@@ -7,6 +7,11 @@ import { TagQueryImpl } from '../../../api/tag/tag.query';
 import { CategoryService } from '../../../api/category/category.service';
 import { STORAGE_CURRENT_BUDGET_ID } from '../../../shared/general.constants';
 import { Page } from '../../../shared/util/page';
+import {
+  BudgetStatistics,
+  EmptyBudgetStatistics,
+} from '../../../api/budget/budget.statistics';
+import { BudgetService } from '../../../api/budget/budget.service';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetSliderService {
@@ -22,13 +27,18 @@ export class BudgetSliderService {
 
   private readonly _currentCategories = signal<Category[]>([]);
   private readonly _currentTags = signal<Tag[]>([]);
+  private readonly _currentStatistic = signal<BudgetStatistics>(
+    new EmptyBudgetStatistics(),
+  );
 
   public readonly currentBudget = this._currentBudget.asReadonly();
   public readonly currentCategories = this._currentCategories.asReadonly();
   public readonly currentTags = this._currentTags.asReadonly();
+  public readonly currentStatistic = this._currentStatistic.asReadonly();
 
   constructor(
     private categoryService: CategoryService,
+    private budgetService: BudgetService,
     private tagService: TagService,
   ) {}
 
@@ -42,6 +52,7 @@ export class BudgetSliderService {
     const promises: Promise<any>[] = [];
     let tags: Page<Tag>;
     let categories: Category[];
+    let statistic: BudgetStatistics;
 
     promises.push(
       this.tagService
@@ -54,10 +65,17 @@ export class BudgetSliderService {
         .then((res) => (categories = res)),
     );
 
+    promises.push(
+      this.budgetService.getStatistics(budget.id).then((value) => {
+        statistic = value.response;
+      }),
+    );
+
     await Promise.all(promises);
 
     this._currentTags.set(tags!.content);
     this._currentCategories.set(categories!);
+    this._currentStatistic.set(statistic!);
     this._currentBudget.set(budget);
   }
 
