@@ -17,7 +17,6 @@ import { ShellConfigHeader } from '../../../shared/modal/shells/modal-shell.type
       <app-loader loaderName="createTransactionLoader"></app-loader>
       <app-transaction-form
         [errors]="errors()"
-        [categories]="payload().categories"
         [budgetId]="payload().budgetId"
         [type]="payload().type"
         (formSubmitted)="onFormSubmit($event)"

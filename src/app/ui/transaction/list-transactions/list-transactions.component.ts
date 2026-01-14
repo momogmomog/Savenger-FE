@@ -157,11 +157,7 @@ export class ListTransactionsComponent implements OnInit {
   async openAddTransaction(type: TransactionType): Promise<void> {
     const resp = await this.modalService.openAndWait(
       CreateTransactionModal,
-      new CreateTransactionModalPayload(
-        this.budget().id,
-        this.categories(),
-        type,
-      ),
+      new CreateTransactionModalPayload(this.budget().id, type),
       {
         shellType: ShellType.HEADER,
         title: '',

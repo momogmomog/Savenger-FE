@@ -1,5 +1,5 @@
 import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-content-base.component';
-import { Component, model, OnInit, signal } from '@angular/core';
+import { Component, model, OnInit } from '@angular/core';
 import { IonContent } from '@ionic/angular/standalone';
 import { LoaderComponent } from '../../../shared/loader/loader.component';
 import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
@@ -10,8 +10,6 @@ import { Transaction } from '../../../api/transaction/transaction';
 import { TransactionService } from '../../../api/transaction/transaction.service';
 import { EditTransactionModalPayload } from './edit-transaction.modal.payload';
 import { ShellConfigHeader } from '../../../shared/modal/shells/modal-shell.types';
-import { CategoryService } from '../../../api/category/category.service';
-import { Category } from '../../../api/category/category';
 
 @Component({
   template: `
@@ -21,7 +19,6 @@ import { Category } from '../../../api/category/category';
         [errors]="errors()"
         [transaction]="payload().transaction"
         [budgetId]="payload().transaction.budgetId"
-        [categories]="categories()"
         (formSubmitted)="onFormSubmit($event)"
       ></app-transaction-form>
     </ion-content>
@@ -36,22 +33,12 @@ export class EditTransactionModal
   implements OnInit
 {
   errors = model<FieldError[]>([]);
-  categories = signal<Category[]>([]);
 
-  constructor(
-    private transactionService: TransactionService,
-    private categoryService: CategoryService,
-  ) {
+  constructor(private transactionService: TransactionService) {
     super();
   }
 
   async ngOnInit(): Promise<void> {
-    const categories = await this.categoryService.fetchAllCategories(
-      this.payload().transaction.budgetId,
-    );
-
-    this.categories.set(categories);
-
     queueMicrotask(() => {
       const cfg = this.shellConfig() as ShellConfigHeader;
       cfg.title = 'Update Transaction';
