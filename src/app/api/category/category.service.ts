@@ -44,6 +44,10 @@ export class CategoryService {
       if (pageResp.content.length) {
         response.push(...pageResp.content);
         query.page.pageNumber++;
+
+        if (pageResp.page.totalPages >= query.page.pageNumber) {
+          return response;
+        }
       } else {
         return response;
       }
