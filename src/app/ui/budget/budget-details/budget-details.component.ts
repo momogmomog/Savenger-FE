@@ -1,4 +1,11 @@
-import { Component, computed, inject, model, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  model,
+  OnInit,
+  output,
+} from '@angular/core';
 import { CommonModule, CurrencyPipe, PercentPipe } from '@angular/common';
 import {
   ActionSheetController,
@@ -29,9 +36,11 @@ import {
 import { addIcons } from 'ionicons';
 import {
   ellipsisVertical,
+  folderOpenOutline,
   pencilOutline,
   peopleOutline,
   personAddOutline,
+  stopCircleOutline,
   swapHorizontalOutline,
   trashOutline,
   trendingDownOutline,
@@ -43,6 +52,8 @@ import { AppRoutingPath } from '../../../app-routing.path';
 import { ModalService } from '../../../shared/modal/modal.service';
 import { ManageParticipantsModal } from '../manage-participants/manage-participants.modal';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
+import { Category } from '../../../api/category/category';
+import { CategoryService } from '../../../api/category/category.service';
 
 @Component({
   selector: 'app-budget-details',
@@ -78,12 +89,14 @@ import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
   templateUrl: './budget-details.component.html',
   styleUrls: ['./budget-details.component.scss'],
 })
-export class BudgetDetailsPage {
+export class BudgetDetailsPage implements OnInit {
   private actionSheetCtrl = inject(ActionSheetController);
   private modalService = inject(ModalService);
+  private categoryService = inject(CategoryService);
 
   routes = AppRoutingPath;
   stats = model.required<BudgetStatistics>();
+  protected categories = model<Category[]>([]);
 
   navigateAway = output<void>();
   editTriggered = output<void>();
@@ -115,9 +128,17 @@ export class BudgetDetailsPage {
       peopleOutline,
       swapHorizontalOutline,
       pencilOutline,
+      stopCircleOutline,
       trashOutline,
       personAddOutline,
+      folderOpenOutline,
     });
+  }
+
+  async ngOnInit(): Promise<void> {
+    this.categories.set(
+      await this.categoryService.fetchAllCategories(this.stats().budget.id),
+    );
   }
 
   async presentActionSheet(): Promise<void> {

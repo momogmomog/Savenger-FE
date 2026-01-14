@@ -127,5 +127,37 @@
       </div>
     </ion-accordion>
 
+    <ion-accordion value="categories">
+      <ion-item slot="header" color="light">
+        <ion-icon slot="start" name="folder-open-outline"></ion-icon>
+        <ion-label>Categories</ion-label>
+        <ion-badge slot="end" color="primary">{{ categories().length }}</ion-badge>
+      </ion-item>
+      <div class="ion-padding-bottom" slot="content">
+        <ion-list lines="none">
+          @for (category of categories(); track category.id) {
+            <ion-item lines="none">
+              <ion-label>
+                <h3>{{ category.categoryName }}</h3>
+              </ion-label>
+              @if (category.budgetCap) {
+                <span slot="end" class="ion-text-end text-danger font-bold">
+                  {{ category.budgetCap | currency }} <ion-icon name="stop-circle-outline"></ion-icon>
+                </span>
+              } @else {
+                <span slot="end" class="ion-text-end text-danger font-bold">
+                  No Limit
+                </span>
+              }
+            </ion-item>
+          } @empty {
+            <div class="ion-padding ion-text-center text-medium">
+              No Categories
+            </div>
+          }
+        </ion-list>
+      </div>
+    </ion-accordion>
+
   </ion-accordion-group>
 </ion-content>
