@@ -54,6 +54,7 @@ import { ManageParticipantsModal } from '../manage-participants/manage-participa
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { Category } from '../../../api/category/category';
 import { CategoryService } from '../../../api/category/category.service';
+import { CreateCategoryModal } from '../../category/create-category.modal';
 
 @Component({
   selector: 'app-budget-details',
@@ -136,6 +137,10 @@ export class BudgetDetailsPage implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    await this.loadCategories();
+  }
+
+  private async loadCategories(): Promise<void> {
     this.categories.set(
       await this.categoryService.fetchAllCategories(this.stats().budget.id),
     );
@@ -174,6 +179,27 @@ export class BudgetDetailsPage implements OnInit {
               });
               this.budgetUpdated.emit();
             }
+          },
+        },
+        {
+          text: 'Add Category',
+          icon: 'folder-open-outline',
+          handler: async (): Promise<void> => {
+            const reload = await this.modalService.openAndWait(
+              CreateCategoryModal,
+              this.stats().budget,
+              {
+                shellType: ShellType.HEADER,
+                title: `Add Category`,
+                showCloseButton: true,
+              },
+            );
+
+            reload.ifConfirmed((reload) => {
+              if (reload) {
+                void this.loadCategories();
+              }
+            });
           },
         },
         {

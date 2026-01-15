@@ -1,5 +1,5 @@
 export interface CreateCategoryPayload {
   categoryName: string;
-  budgetCap: number;
+  budgetCap: number | null;
   budgetId: number;
 }

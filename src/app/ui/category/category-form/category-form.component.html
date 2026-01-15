@@ -1,0 +1,26 @@
+<form #categoryForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div>
+    <app-field-error
+      [errors]="errors()"
+      fieldName=""></app-field-error>
+    <div class="ion-margin-top">
+      <app-input placeholder="Name"
+                 formControlName="categoryName"
+                 [errors]="errors()"></app-input>
+    </div>
+    <div class="ion-margin-top">
+      <app-input
+        type="number"
+        placeholder="Budget Cap"
+        formControlName="budgetCap"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top ion-text-end">
+      <ion-button [form]="categoryForm"
+                  type="submit"
+                  [disabled]="!form.valid">Save
+      </ion-button>
+    </div>
+  </div>
+</form>
