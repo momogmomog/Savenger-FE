@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClientSecuredService } from '../../shared/http/http-client-secured.service';
-import { TransactionQuery } from './transaction.query';
+import { TransactionSearchQuery } from './transactionSearchQuery';
 import { Observable } from 'rxjs';
 import { Page } from '../../shared/util/page';
 import { Transaction, TransactionDetailed } from './transaction';
@@ -12,8 +12,8 @@ import { RouteUtils } from '../../shared/routing/route-utils';
 export class TransactionRepository {
   constructor(private http: HttpClientSecuredService) {}
 
-  public search(query: TransactionQuery): Observable<Page<Transaction>> {
-    return this.http.post<TransactionQuery, Page<Transaction>>(
+  public search(query: TransactionSearchQuery): Observable<Page<Transaction>> {
+    return this.http.post<TransactionSearchQuery, Page<Transaction>>(
       Endpoints.TRANSACTIONS_SEARCH,
       query,
     );

@@ -5,33 +5,45 @@ import { BetweenQuery } from '../../shared/util/between-query';
 import { DEFAULT_PAGE_SIZE } from '../../shared/general.constants';
 
 export interface TransactionQuery {
-  page: PageRequest;
-  sort: SortQuery;
   type: TransactionType | null;
   amount: BetweenQuery<number> | null;
   dateCreated: BetweenQuery<string> | null;
   comment: string | null;
   revised: boolean | null;
-  categoryId: number | null;
-  userId: number | null;
+  categoryIds: number[];
+  userIds: number[];
+  noDebtTransactions: boolean | null;
   budgetId: number;
-  tagId: number | null;
+  tagIds: number[];
 }
 
 export class TransactionQueryImpl implements TransactionQuery {
-  page: PageRequest = new PageRequestImpl(0, DEFAULT_PAGE_SIZE);
-  sort: SortQuery = { field: 'id', direction: SortDirection.DESC };
   type: TransactionType | null = null;
   amount: BetweenQuery<number> | null = null;
   dateCreated: BetweenQuery<string> | null = null;
   comment: string | null = null;
-  revised: boolean | null = false;
-  categoryId: number | null = null;
-  tagId: number | null = null;
-  userId: number | null = null;
+  revised: boolean | null = null;
+  categoryIds: number[] = [];
+  noDebtTransactions: boolean | null = null;
+  tagIds: number[] = [];
+  userIds: number[] = [];
   budgetId: number;
 
   constructor(budgetId: number | null) {
     this.budgetId = budgetId!;
   }
+}
+
+export interface TransactionSearchQuery extends TransactionQuery {
+  page: PageRequest;
+  sort: SortQuery;
+}
+
+export class TransactionSearchQueryImpl
+  extends TransactionQueryImpl
+  implements TransactionSearchQuery
+{
+  page: PageRequest = new PageRequestImpl(0, DEFAULT_PAGE_SIZE);
+  sort: SortQuery = { field: 'id', direction: SortDirection.DESC };
+  override revised: boolean | null = false;
 }

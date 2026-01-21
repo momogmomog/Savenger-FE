@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TransactionRepository } from './transaction.repository';
-import { TransactionQuery } from './transaction.query';
+import { TransactionSearchQuery } from './transactionSearchQuery';
 import { EmptyPage, Page } from '../../shared/util/page';
 import { Transaction, TransactionDetailed } from './transaction';
 import {
@@ -13,7 +13,9 @@ import { CreateTransactionPayload } from './dto/create-transaction.payload';
 export class TransactionService {
   constructor(private repository: TransactionRepository) {}
 
-  public async search(query: TransactionQuery): Promise<Page<Transaction>> {
+  public async search(
+    query: TransactionSearchQuery,
+  ): Promise<Page<Transaction>> {
     const resp = await new FieldErrorWrapper(() =>
       this.repository.search(query),
     ).execute();

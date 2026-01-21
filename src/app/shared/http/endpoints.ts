@@ -18,4 +18,7 @@ export class Endpoints {
   public static readonly DEBTS = '/debts';
   public static readonly PAY_DEBT = '/debts/:id/pay-debt';
   public static readonly PREPAYMENTS = '/prepayments';
+  public static readonly PAY_R_TRANSACTION = '/recurring-transaction/{rTransactionId}/pay';
+  public static readonly ANALYTICS_CATEGORIES = '/analytics/categories';
+  public static readonly ANALYTICS_TAGS = '/analytics/tags';
 }

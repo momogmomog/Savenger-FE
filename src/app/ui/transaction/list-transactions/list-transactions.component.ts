@@ -28,9 +28,9 @@ import { add, ellipsisVertical, filter, funnel, remove } from 'ionicons/icons';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
 import { TransactionService } from '../../../api/transaction/transaction.service';
 import {
-  TransactionQuery,
-  TransactionQueryImpl,
-} from '../../../api/transaction/transaction.query';
+  TransactionSearchQuery,
+  TransactionSearchQueryImpl,
+} from '../../../api/transaction/transactionSearchQuery';
 import { Transaction } from '../../../api/transaction/transaction';
 import { ModalService } from '../../../shared/modal/modal.service';
 import { CreateTransactionModal } from '../create-transaction-modal/create-transaction.modal';
@@ -99,7 +99,8 @@ export class ListTransactionsComponent implements OnInit {
     }));
   });
 
-  private readonly query: TransactionQuery = new TransactionQueryImpl(null);
+  private readonly query: TransactionSearchQuery =
+    new TransactionSearchQueryImpl(null);
 
   constructor(
     private budgetSliderService: BudgetSliderService,
