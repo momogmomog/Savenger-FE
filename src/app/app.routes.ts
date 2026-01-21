@@ -50,6 +50,14 @@ const tab4Routes: Routes = [
   },
 ];
 
+const tab5Routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./ui/tabs/tab5/tab5.page').then((m) => m.Tab5Page),
+  },
+];
+
 export const routes: Routes = [
   {
     path: AppRoutingPath.TABS.path,
@@ -74,6 +82,11 @@ export const routes: Routes = [
         path: AppRoutingPath.TAB_4_BUDGETS.path,
         title: 'Budgets',
         children: tab4Routes,
+      },
+      {
+        path: AppRoutingPath.TAB_5_PROFILE.path,
+        title: 'Profile',
+        children: tab5Routes,
       },
       {
         path: '',
