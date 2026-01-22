@@ -79,6 +79,15 @@ export class BudgetSliderService {
     this._currentBudget.set(budget);
   }
 
+  public async refreshStatistic(budgetId: number): Promise<void> {
+    const statisticResp = await this.budgetService.getStatistics(budgetId);
+    if (statisticResp.isSuccess) {
+      this._currentStatistic.set(statisticResp.response);
+    } else {
+      console.error(statisticResp);
+    }
+  }
+
   public async initializeFromStorage(budgets: Budget[]): Promise<void> {
     if (budgets.length === 0 || this.storageInitialized) return;
     console.log('Initializing budget from storage');

@@ -14,6 +14,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^19.0.0",
+    "@angular/cdk": "^19.2.19",
     "@angular/common": "^19.0.0",
     "@angular/compiler": "^19.0.0",
     "@angular/core": "^19.0.0",
@@ -30,7 +31,9 @@
     "@capacitor/status-bar": "7.0.1",
     "@ionic/angular": "^8.0.0",
     "@ionic/cli": "^7.2.1",
+    "chart.js": "^4.5.1",
     "ionicons": "^7.0.0",
+    "ng2-charts": "^8.0.0",
     "rxjs": "~7.8.0",
     "swiper": "^12.0.3",
     "tslib": "^2.3.0",

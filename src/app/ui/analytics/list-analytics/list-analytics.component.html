@@ -1,0 +1,234 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Analytics</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentFilterOptions()">
+        <ion-icon slot="icon-only" [name]="isFiltering() ? 'funnel' : 'filter'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="slider-container">
+    <app-budget-slider></app-budget-slider>
+  </div>
+
+  @if (isFiltering()) {
+    <div class="ion-padding-horizontal ion-padding-bottom">
+      <ion-text color="primary" class="filter-text">
+        <ion-icon name="funnel" style="vertical-align: middle;"></ion-icon>
+        <small style="margin-left: 5px;">
+          Filters Active
+          @if (query.dateCreated?.min) {
+            ({{ query.dateCreated?.min | date:'MM/dd' }} - {{ query.dateCreated?.max | date:'MM/dd' }})
+          }
+        </small>
+      </ion-text>
+    </div>
+  }
+
+  <div class="ion-padding-horizontal ion-margin-bottom">
+    <ion-segment [value]="selectedSegment()" (ionChange)="segmentChanged($event)" mode="ios">
+      <ion-segment-button [value]="ChartSegment.CATEGORIES">
+        <ion-label>Categories</ion-label>
+        <ion-icon name="wallet"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button [value]="ChartSegment.TAGS">
+        <ion-label>Tags</ion-label>
+        <ion-icon name="pricetag"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  @if (selectedSegment() === ChartSegment.CATEGORIES) {
+
+    <ion-card class="analytics-card">
+      <ion-card-header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <ion-card-subtitle>Breakdown</ion-card-subtitle>
+            <ion-card-title>By Category</ion-card-title>
+          </div>
+          <div style="width: 150px;">
+            <ion-segment [value]="chartMode()" (ionChange)="setChartMode($any($event).detail.value)" mode="ios" style="--background: rgba(255,255,255,0.1);">
+              <ion-segment-button [value]="ChartMode.EXPENSE">
+                <ion-label>Exp</ion-label>
+              </ion-segment-button>
+              <ion-segment-button [value]="ChartMode.INCOME">
+                <ion-label>Inc</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="categoryChartData()"
+                  [type]="'doughnut'"
+                  [options]="categoryChartOptions">
+          </canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="ion-padding-start ion-padding-top">
+      <ion-text color="medium">
+        <small style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Details</small>
+      </ion-text>
+    </div>
+
+    <ion-card class="list-card">
+      <ion-list lines="full">
+        @for (item of categoryAnalytics(); track item.category.id) {
+          @if (item.expenses.count > 0 || item.incomes.count > 0) {
+            <ion-item>
+              <div class="category-item-wrapper">
+
+                @if (item.expenses.count > 0) {
+                  <div class="item-header">
+                    <ion-label>
+                      <h2>{{ item.category.categoryName }}</h2>
+                      <p>{{ item.expenses.count }} transactions</p>
+                    </ion-label>
+                    <div class="amount-display ion-text-end">
+                      <ion-text color="danger">
+                        <h3>-{{ item.expenses.sum | currency }}</h3>
+                      </ion-text>
+                    </div>
+                  </div>
+
+                  @if (item.category.budgetCap > 0) {
+                    <div class="progress-wrapper">
+                      <ion-progress-bar
+                        [value]="getPercentage(item.expenses.sum, item.category.budgetCap)"
+                        [color]="item.expenses.sum > item.category.budgetCap ? 'danger' : 'primary'">
+                      </ion-progress-bar>
+                      <div class="progress-labels">
+                        <ion-note class="text-tiny">
+                          {{ getPercentage(item.expenses.sum, item.category.budgetCap) | percent }} used
+                        </ion-note>
+                        <ion-note class="text-tiny">
+                          Cap: {{ item.category.budgetCap | currency:'USD':'symbol':'1.0-0' }}
+                        </ion-note>
+                      </div>
+                    </div>
+                  }
+                }
+
+                @if (item.expenses.count > 0 && item.incomes.count > 0) {
+                  <div style="margin: 10px 0; border-top: 1px solid var(--ion-color-step-150);"></div>
+                }
+
+                @if (item.incomes.count > 0) {
+                  <div class="item-header">
+                    <ion-label>
+                      <h2>{{ item.category.categoryName }}</h2>
+                      <p>{{ item.incomes.count }} deposits</p>
+                    </ion-label>
+                    <div class="amount-display ion-text-end">
+                      <ion-text color="success">
+                        <h3>+{{ item.incomes.sum | currency }}</h3>
+                      </ion-text>
+                    </div>
+                  </div>
+                }
+
+              </div>
+            </ion-item>
+          }
+        } @empty {
+          <ion-item>
+            <ion-label class="ion-text-center">No category data found</ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    </ion-card>
+  }
+
+  @if (selectedSegment() === ChartSegment.TAGS) {
+
+    <ion-card class="analytics-card">
+      <ion-card-header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <ion-card-subtitle>Top Volume</ion-card-subtitle>
+            <ion-card-title>By Tag</ion-card-title>
+          </div>
+          <div style="width: 150px;">
+            <ion-segment [value]="chartMode()" (ionChange)="setChartMode($any($event).detail.value)" mode="ios" style="--background: rgba(255,255,255,0.1);">
+              <ion-segment-button [value]="ChartMode.EXPENSE">
+                <ion-label>Exp</ion-label>
+              </ion-segment-button>
+              <ion-segment-button [value]="ChartMode.INCOME">
+                <ion-label>Inc</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="tagChartData()"
+                  [type]="'bar'"
+                  [options]="tagChartOptions">
+          </canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="list-card">
+      <ion-list lines="none">
+        @for (item of tagAnalytics(); track item.tag.id) {
+          @if(item.expenses.count > 0 || item.incomes.count > 0) {
+            <ion-item>
+              <div style="width: 100%; padding: 8px 0;">
+
+                @if(item.expenses.count > 0) {
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <div style="display:flex; align-items:center;">
+                      <ion-icon name="pricetag" color="medium" style="margin-right: 10px;"></ion-icon>
+                      <ion-label>
+                        <h2>#{{ item.tag.tagName }}</h2>
+                        <p class="ion-no-margin" style="font-size: 0.8em;">{{ item.expenses.count }} txns</p>
+                      </ion-label>
+                    </div>
+                    <ion-text color="dark">
+                      <strong>-{{ item.expenses.sum | currency }}</strong>
+                    </ion-text>
+                  </div>
+                }
+
+                @if(item.expenses.count > 0 && item.incomes.count > 0) {
+                  <div style="height: 4px;"></div>
+                }
+
+                @if(item.incomes.count > 0) {
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display:flex; align-items:center;">
+                      <ion-icon name="pricetag" color="success" style="margin-right: 10px;"></ion-icon>
+                      <ion-label>
+                        <h2>#{{ item.tag.tagName }}</h2>
+                        <p class="ion-no-margin" style="font-size: 0.8em;">{{ item.incomes.count }} deposits</p>
+                      </ion-label>
+                    </div>
+                    <ion-text color="success">
+                      <strong>+{{ item.incomes.sum | currency }}</strong>
+                    </ion-text>
+                  </div>
+                }
+              </div>
+            </ion-item>
+          }
+        }
+      </ion-list>
+    </ion-card>
+  }
+
+</ion-content>

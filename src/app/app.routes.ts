@@ -3,6 +3,7 @@ import { AppRoutingPath } from './app-routing.path';
 import { TabsPage } from './ui/tabs/tabs/tabs.page';
 import { ListBudgetsComponent } from './ui/budget/list-budgets/list-budgets.component';
 import { ListTransactionsComponent } from './ui/transaction/list-transactions/list-transactions.component';
+import { ListAnalyticsComponent } from './ui/analytics/list-analytics/list-analytics.component';
 
 const tab1Routes: Routes = [
   {
@@ -17,6 +18,13 @@ const tab2Routes: Routes = [
     path: '',
     loadComponent: () =>
       import('./ui/tabs/tab2/tab2.page').then((m) => m.Tab2Page),
+    children: [
+      {
+        path: '',
+        component: ListAnalyticsComponent,
+        children: [],
+      },
+    ],
   },
 ];
 

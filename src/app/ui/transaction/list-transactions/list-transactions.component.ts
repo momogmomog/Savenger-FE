@@ -35,7 +35,6 @@ import { Transaction } from '../../../api/transaction/transaction';
 import { ModalService } from '../../../shared/modal/modal.service';
 import { CreateTransactionModal } from '../create-transaction-modal/create-transaction.modal';
 import { CreateTransactionModalPayload } from '../create-transaction-modal/create-transaction.modal.payload';
-import { TransactionRepository } from '../../../api/transaction/transaction.repository';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { DatePipe } from '@angular/common';
 import {
@@ -151,6 +150,7 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   async handleRefresh(event: RefresherCustomEvent): Promise<void> {
+    await this.budgetSliderService.refreshStatistic(this.budget().id);
     await this.onFilterChange();
     void event.target.complete();
   }
@@ -167,6 +167,7 @@ export class ListTransactionsComponent implements OnInit {
 
     resp.ifConfirmed((data): void => {
       if (data?.id) {
+        void this.budgetSliderService.refreshStatistic(this.budget().id);
         void this.onFilterChange();
       }
     });
@@ -279,10 +280,9 @@ export class ListTransactionsComponent implements OnInit {
 
     update.ifConfirmed((reload) => {
       if (reload) {
+        this.budgetSliderService.refreshStatistic(this.budget().id);
         void this.onFilterChange();
       }
     });
   }
-
-  protected readonly TransactionRepository = TransactionRepository;
 }
