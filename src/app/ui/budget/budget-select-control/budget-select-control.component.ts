@@ -13,40 +13,38 @@ import {
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { CategoryService } from '../../../api/category/category.service';
 import { SelectSearchComponent } from '../../../shared/form-controls/select-search/select-search.component';
 import {
   SelectSearchItem,
   SelectSearchItemImpl,
 } from '../../../shared/form-controls/select-search/select-search.item';
-import {
-  CategoryQuery,
-  CategoryQueryImpl,
-} from '../../../api/category/category.query';
-import { Category } from '../../../api/category/category';
 import { EmptyPage, Page, PageImpl } from '../../../shared/util/page';
+import { BudgetQuery, BudgetQueryImpl } from '../../../api/budget/budget.query';
+import { Budget } from '../../../api/budget/budget';
+import { BudgetService } from '../../../api/budget/budget.service';
+import { ModalService } from '../../../shared/modal/modal.service';
 
 @Component({
-  selector: 'app-category-select-control',
-  templateUrl: './category-select-control.component.html',
-  styleUrls: ['./category-select-control.component.scss'],
+  selector: 'app-budget-select-control',
+  templateUrl: './budget-select-control.component.html',
+  styleUrls: ['./budget-select-control.component.scss'],
   imports: [SelectSearchComponent, ReactiveFormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => CategorySelectControlComponent),
+      useExisting: forwardRef(() => BudgetSelectControlComponent),
       multi: true,
     },
   ],
 })
-export class CategorySelectControlComponent
+export class BudgetSelectControlComponent
   extends AutoUnsubComponent
   implements ControlValueAccessor, OnInit
 {
-  private categoryQuery: CategoryQuery = new CategoryQueryImpl(null!);
+  private budgetQuery: BudgetQuery = new BudgetQueryImpl();
 
-  label = input<string>('Category');
-  budgetId = input.required<number>();
+  excludedBudgetIds = input<number[]>([]);
+  label = input<string>('Budget');
   disabled = model<boolean>(false);
   valueOverride = model<any>();
   searchTerm = model<string>('');
@@ -54,13 +52,16 @@ export class CategorySelectControlComponent
   selectionChange = output<SelectSearchItem<any> | null>();
   onTouch = output<void>();
 
-  payload = model<Page<SelectSearchItem<Category>>>(new EmptyPage());
+  payload = model<Page<SelectSearchItem<Budget>>>(new EmptyPage());
 
-  constructor(private categoryService: CategoryService) {
+  constructor(
+    private budgetService: BudgetService,
+    private modalService: ModalService,
+  ) {
     super();
 
     effect(() => {
-      this.categoryQuery.budgetId = this.budgetId();
+      this.budgetQuery.excludedBudgetIds = this.excludedBudgetIds();
     });
 
     effect(() => {
@@ -72,30 +73,38 @@ export class CategorySelectControlComponent
   ngOnInit(): void {}
 
   protected async onLoadMode(): Promise<void> {
-    this.categoryQuery.page.pageNumber += 1;
-    await this.fetchCategories();
+    this.budgetQuery.page.pageNumber += 1;
+    await this.fetchData();
   }
 
   async reloadFilters(query: string | null): Promise<void> {
-    this.categoryQuery.categoryName = query;
-    this.categoryQuery.page.pageNumber = 0;
+    this.budgetQuery.budgetName = query;
+    this.budgetQuery.page.pageNumber = 0;
     this.payload.set(new EmptyPage());
-    await this.fetchCategories();
+    await this.fetchData();
   }
 
-  async fetchCategories(): Promise<void> {
-    const resp = await this.categoryService.search(this.categoryQuery);
+  async fetchData(): Promise<void> {
+    const response = await this.budgetService.search(this.budgetQuery);
 
+    if (!response.isSuccess) {
+      console.error(response);
+      void this.modalService.showDangerToast('Could not fetch budgets!');
+      return;
+    }
+
+    const resp = response.response;
     this.payload.set(
       new PageImpl(
         [...this.payload().content].concat(
           resp.content.map(
-            (cat) => new SelectSearchItemImpl(cat.categoryName, cat.id, cat),
+            (budget) =>
+              new SelectSearchItemImpl(budget.budgetName, budget.id, budget),
           ),
         ),
         resp.page.totalElements,
         resp.page.totalPages,
-        this.categoryQuery.page,
+        this.budgetQuery.page,
       ),
     );
   }

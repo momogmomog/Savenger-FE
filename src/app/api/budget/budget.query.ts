@@ -13,6 +13,7 @@ export interface BudgetQuery {
   balance: BetweenQuery<number>;
   budgetCap: BetweenQuery<number>;
   autoRevise: boolean | null;
+  excludedBudgetIds: number[];
 }
 
 export class BudgetQueryImpl implements BudgetQuery {
@@ -25,4 +26,5 @@ export class BudgetQueryImpl implements BudgetQuery {
   balance: BetweenQuery<number> = {};
   budgetCap: BetweenQuery<number> = {};
   autoRevise: boolean | null = null;
+  excludedBudgetIds: number[] = [];
 }

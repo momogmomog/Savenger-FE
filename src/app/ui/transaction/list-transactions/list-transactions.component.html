@@ -33,6 +33,12 @@
       <span>Income</span>
     </div>
 
+    <div class="action-item" (click)="openTransfers()">
+      <div class="action-btn transfer">
+        <ion-icon name="swap-horizontal-outline"></ion-icon>
+      </div>
+      <span>Transfer</span>
+    </div>
   </div>
 
   @for (group of groupedTransactions(); track group.dateLabel) {

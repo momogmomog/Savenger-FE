@@ -19,6 +19,11 @@ export class Endpoints {
   public static readonly PAY_DEBT = '/debts/:id/pay-debt';
   public static readonly PREPAYMENTS = '/prepayments';
   public static readonly PAY_R_TRANSACTION = '/recurring-transaction/{rTransactionId}/pay';
+  public static readonly TRANSFERS = '/transfers';
+  public static readonly TRANSFER = '/transfers/:id';
+  public static readonly TRANSFERS_SEARCH = '/transfers/search';
+  public static readonly TRANSFER_TRANSACTIONS = '/transfers/transactions';
+  public static readonly TRANSFER_TRANSACTION = '/transfers/transactions/:id';
   public static readonly ANALYTICS_CATEGORIES = '/analytics/categories';
   public static readonly ANALYTICS_TAGS = '/analytics/tags';
 }

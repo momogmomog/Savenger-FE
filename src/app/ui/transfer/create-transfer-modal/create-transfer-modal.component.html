@@ -1,0 +1,25 @@
+<app-loader loaderName="transferCreateLoader"></app-loader>
+
+<ion-label>Source Budget: {{ payload().budget.budgetName }}</ion-label>
+<form #transferForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div>
+    <app-field-error [errors]="errors()" fieldName=""></app-field-error>
+    <app-field-error [errors]="errors()" fieldName="sourceBudgetId"></app-field-error>
+
+    <div class="ion-margin-top">
+      <app-budget-select-control
+        formControlName="receiverBudgetId"
+        [label]="'Select receiver budget'"
+        [excludedBudgetIds]="[payload().budget.id]"></app-budget-select-control>
+      <app-field-error [errors]="errors()" fieldName="receiverBudgetId"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top ion-text-end">
+      <ion-button
+        [form]="transferForm"
+        type="submit"
+        [disabled]="!form.valid">Save
+      </ion-button>
+    </div>
+  </div>
+</form>

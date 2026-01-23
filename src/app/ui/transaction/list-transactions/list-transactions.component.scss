@@ -48,6 +48,11 @@
       background: var(--ion-color-success);
       color: white;
     }
+
+    &.transfer {
+      background: var(--ion-color-secondary);
+      color: white;
+    }
   }
 }
 

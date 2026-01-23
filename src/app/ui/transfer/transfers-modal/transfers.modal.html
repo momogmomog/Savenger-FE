@@ -1,0 +1,29 @@
+<ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+  <ion-refresher-content></ion-refresher-content>
+</ion-refresher>
+
+<div class="ion-padding">
+  @for (transfer of transfers().content; track transfer.id) {
+    <app-transfer-card
+      [transfer]="transfer"
+      (archive)="onTransferArchive($event)"
+      (performTransfer)="onPerformTransfer($event)"
+      (viewDetails)="onViewDetails($event)"
+      (click)="onTransferClick(transfer)">
+    </app-transfer-card>
+  } @empty {
+    <div class="ion-text-center ion-padding ion-margin-top text-medium">
+      <p>No transfers found</p>
+    </div>
+  }
+</div>
+
+<ion-infinite-scroll [disabled]="!hasNextPage()" (ionInfinite)="loadMore($event)">
+  <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+</ion-infinite-scroll>
+
+<ion-fab horizontal="end" vertical="bottom" slot="fixed">
+  <ion-fab-button (click)="onCreateTransfer()">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

@@ -1,5 +1,5 @@
 import { Component, effect, OnInit, signal, ViewChild } from '@angular/core';
-import { CurrencyPipe, DatePipe, PercentPipe, NgClass } from '@angular/common';
+import { CurrencyPipe, DatePipe, PercentPipe } from '@angular/common';
 import { BudgetSliderComponent } from '../../budget/budget-slider/budget-slider.component';
 import {
   ActionSheetController,
@@ -30,13 +30,13 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  arrowDown,
+  arrowUp,
   calendar,
   filter,
   funnel,
   pricetag,
   wallet,
-  arrowDown,
-  arrowUp,
 } from 'ionicons/icons';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
@@ -92,13 +92,12 @@ enum ChartSegment {
     CurrencyPipe,
     DatePipe,
     PercentPipe,
-    NgClass,
   ],
 })
 export class ListAnalyticsComponent implements OnInit {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
-  Segments = ChartSegment;
+  ChartSegment = ChartSegment;
   ChartMode = ChartMode;
 
   budget = this.budgetSliderService.currentBudget;
@@ -419,6 +418,4 @@ export class ListAnalyticsComponent implements OnInit {
     if (!max || max === 0) return 0;
     return Math.min(current / max, 1);
   }
-
-  protected readonly ChartSegment = ChartSegment;
 }

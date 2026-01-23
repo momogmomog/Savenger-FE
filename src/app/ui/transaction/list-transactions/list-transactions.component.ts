@@ -23,7 +23,14 @@ import {
 import { TransactionCardComponent } from '../transaction-card/transaction-card.component';
 import { TransactionType } from '../../../api/transaction/transaction.type';
 import { addIcons } from 'ionicons';
-import { add, ellipsisVertical, filter, funnel, remove } from 'ionicons/icons';
+import {
+  add,
+  ellipsisVertical,
+  filter,
+  funnel,
+  remove,
+  swapHorizontalOutline,
+} from 'ionicons/icons';
 
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
 import { TransactionService } from '../../../api/transaction/transaction.service';
@@ -41,6 +48,8 @@ import {
   TransactionDetailsModal,
   TransactionDetailsModalPayload,
 } from '../transaction-details-modal/transaction-details.modal';
+import { TransfersModal } from '../../transfer/transfers-modal/transfers.modal';
+import { TransfersModalPayload } from '../../transfer/transfers-modal/transfers.modal.payload';
 
 @Component({
   selector: 'app-list-transactions',
@@ -108,7 +117,14 @@ export class ListTransactionsComponent implements OnInit {
     private alertCtrl: AlertController,
     private modalService: ModalService,
   ) {
-    addIcons({ ellipsisVertical, add, remove, filter, funnel });
+    addIcons({
+      ellipsisVertical,
+      add,
+      remove,
+      filter,
+      funnel,
+      swapHorizontalOutline,
+    });
 
     effect(() => {
       const budget = this.budgetSliderService.currentBudget();
@@ -143,6 +159,13 @@ export class ListTransactionsComponent implements OnInit {
     }
   }
 
+  async transactionsChanged(): Promise<void> {
+    await Promise.all([
+      this.budgetSliderService.refreshStatistic(this.budget().id),
+      this.onFilterChange(),
+    ]);
+  }
+
   async loadMore(event: InfiniteScrollCustomEvent): Promise<void> {
     this.query.page.pageNumber += 1;
     await this.fetchTransactions();
@@ -165,10 +188,26 @@ export class ListTransactionsComponent implements OnInit {
       },
     );
 
-    resp.ifConfirmed((data): void => {
+    resp.ifConfirmed(async (data): Promise<void> => {
       if (data?.id) {
-        void this.budgetSliderService.refreshStatistic(this.budget().id);
-        void this.onFilterChange();
+        await this.transactionsChanged();
+      }
+    });
+  }
+
+  async openTransfers(): Promise<void> {
+    const resp = await this.modalService.openAndWait(
+      TransfersModal,
+      new TransfersModalPayload(this.budget()),
+      {
+        shellType: ShellType.HEADER,
+        title: 'Transfers',
+      },
+    );
+
+    resp.ifConfirmed(async (refresh): Promise<void> => {
+      if (refresh) {
+        await this.transactionsChanged();
       }
     });
   }
@@ -278,10 +317,9 @@ export class ListTransactionsComponent implements OnInit {
       new TransactionDetailsModalPayload(transaction.id, this.budget()),
     );
 
-    update.ifConfirmed((reload) => {
+    update.ifConfirmed(async (reload) => {
       if (reload) {
-        this.budgetSliderService.refreshStatistic(this.budget().id);
-        void this.onFilterChange();
+        await this.transactionsChanged();
       }
     });
   }

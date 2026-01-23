@@ -1,0 +1,55 @@
+<app-loader loaderName="transferTransactionCreationLoader"></app-loader>
+
+<form #transferTransactionForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div>
+    <app-field-error [errors]="errors()" fieldName=""></app-field-error>
+
+    <div class="ion-margin-top">
+      <app-category-select-control
+        label="Source budget category"
+        formControlName="sourceCategoryId"
+        [budgetId]="payload().transfer.sourceBudgetId"></app-category-select-control>
+      <app-field-error [errors]="errors()" fieldName="sourceCategoryId"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-input
+        type="textarea"
+        placeholder="Comment for source budget"
+        formControlName="sourceComment"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-category-select-control
+        label="Receiver budget category"
+        formControlName="receiverCategoryId"
+        [budgetId]="payload().transfer.receiverBudgetId"></app-category-select-control>
+      <app-field-error [errors]="errors()" fieldName="receiverCategoryId"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-input
+        type="textarea"
+        placeholder="Comment for receiver budget"
+        formControlName="receiverComment"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-input
+        type="number"
+        placeholder="Amount"
+        formControlName="amount"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top ion-text-end">
+      <ion-button
+        [form]="transferTransactionForm"
+        type="submit"
+        [disabled]="!form.valid">Save
+      </ion-button>
+    </div>
+  </div>
+</form>
