@@ -90,7 +90,12 @@ export class CategorySelectControlComponent
       new PageImpl(
         [...this.payload().content].concat(
           resp.content.map(
-            (cat) => new SelectSearchItemImpl(cat.categoryName, cat.id, cat),
+            (cat) =>
+              new SelectSearchItemImpl(
+                `${cat.categoryName} (${cat.budgetCap || 'Unlimited'})`,
+                cat.id,
+                cat,
+              ),
           ),
         ),
         resp.page.totalElements,

@@ -201,7 +201,7 @@ export class ListTransactionsComponent implements OnInit {
       new TransfersModalPayload(this.budget()),
       {
         shellType: ShellType.HEADER,
-        title: 'Transfers',
+        title: 'Available Transfers',
       },
     );
 

@@ -22,7 +22,7 @@ import {
 import { ModalService } from '../../../shared/modal/modal.service';
 import { TransferCardComponent } from '../transfer-card/transfer-card.component';
 import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
+import { add, close } from 'ionicons/icons';
 import { CreateTransferModalComponent } from '../create-transfer-modal/create-transfer-modal.component';
 import { CreateTransferModalPayload } from '../create-transfer-modal/create-transfer-modal.payload';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
@@ -56,7 +56,7 @@ export class TransfersModal extends ModalContentBaseComponent<
     private modalService: ModalService,
   ) {
     super();
-    addIcons({ add });
+    addIcons({ add, close });
 
     effect(async () => {
       this.query.sourceBudgetId = this.payload().budget.id;
