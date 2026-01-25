@@ -53,6 +53,11 @@
       background: var(--ion-color-secondary);
       color: white;
     }
+
+    &.other {
+      background: var(--ion-color-tertiary);
+      color: white;
+    }
   }
 }
 

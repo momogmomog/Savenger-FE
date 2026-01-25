@@ -25,10 +25,13 @@ import { TransactionType } from '../../../api/transaction/transaction.type';
 import { addIcons } from 'ionicons';
 import {
   add,
+  calendarOutline,
+  ellipsisHorizontalOutline,
   ellipsisVertical,
   filter,
   funnel,
   remove,
+  repeatOutline,
   swapHorizontalOutline,
 } from 'ionicons/icons';
 
@@ -119,11 +122,14 @@ export class ListTransactionsComponent implements OnInit {
   ) {
     addIcons({
       ellipsisVertical,
+      ellipsisHorizontalOutline,
       add,
       remove,
       filter,
       funnel,
       swapHorizontalOutline,
+      calendarOutline,
+      repeatOutline,
     });
 
     effect(() => {
@@ -210,6 +216,34 @@ export class ListTransactionsComponent implements OnInit {
         await this.transactionsChanged();
       }
     });
+  }
+
+  async showMoreTransactionOptions(): Promise<void> {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'More Options',
+      buttons: [
+        {
+          text: 'Pre-payment',
+          icon: 'calendar-outline',
+          handler: (): void => {
+            alert('prepayments!!');
+          },
+        },
+        {
+          text: 'Recurring Transaction',
+          icon: 'repeat-outline',
+          handler: (): void => {
+            alert('rtransaction!!');
+          },
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          data: { action: 'cancel' },
+        },
+      ],
+    });
+    await actionSheet.present();
   }
 
   async presentFilterOptions(): Promise<void> {

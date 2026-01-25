@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   appName: 'Savanger Local',
-  backendUrl: 'https://savanger-be.cyecize.fun',
+  backendUrl: 'http://localhost:8080',
+  // backendUrl: 'https://savanger-be.cyecize.fun',
   apiUrl: '',
 };
 
