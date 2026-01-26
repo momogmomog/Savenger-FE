@@ -13,10 +13,10 @@ export interface Transaction {
   userId: number;
   categoryId: number;
   budgetId: number;
+  tags: Tag[];
 }
 
 export interface TransactionDetailed extends Transaction {
-  tags: Tag[];
   category: Category;
   user: OtherUser;
 }
