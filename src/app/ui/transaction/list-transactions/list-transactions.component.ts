@@ -80,7 +80,6 @@ export class ListTransactionsComponent implements OnInit {
   budget = this.budgetSliderService.currentBudget;
 
   categories = this.budgetSliderService.currentCategories;
-  tags = this.budgetSliderService.currentTags;
 
   transactionsList = signal<Transaction[]>([]);
   hasNextPage = signal<boolean>(true);

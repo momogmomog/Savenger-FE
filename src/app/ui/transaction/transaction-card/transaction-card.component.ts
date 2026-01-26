@@ -42,6 +42,14 @@ import { Transaction } from '../../../api/transaction/transaction';
             <span class="comment-preview">{{ transaction().comment }}</span>
           }
         </p>
+
+        @if (transaction().tags && transaction().tags.length > 0) {
+          <div class="tags-row">
+            @for (tag of transaction().tags; track tag.id) {
+              <span class="tag-pill">{{ tag.tagName }}</span>
+            }
+          </div>
+        }
       </ion-label>
 
       <div slot="end" class="amount-container">
@@ -106,6 +114,23 @@ import { Transaction } from '../../../api/transaction/transaction';
         opacity: 0.8;
       }
 
+      .tags-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+
+      .tag-pill {
+        font-size: 0.7rem;
+        background-color: var(--ion-color-step-150, #333);
+        color: var(--ion-text-color, #fff);
+        padding: 2px 8px;
+        border-radius: 4px;
+        opacity: 0.9;
+        white-space: nowrap;
+      }
+
       .amount-text {
         font-weight: 700;
         font-size: 1rem;
@@ -139,7 +164,7 @@ export class TransactionCardComponent {
       case TransactionType.INCOME:
         return 'success';
       case TransactionType.EXPENSE:
-        return 'dark';
+        return 'dark'; // Or 'danger' if you prefer red for expense text
       default:
         return 'medium';
     }

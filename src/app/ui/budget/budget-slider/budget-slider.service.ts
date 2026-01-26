@@ -1,12 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { Budget, EmptyBudget } from '../../../api/budget/budget';
-import { Tag } from '../../../api/tag/tag';
 import { Category } from '../../../api/category/category';
-import { TagService } from '../../../api/tag/tag.service';
-import { TagQueryImpl } from '../../../api/tag/tag.query';
 import { CategoryService } from '../../../api/category/category.service';
 import { STORAGE_CURRENT_BUDGET_ID } from '../../../shared/general.constants';
-import { Page } from '../../../shared/util/page';
 import {
   BudgetStatistics,
   EmptyBudgetStatistics,
@@ -26,20 +22,17 @@ export class BudgetSliderService {
   private storageInitialized = false;
 
   private readonly _currentCategories = signal<Category[]>([]);
-  private readonly _currentTags = signal<Tag[]>([]);
   private readonly _currentStatistic = signal<BudgetStatistics>(
     new EmptyBudgetStatistics(),
   );
 
   public readonly currentBudget = this._currentBudget.asReadonly();
   public readonly currentCategories = this._currentCategories.asReadonly();
-  public readonly currentTags = this._currentTags.asReadonly();
   public readonly currentStatistic = this._currentStatistic.asReadonly();
 
   constructor(
     private categoryService: CategoryService,
     private budgetService: BudgetService,
-    private tagService: TagService,
   ) {}
 
   public async setBudget(budget: Budget): Promise<void> {
@@ -50,15 +43,9 @@ export class BudgetSliderService {
     }
 
     const promises: Promise<any>[] = [];
-    let tags: Page<Tag>;
     let categories: Category[];
     let statistic: BudgetStatistics;
 
-    promises.push(
-      this.tagService
-        .search(new TagQueryImpl(budget.id))
-        .then((res) => (tags = res)),
-    );
     promises.push(
       this.categoryService
         .fetchAllCategories(budget.id)
@@ -73,7 +60,6 @@ export class BudgetSliderService {
 
     await Promise.all(promises);
 
-    this._currentTags.set(tags!.content);
     this._currentCategories.set(categories!);
     this._currentStatistic.set(statistic!);
     this._currentBudget.set(budget);
