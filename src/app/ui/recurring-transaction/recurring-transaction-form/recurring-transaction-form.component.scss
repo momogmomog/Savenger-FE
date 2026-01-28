@@ -1,0 +1,20 @@
+ion-input.recurrence-picker {
+  --padding-start: 0;
+  cursor: pointer;
+
+
+}
+
+.recurrence-picker-container {
+  &.ng-invalid  {
+    ion-input, ion-textarea {
+      border-bottom: 1px #f8bd4b solid;
+    }
+
+    &.ng-dirty {
+      ion-input, ion-textarea  {
+        border-bottom: 1px darkred solid;
+      }
+    }
+  }
+}

@@ -53,6 +53,8 @@ import {
 } from '../transaction-details-modal/transaction-details.modal';
 import { TransfersModal } from '../../transfer/transfers-modal/transfers.modal';
 import { TransfersModalPayload } from '../../transfer/transfers-modal/transfers.modal.payload';
+import { CreateRecurringTransactionModal } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal';
+import { CreateRecurringTransactionModalPayload } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal.payload';
 
 @Component({
   selector: 'app-list-transactions',
@@ -231,8 +233,21 @@ export class ListTransactionsComponent implements OnInit {
         {
           text: 'Recurring Transaction',
           icon: 'repeat-outline',
-          handler: (): void => {
-            alert('rtransaction!!');
+          handler: async (): Promise<void> => {
+            const resp = await this.modalService.openAndWait(
+              CreateRecurringTransactionModal,
+              new CreateRecurringTransactionModalPayload(this.budget().id),
+              {
+                shellType: ShellType.HEADER,
+                title: '',
+              },
+            );
+
+            resp.ifConfirmed(async (data): Promise<void> => {
+              if (data?.id) {
+                await this.transactionsChanged();
+              }
+            });
           },
         },
         {

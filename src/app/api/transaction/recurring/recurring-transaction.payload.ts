@@ -5,8 +5,7 @@ export interface RecurringTransactionPayload {
   amount: number;
   recurringRule: string;
   autoExecute: boolean;
-  categoryId: number | null;
+  categoryId: number;
   budgetId: number;
-  debtId: number | null;
   tagIds: number[];
 }
