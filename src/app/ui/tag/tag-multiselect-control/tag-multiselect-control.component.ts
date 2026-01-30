@@ -19,10 +19,10 @@ import {
 import { TagQuery, TagQueryImpl } from '../../../api/tag/tag.query';
 import { StringUtils } from '../../../shared/util/string-utils';
 import { ObjectUtils } from '../../../shared/util/object-utils';
-import { CreateTransactionPayload } from '../../../api/transaction/dto/create-transaction.payload';
-import { TransactionDetailed } from '../../../api/transaction/transaction';
 import { AutoUnsubComponent } from '../../../shared/util/auto-unsub.component';
 import { IonChip, IonIcon, IonLabel } from '@ionic/angular/standalone';
+import { CreateTransactionPayload } from '../../../api/transaction/dto/create-transaction.payload';
+import { RecurringTransactionPayload } from '../../../api/transaction/recurring/recurring-transaction.payload';
 
 @Component({
   selector: 'app-tag-multiselect-control',
@@ -37,8 +37,11 @@ export class TagMultiselectControlComponent
   private readonly tagQuery: TagQuery = new TagQueryImpl(null!);
 
   budgetId = input.required<number>();
-  form = input.required<DeepFormified<CreateTransactionPayload>>();
-  transaction = input<TransactionDetailed>();
+  form = input.required<
+    | DeepFormified<CreateTransactionPayload>
+    | DeepFormified<RecurringTransactionPayload>
+  >();
+  existingTags = input<Tag[]>();
   shouldInitTags = input<boolean>();
 
   tags: Tag[] = [];
@@ -65,9 +68,9 @@ export class TagMultiselectControlComponent
       const val = this.shouldInitTags();
       if (val) {
         await this.fetchedTagsOnce;
-        const transaction = untracked(this.transaction);
-        if (transaction) {
-          this.initTagControls(transaction.tags);
+        const existingTags = untracked(this.existingTags);
+        if (!ObjectUtils.isNil(existingTags)) {
+          this.initTagControls(existingTags);
         }
 
         const form = untracked(this.form);

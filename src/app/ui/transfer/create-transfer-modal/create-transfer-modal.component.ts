@@ -11,7 +11,6 @@ import { LoaderComponent } from '../../../shared/loader/loader.component';
 import { FieldError } from '../../../shared/field-error/field-error';
 import { ErrorMessageComponent } from '../../../shared/field-error/error-message/error-message.component';
 import { IonButton, IonLabel } from '@ionic/angular/standalone';
-import { CategorySelectControlComponent } from '../../category/category-select-control/category-select-control.component';
 import { BudgetSelectControlComponent } from '../../budget/budget-select-control/budget-select-control.component';
 
 @Component({
@@ -24,7 +23,6 @@ import { BudgetSelectControlComponent } from '../../budget/budget-select-control
     IonButton,
     ReactiveFormsModule,
     IonLabel,
-    CategorySelectControlComponent,
     BudgetSelectControlComponent,
   ],
 })

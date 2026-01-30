@@ -34,7 +34,7 @@ export class CreateBudgetModal
   ngOnInit(): void {
     queueMicrotask(() => {
       const cfg = this.shellConfig() as ShellConfigHeader;
-      cfg.title = 'Create Budget Modal';
+      cfg.title = 'Create Budget';
       cfg.showCloseButton = true;
     });
   }

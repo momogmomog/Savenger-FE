@@ -39,6 +39,13 @@
       </div>
       <span>Transfer</span>
     </div>
+
+    <div class="action-item" (click)="showMoreTransactionOptions()">
+      <div class="action-btn other">
+        <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+      </div>
+      <span>More</span>
+    </div>
   </div>
 
   @for (group of groupedTransactions(); track group.dateLabel) {

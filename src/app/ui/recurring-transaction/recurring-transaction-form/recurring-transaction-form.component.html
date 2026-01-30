@@ -1,0 +1,60 @@
+<form #recurringTransactionForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div>
+    <app-field-error
+      [errors]="errors()"
+      fieldName=""></app-field-error>
+
+    <div class="ion-margin-top">
+      <app-select formControlName="type" [options]="transactionTypeOptions"></app-select>
+      <app-field-error [errors]="errors()" fieldName="type"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-input
+        type="number"
+        placeholder="Amount"
+        formControlName="amount"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top recurrence-picker-container"
+         [class.ng-invalid]="form.controls.recurringRule.invalid"
+         [class.ng-dirty]="form.controls.recurringRule.touched">
+      <ion-input
+        label="Recurrence"
+        label-placement="floating"
+        [readonly]="true"
+        [value]="selectedRecurrenceText()"
+        (click)="selectRecurrence()"
+        class="recurrence-picker"
+        [class.status-required]="form.controls.recurringRule.invalid && !form.controls.recurringRule.touched"
+      >
+        <ion-icon slot="start" class="ion-margin-end" name="calendar-clear-outline" aria-hidden="true"></ion-icon>
+        <ion-icon slot="end" name="chevron-down-outline" aria-hidden="true"></ion-icon>
+      </ion-input>
+
+      <app-field-error [errors]="errors()" fieldName="recurringRule"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-category-select-control formControlName="categoryId"
+                                   [budgetId]="budgetId()"></app-category-select-control>
+      <app-field-error [errors]="errors()" fieldName="categoryId"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-tag-multiselect-control
+        [budgetId]="budgetId()"
+        [form]="form"
+        [shouldInitTags]="initTags()"
+        [existingTags]=""></app-tag-multiselect-control>
+    </div>
+
+    <div class="ion-margin-top ion-text-end">
+      <ion-button [form]="recurringTransactionForm"
+                  type="submit"
+                  [disabled]="!form.valid">Save
+      </ion-button>
+    </div>
+  </div>
+</form>

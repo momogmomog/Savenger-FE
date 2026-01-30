@@ -1,0 +1,149 @@
+<ion-list lines="none" class="rrule-container">
+  <ion-item class="input-item">
+    <ion-label position="stacked" color="medium">Repeat every</ion-label>
+    <div class="freq-wrapper">
+      <ion-input
+        type="number"
+        [value]="interval()"
+        (ionInput)="interval.set(+$event.detail.value!)"
+        class="interval-input"
+      >
+      </ion-input>
+
+      <ion-select
+        interface="popover"
+        [value]="freq()"
+        (ionChange)="freq.set($event.detail.value)"
+      >
+        <ion-select-option [value]="3">Days</ion-select-option>
+        <ion-select-option [value]="2">Weeks</ion-select-option>
+        <ion-select-option [value]="1">Months</ion-select-option>
+        <ion-select-option [value]="0">Years</ion-select-option>
+      </ion-select>
+    </div>
+  </ion-item>
+
+  @if (freq() === 2) {
+    <ion-item class="input-item">
+      <ion-label position="stacked" color="medium">On</ion-label>
+      <div class="weekdays-wrapper">
+        @for (day of weekDaysList; track day.val) {
+          <div
+            class="day-circle"
+            [class.selected]="selectedDays().includes(day.val)"
+            (click)="toggleDay(day.val)"
+          >
+            {{ day.label }}
+          </div>
+        }
+      </div>
+    </ion-item>
+  }
+
+  @if (freq() === 1) {
+    <ion-radio-group [value]="monthMode()" (ionChange)="monthMode.set($event.detail.value)">
+
+      <ion-item class="input-item">
+        <div class="month-row">
+          <ion-radio value="day" labelPlacement="end">On day</ion-radio>
+          <ion-select
+            interface="popover"
+            [value]="monthDay()"
+            (ionChange)="monthDay.set($event.detail.value)"
+            [disabled]="monthMode() !== 'day'"
+            class="month-select-small"
+          >
+            @for (num of monthDaysArray; track num) {
+              <ion-select-option [value]="num">{{ num }}</ion-select-option>
+            }
+          </ion-select>
+        </div>
+      </ion-item>
+
+      <ion-item class="input-item">
+        <div class="month-row">
+          <ion-radio value="pos" labelPlacement="end">On the</ion-radio>
+
+          <ion-select
+            interface="popover"
+            [value]="monthPos()"
+            (ionChange)="monthPos.set($event.detail.value)"
+            [disabled]="monthMode() !== 'pos'"
+            class="month-select-medium"
+          >
+            <ion-select-option [value]="1">First</ion-select-option>
+            <ion-select-option [value]="2">Second</ion-select-option>
+            <ion-select-option [value]="3">Third</ion-select-option>
+            <ion-select-option [value]="4">Fourth</ion-select-option>
+            <ion-select-option [value]="-1">Last</ion-select-option>
+          </ion-select>
+
+          <ion-select
+            interface="popover"
+            [value]="monthWeekday()"
+            (ionChange)="monthWeekday.set($event.detail.value)"
+            [disabled]="monthMode() !== 'pos'"
+            class="month-select-medium"
+          >
+            @for (day of weekDaysList; track day.val) {
+              <ion-select-option [value]="day.val">{{ day.fullLabel }}</ion-select-option>
+            }
+          </ion-select>
+        </div>
+      </ion-item>
+    </ion-radio-group>
+  }
+
+  <ion-item class="input-item">
+    <ion-label position="stacked" color="medium">End</ion-label>
+    <ion-segment
+      [value]="endType()"
+      (ionChange)="endType.set($event.detail.value!)"
+    >
+      <ion-segment-button value="never">
+        <ion-label>Never</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="date">
+        <ion-label>On Date</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="count">
+        <ion-label>After</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-item>
+
+  @if (endType() === 'date') {
+    <ion-item lines="none">
+      <ion-datetime-button datetime="untilDate"></ion-datetime-button>
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime
+            id="untilDate"
+            presentation="date"
+            [value]="untilDate()"
+            (ionChange)="untilDate.set($event.detail.value)"
+          >
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>
+    </ion-item>
+  }
+
+  @if (endType() === 'count') {
+    <ion-item lines="none">
+      <ion-input
+        label="Occurrences"
+        labelPlacement="start"
+        type="number"
+        [value]="count()"
+        (ionInput)="count.set(+$event.detail.value!)"
+        placeholder="e.g. 10"
+      >
+      </ion-input>
+    </ion-item>
+  }
+
+  <ion-note class="ion-padding-start ion-margin-top" color="primary">
+    {{ humanReadableText() }}
+  </ion-note>
+</ion-list>

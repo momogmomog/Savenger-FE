@@ -25,10 +25,13 @@ import { TransactionType } from '../../../api/transaction/transaction.type';
 import { addIcons } from 'ionicons';
 import {
   add,
+  calendarOutline,
+  ellipsisHorizontalOutline,
   ellipsisVertical,
   filter,
   funnel,
   remove,
+  repeatOutline,
   swapHorizontalOutline,
 } from 'ionicons/icons';
 
@@ -50,6 +53,8 @@ import {
 } from '../transaction-details-modal/transaction-details.modal';
 import { TransfersModal } from '../../transfer/transfers-modal/transfers.modal';
 import { TransfersModalPayload } from '../../transfer/transfers-modal/transfers.modal.payload';
+import { CreateRecurringTransactionModal } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal';
+import { CreateRecurringTransactionModalPayload } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal.payload';
 
 @Component({
   selector: 'app-list-transactions',
@@ -118,11 +123,14 @@ export class ListTransactionsComponent implements OnInit {
   ) {
     addIcons({
       ellipsisVertical,
+      ellipsisHorizontalOutline,
       add,
       remove,
       filter,
       funnel,
       swapHorizontalOutline,
+      calendarOutline,
+      repeatOutline,
     });
 
     effect(() => {
@@ -209,6 +217,47 @@ export class ListTransactionsComponent implements OnInit {
         await this.transactionsChanged();
       }
     });
+  }
+
+  async showMoreTransactionOptions(): Promise<void> {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'More Options',
+      buttons: [
+        {
+          text: 'Pre-payment',
+          icon: 'calendar-outline',
+          handler: (): void => {
+            alert('prepayments!!');
+          },
+        },
+        {
+          text: 'Recurring Transaction',
+          icon: 'repeat-outline',
+          handler: async (): Promise<void> => {
+            const resp = await this.modalService.openAndWait(
+              CreateRecurringTransactionModal,
+              new CreateRecurringTransactionModalPayload(this.budget().id),
+              {
+                shellType: ShellType.HEADER,
+                title: '',
+              },
+            );
+
+            resp.ifConfirmed(async (data): Promise<void> => {
+              if (data?.id) {
+                await this.transactionsChanged();
+              }
+            });
+          },
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          data: { action: 'cancel' },
+        },
+      ],
+    });
+    await actionSheet.present();
   }
 
   async presentFilterOptions(): Promise<void> {

@@ -1,0 +1,75 @@
+.rrule-container {
+  border-radius: 10px;
+}
+
+.freq-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.interval-input {
+  max-width: 80px;
+  text-align: center;
+  background: var(--ion-color-step-100);
+  border-radius: 8px;
+  --padding-start: 10px;
+}
+
+.weekdays-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.day-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ion-color-step-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--ion-text-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.day-circle.selected {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+}
+
+/* --- NEW MONTH STYLES --- */
+.month-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 5px;
+
+  ion-radio {
+    font-size: 14px;
+    margin-right: 5px;
+    --color: var(--ion-color-medium);
+  }
+}
+
+.month-select-small {
+  max-width: 80px;
+  background: var(--ion-color-step-100);
+  border-radius: 8px;
+  padding: 0 10px;
+  flex: 1;
+}
+
+.month-select-medium {
+  flex: 1;
+  background: var(--ion-color-step-100);
+  border-radius: 8px;
+  padding: 0 10px;
+}

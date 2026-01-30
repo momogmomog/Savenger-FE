@@ -44,6 +44,6 @@ export class TransactionSearchQueryImpl
   implements TransactionSearchQuery
 {
   page: PageRequest = new PageRequestImpl(0, DEFAULT_PAGE_SIZE);
-  sort: SortQuery = { field: 'amount', direction: SortDirection.DESC };
+  sort: SortQuery = { field: 'id', direction: SortDirection.DESC };
   override revised: boolean | null = false;
 }
