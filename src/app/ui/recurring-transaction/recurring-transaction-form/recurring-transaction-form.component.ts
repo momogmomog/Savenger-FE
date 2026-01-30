@@ -97,7 +97,6 @@ export class RecurringTransactionFormComponent implements OnInit {
     resp.ifConfirmed((rRule) => {
       if (rRule) {
         this.selectedRecurrenceText.set(rRule.toText());
-        this.form.controls.recurringRule.setValue(rRule.toString());
       }
     });
   }

@@ -20,7 +20,6 @@ import { RRuleUtils } from '../../util/rrule-utils';
   ],
 })
 export class RrulePickerComponent implements ControlValueAccessor {
-  // Updated list with full labels for the dropdown
   readonly weekDaysList = [
     { label: 'M', fullLabel: 'Monday', val: RRule.MO },
     { label: 'T', fullLabel: 'Tuesday', val: RRule.TU },
@@ -35,13 +34,12 @@ export class RrulePickerComponent implements ControlValueAccessor {
 
   freq = signal<Frequency>(RRule.WEEKLY);
   interval = signal<number>(1);
-  selectedDays = signal<any[]>([]); // For Weekly: Array of RRule weekdays
+  selectedDays = signal<any[]>([]);
 
-  // -- New Monthly Signals --
-  monthMode = signal<'day' | 'pos'>('day'); // 'day' = On Day 4, 'pos' = On First Sunday
-  monthDay = signal<number>(1); // 1-31
-  monthPos = signal<number>(1); // 1, 2, 3, 4, -1
-  monthWeekday = signal<any>(RRule.MO); // Specific weekday for month pos
+  monthMode = signal<'day' | 'pos'>('day');
+  monthDay = signal<number>(1);
+  monthPos = signal<number>(1);
+  monthWeekday = signal<any>(RRule.MO);
 
   endType = signal<SegmentValue>('never');
   count = signal<number>(10);
@@ -53,12 +51,10 @@ export class RrulePickerComponent implements ControlValueAccessor {
       interval: this.interval() || 1,
     };
 
-    // 1. Weekly Logic
     if (this.freq() === RRule.WEEKLY && this.selectedDays().length > 0) {
       options.byweekday = this.selectedDays();
     }
 
-    // 2. Monthly Logic
     if (this.freq() === RRule.MONTHLY) {
       if (this.monthMode() === 'day') {
         options.bymonthday = this.monthDay();
@@ -69,25 +65,16 @@ export class RrulePickerComponent implements ControlValueAccessor {
       }
     }
 
-    // End Condition
     if (this.endType() === 'count') {
       options.count = this.count();
     } else if (this.endType() === 'date' && this.untilDate()) {
       options.until = new Date(this.untilDate());
     }
 
-    try {
-      const rule = new RRule(options);
-      return rule.toString();
-    } catch (err) {
-      console.warn(err);
-      return '';
-    }
+    return RRuleUtils.toRRuleString(options);
   });
 
   humanReadableText = computed(() => {
-    // If you don't have RRuleUtils in this context, use:
-    // try { return RRule.fromString(this.rruleValue()).toText(); } catch { return ''; }
     return RRuleUtils.toHumanReadableText(this.rruleValue());
   });
 
@@ -110,7 +97,6 @@ export class RrulePickerComponent implements ControlValueAccessor {
       this.interval.set(rule.options.interval);
       this.selectedDays.set(rule.options.byweekday || []);
 
-      // Parse Monthly Specifics
       if (rule.options.freq === RRule.MONTHLY) {
         if (rule.options.bysetpos) {
           this.monthMode.set('pos');
@@ -120,7 +106,6 @@ export class RrulePickerComponent implements ControlValueAccessor {
               : rule.options.bysetpos,
           );
 
-          // byweekday can be an array in RRule options, grab the first one
           const day = Array.isArray(rule.options.byweekday)
             ? rule.options.byweekday[0]
             : rule.options.byweekday;

@@ -3,6 +3,7 @@ import { HttpClientSecuredService } from '../../../shared/http/http-client-secur
 import { RecurringTransactionPayload } from './recurring-transaction.payload';
 import { Observable } from 'rxjs';
 import { RecurringTransaction } from './recurring-transaction';
+import { Endpoints } from '../../../shared/http/endpoints';
 
 @Injectable({ providedIn: 'root' })
 export class RecurringTransactionRepository {
@@ -12,7 +13,7 @@ export class RecurringTransactionRepository {
     payload: RecurringTransactionPayload,
   ): Observable<RecurringTransaction> {
     return this.http.post<RecurringTransactionPayload, RecurringTransaction>(
-      'TODO',
+      Endpoints.RECURRING_TRANSACTIONS,
       payload,
     );
   }
