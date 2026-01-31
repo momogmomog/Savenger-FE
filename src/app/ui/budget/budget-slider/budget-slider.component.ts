@@ -4,7 +4,6 @@ import { Budget } from '../../../api/budget/budget';
 import { UiSwiperComponent } from '../../../shared/ui-swiper/ui-swiper.component';
 import { BudgetSliderItemComponent } from './budget-slider-item.component';
 import { BudgetSliderService } from './budget-slider.service';
-import { BudgetQuery, BudgetQueryImpl } from '../../../api/budget/budget.query';
 import { BudgetService } from '../../../api/budget/budget.service';
 import { STORAGE_CURRENT_BUDGET_ID } from '../../../shared/general.constants';
 import { BudgetDetailsModal } from '../budget-details-modal/budget-details.modal';
@@ -40,9 +39,7 @@ export class BudgetSliderComponent
   extends AutoUnsubComponent
   implements OnInit
 {
-  private budgetQuery: BudgetQuery = new BudgetQueryImpl();
-
-  budgets = signal<Budget[]>([]);
+  budgets = this.budgetSliderService.fetchedBudgets;
   activeSlideIndex = signal<number>(0);
 
   currentBudget = this.budgetSliderService.currentBudget;
@@ -66,8 +63,7 @@ export class BudgetSliderComponent
       if (index >= 0) {
         this.activeSlideIndex.set(index);
       } else {
-        const newList = [...currentList, targetBudget];
-        this.budgets.set(newList);
+        const newList = this.budgetSliderService.addToBudgetList(targetBudget);
         this.activeSlideIndex.set(newList.length - 1);
       }
     });
@@ -90,18 +86,14 @@ export class BudgetSliderComponent
   }
 
   async ngOnInit(): Promise<void> {
-    this.sub = this.userService.currentUser$.subscribe((user) => {
+    this.sub = this.userService.currentUser$.subscribe(async (user) => {
       console.log(user);
-      this.initialize();
+      await this.initialize();
     });
   }
 
   private async initialize(): Promise<void> {
-    const resp = await this.budgetService.search(this.budgetQuery);
-    const fetchedBudgets = resp.response.content;
-
-    this.budgets.set(fetchedBudgets);
-    void this.budgetSliderService.initializeFromStorage(fetchedBudgets);
+    await this.budgetSliderService.initializeFromStorage();
   }
 
   handleAccountSwipe(budget: Budget): void {

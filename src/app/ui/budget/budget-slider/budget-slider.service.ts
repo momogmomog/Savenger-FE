@@ -8,6 +8,7 @@ import {
   EmptyBudgetStatistics,
 } from '../../../api/budget/budget.statistics';
 import { BudgetService } from '../../../api/budget/budget.service';
+import { BudgetQuery, BudgetQueryImpl } from '../../../api/budget/budget.query';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetSliderService {
@@ -20,15 +21,18 @@ export class BudgetSliderService {
   );
 
   private storageInitialized = false;
+  private budgetQuery: BudgetQuery = new BudgetQueryImpl();
 
   private readonly _currentCategories = signal<Category[]>([]);
   private readonly _currentStatistic = signal<BudgetStatistics>(
     new EmptyBudgetStatistics(),
   );
+  private readonly _fetchedBudgets = signal<Budget[]>([]);
 
   public readonly currentBudget = this._currentBudget.asReadonly();
   public readonly currentCategories = this._currentCategories.asReadonly();
   public readonly currentStatistic = this._currentStatistic.asReadonly();
+  public readonly fetchedBudgets = this._fetchedBudgets.asReadonly();
 
   constructor(
     private categoryService: CategoryService,
@@ -74,23 +78,39 @@ export class BudgetSliderService {
     }
   }
 
-  public async initializeFromStorage(budgets: Budget[]): Promise<void> {
-    if (budgets.length === 0 || this.storageInitialized) return;
+  public async initializeFromStorage(): Promise<void> {
+    if (this.storageInitialized) {
+      return;
+    }
+
+    const resp = await this.budgetService.search(this.budgetQuery);
+    const budgets = resp.response.content;
+
+    if (budgets.length === 0) return;
+
     console.log('Initializing budget from storage');
 
     const storedId = Number(localStorage.getItem(STORAGE_CURRENT_BUDGET_ID));
     const found = budgets.find((b) => b.id === storedId);
 
+    this._fetchedBudgets.set(budgets);
     if (found) {
       await this.setBudget(found);
     } else {
       // Default to first if storage is invalid/empty
       await this.setBudget(budgets[0]);
-      this.storageInitialized = true;
     }
+    this.storageInitialized = true;
   }
 
   public isStorageInitialized(): boolean {
     return this.storageInitialized;
+  }
+
+  public addToBudgetList(budget: Budget): Budget[] {
+    const newList = [...this._fetchedBudgets(), budget];
+    this._fetchedBudgets.set(newList);
+
+    return newList;
   }
 }
