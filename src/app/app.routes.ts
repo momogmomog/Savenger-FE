@@ -4,12 +4,20 @@ import { TabsPage } from './ui/tabs/tabs/tabs.page';
 import { ListBudgetsComponent } from './ui/budget/list-budgets/list-budgets.component';
 import { ListTransactionsComponent } from './ui/transaction/list-transactions/list-transactions.component';
 import { ListAnalyticsComponent } from './ui/analytics/list-analytics/list-analytics.component';
+import { ListRevisionsComponent } from './ui/revisions/list-revisions/list-revisions.component';
 
 const tab1Routes: Routes = [
   {
     path: '',
     loadComponent: () =>
       import('./ui/tabs/tab1/tab1.page').then((m) => m.Tab1Page),
+    children: [
+      {
+        path: '',
+        component: ListRevisionsComponent,
+        children: [],
+      },
+    ],
   },
 ];
 
