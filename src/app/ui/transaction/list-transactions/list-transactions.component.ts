@@ -55,6 +55,7 @@ import { TransfersModal } from '../../transfer/transfers-modal/transfers.modal';
 import { TransfersModalPayload } from '../../transfer/transfers-modal/transfers.modal.payload';
 import { CreateRecurringTransactionModal } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal';
 import { CreateRecurringTransactionModalPayload } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal.payload';
+import { RecurringTransactionsPreviewComponent } from '../../recurring-transaction/recurring-transactions-preview/recurring-transactions-preview.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -78,6 +79,7 @@ import { CreateRecurringTransactionModalPayload } from '../../recurring-transact
     IonText,
     DatePipe,
     IonCard,
+    RecurringTransactionsPreviewComponent,
   ],
 })
 export class ListTransactionsComponent implements OnInit {

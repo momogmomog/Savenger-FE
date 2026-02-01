@@ -1,0 +1,161 @@
+:host {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.preview-card {
+  border-radius: 24px; // Matching your list-transactions card style
+  background: var(--ion-card-background);
+  box-shadow: none; // Flat look often looks cleaner in lists, or remove to keep shadow
+  border: 1px solid var(--ion-color-step-100, rgba(255,255,255,0.05));
+  margin: 0;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  .title-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    ion-icon {
+      font-size: 1.2rem;
+    }
+
+    .card-title {
+      color: white;
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+  }
+
+  .filter-btn {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    font-size: 0.8rem;
+    height: 28px;
+
+    span {
+      margin-right: 4px;
+    }
+  }
+}
+
+.state-container {
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  &.empty {
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+  }
+}
+
+// Mimicking TransactionCardComponent Styles
+.transaction-item {
+  --background: transparent;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 0;
+  margin-bottom: 4px;
+
+  .type-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-right: 12px;
+
+    // Default / Transfer
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+    color: var(--ion-color-primary);
+
+    &.EXPENSE {
+      background: rgba(var(--ion-color-danger-rgb), 0.1);
+      color: var(--ion-color-danger);
+    }
+
+    &.INCOME {
+      background: rgba(var(--ion-color-success-rgb), 0.1);
+      color: var(--ion-color-success);
+    }
+  }
+
+  .category-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+
+  .meta-info {
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+    display: flex;
+    align-items: center;
+
+    .dot {
+      margin: 0 4px;
+      font-size: 0.6rem;
+    }
+
+    .recurrence {
+      text-transform: capitalize;
+    }
+  }
+
+  .amount-wrapper {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+
+    .amount {
+      font-weight: 700;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    .auto-badge {
+      font-size: 0.6rem;
+      background: var(--ion-color-step-150);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--ion-text-color);
+      opacity: 0.8;
+    }
+  }
+}
+
+.footer-action {
+  margin-top: 8px;
+
+  .view-all-btn {
+    --border-radius: 12px;
+    --border-color: var(--ion-color-step-150);
+    --color: var(--ion-color-medium);
+    font-size: 0.85rem;
+    height: 36px;
+    margin: 0;
+  }
+}
+
+// Popover specific styles
+.popover-content {
+  min-width: 250px;
+}

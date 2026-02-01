@@ -1,5 +1,4 @@
 import { TransactionType } from '../transaction.type';
-import { Prepayment } from '../../prepayment/prepayment';
 
 export interface RecurringTransaction {
   id: number;
@@ -12,5 +11,4 @@ export interface RecurringTransaction {
   completed: boolean;
   categoryId: number;
   budgetId: number;
-  prepayment: Prepayment;
 }

@@ -48,6 +48,9 @@
     </div>
   </div>
 
+  <app-recurring-transactions-preview
+    [budgetId]="budget().id"></app-recurring-transactions-preview>
+
   @for (group of groupedTransactions(); track group.dateLabel) {
 
     <div class="ion-padding-start ion-padding-bottom ion-margin-top">
