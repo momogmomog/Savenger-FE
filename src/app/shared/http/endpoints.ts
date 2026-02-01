@@ -20,6 +20,7 @@ export class Endpoints {
   public static readonly PREPAYMENTS = '/prepayments';
   public static readonly PAY_R_TRANSACTION = '/recurring-transaction/{rTransactionId}/pay';
   public static readonly RECURRING_TRANSACTIONS = '/recurring-transactions';
+  public static readonly RECURRING_TRANSACTIONS_SEARCH = '/recurring-transactions/search';
   public static readonly TRANSFERS = '/transfers';
   public static readonly TRANSFER = '/transfers/:id';
   public static readonly TRANSFERS_SEARCH = '/transfers/search';
