@@ -229,7 +229,7 @@ export class ListTransactionsComponent implements OnInit {
           text: 'View Upcoming Transactions',
           icon: 'time-outline',
           handler: (): void => {
-            alert('prepayments!!');
+            alert('upcoming transactions!!');
           },
         },
         {

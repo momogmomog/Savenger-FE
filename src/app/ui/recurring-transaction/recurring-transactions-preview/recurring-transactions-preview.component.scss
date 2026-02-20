@@ -4,9 +4,9 @@
 }
 
 .preview-card {
-  border-radius: 24px; // Matching your list-transactions card style
+  border-radius: 24px;
   background: var(--ion-card-background);
-  box-shadow: none; // Flat look often looks cleaner in lists, or remove to keep shadow
+  box-shadow: none;
   border: 1px solid var(--ion-color-step-100, rgba(255,255,255,0.05));
   margin: 0;
 }
@@ -63,7 +63,7 @@
   }
 }
 
-// Mimicking TransactionCardComponent Styles
+
 .transaction-item {
   --background: transparent;
   --padding-start: 16px;
@@ -81,7 +81,6 @@
     font-size: 1.2rem;
     margin-right: 12px;
 
-    // Default / Transfer
     background: rgba(var(--ion-color-primary-rgb), 0.1);
     color: var(--ion-color-primary);
 
@@ -155,7 +154,6 @@
   }
 }
 
-// Popover specific styles
 .popover-content {
   min-width: 250px;
 }

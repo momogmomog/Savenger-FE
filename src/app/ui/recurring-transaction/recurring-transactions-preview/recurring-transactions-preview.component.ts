@@ -88,7 +88,6 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
       eyeOutline,
     });
 
-    // 1. Effect to handle Budget ID changes
     effect(async () => {
       const bId = this.budgetId();
 
@@ -102,7 +101,6 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
       }
     });
 
-    // 2. Effect to handle Date Filter changes
     this.lookAheadDateControl.valueChanges.subscribe((date) => {
       if (date) {
         this.currentMaxDate.set(date);
@@ -140,11 +138,7 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
 
   openAllPendingModal(): void {
     // TODO: Implement the modal opening logic here
-    // This would likely open a modal listing ALL recurring transactions
-    // passing the budgetId.
     console.log('Open modal for all pending items');
-    // Example:
-    // this.modalService.open(RecurringTransactionsListModal, ...);
   }
 
   getCategoryName(id: number): string {
