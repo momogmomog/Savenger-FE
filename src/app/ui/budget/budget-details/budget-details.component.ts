@@ -40,6 +40,7 @@ import {
   pencilOutline,
   peopleOutline,
   personAddOutline,
+  pricetagsOutline,
   stopCircleOutline,
   swapHorizontalOutline,
   trashOutline,
@@ -55,6 +56,9 @@ import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { Category } from '../../../api/category/category';
 import { CategoryService } from '../../../api/category/category.service';
 import { CreateCategoryModal } from '../../category/create-category.modal';
+import { TagService } from '../../../api/tag/tag.service';
+import { Tag } from '../../../api/tag/tag';
+import { CreateTagModal } from '../../tag/create-tag.modal';
 
 @Component({
   selector: 'app-budget-details',
@@ -94,10 +98,12 @@ export class BudgetDetailsPage implements OnInit {
   private actionSheetCtrl = inject(ActionSheetController);
   private modalService = inject(ModalService);
   private categoryService = inject(CategoryService);
+  private tagService = inject(TagService);
 
   routes = AppRoutingPath;
   stats = model.required<BudgetStatistics>();
   protected categories = model<Category[]>([]);
+  protected tags = model<Tag[]>([]);
 
   navigateAway = output<void>();
   editTriggered = output<void>();
@@ -133,17 +139,23 @@ export class BudgetDetailsPage implements OnInit {
       trashOutline,
       personAddOutline,
       folderOpenOutline,
+      pricetagsOutline,
     });
   }
 
   async ngOnInit(): Promise<void> {
     await this.loadCategories();
+    await this.loadTags();
   }
 
   private async loadCategories(): Promise<void> {
     this.categories.set(
       await this.categoryService.fetchAllCategories(this.stats().budget.id),
     );
+  }
+
+  private async loadTags(): Promise<void> {
+    this.tags.set(await this.tagService.fetchAllTags(this.stats().budget.id));
   }
 
   async presentActionSheet(): Promise<void> {
@@ -198,6 +210,27 @@ export class BudgetDetailsPage implements OnInit {
             reload.ifConfirmed((reload) => {
               if (reload) {
                 void this.loadCategories();
+              }
+            });
+          },
+        },
+        {
+          text: 'Add Tag',
+          icon: 'pricetags-outline',
+          handler: async (): Promise<void> => {
+            const reload = await this.modalService.openAndWait(
+              CreateTagModal,
+              this.stats().budget,
+              {
+                shellType: ShellType.HEADER,
+                title: `Add Tag`,
+                showCloseButton: true,
+              },
+            );
+
+            reload.ifConfirmed((reload) => {
+              if (reload) {
+                void this.loadTags();
               }
             });
           },

@@ -80,6 +80,7 @@ export class UiSwiperComponent<T> implements AfterViewInit {
   swiperRef = viewChild.required<ElementRef>('swiperRef');
 
   private swiperInstance?: Swiper;
+  private pendingIndex: number | null = null;
 
   private activeSwipe: ProgrammaticSwipe | null = null;
 
@@ -87,7 +88,12 @@ export class UiSwiperComponent<T> implements AfterViewInit {
     effect(() => {
       const index = this.activeIndex();
 
-      if (index < 0 || !this.swiperInstance) {
+      if (index < 0) {
+        return;
+      }
+
+      if (!this.swiperInstance) {
+        this.pendingIndex = index;
         return;
       }
 
@@ -122,6 +128,11 @@ export class UiSwiperComponent<T> implements AfterViewInit {
 
     swiperEl.initialize();
     this.swiperInstance = swiperEl.swiper;
+    if (!ObjectUtils.isNil(this.pendingIndex)) {
+      const ind = this.pendingIndex;
+      this.pendingIndex = null;
+      this.scheduleSlide(ind);
+    }
   }
 
   onSlideChange(): void {

@@ -6,7 +6,7 @@ import {
   WrappedResponse,
 } from '../../shared/util/field-error-wrapper';
 import { Tag } from './tag';
-import { TagQuery } from './tag.query';
+import { TagQuery, TagQueryImpl } from './tag.query';
 import { EmptyPage, Page } from '../../shared/util/page';
 
 @Injectable({ providedIn: 'root' })
@@ -32,5 +32,25 @@ export class TagService {
     }
 
     return resp.response;
+  }
+
+  public async fetchAllTags(budgetId: number): Promise<Tag[]> {
+    const response: Tag[] = [];
+
+    const query = new TagQueryImpl(budgetId);
+
+    while (true) {
+      const pageResp = await this.search(query);
+      if (pageResp.content.length) {
+        response.push(...pageResp.content);
+        query.page.pageNumber++;
+
+        if (pageResp.page.totalPages >= query.page.pageNumber) {
+          return response;
+        }
+      } else {
+        return response;
+      }
+    }
   }
 }

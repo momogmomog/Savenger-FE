@@ -159,5 +159,37 @@
       </div>
     </ion-accordion>
 
+    <ion-accordion value="tags">
+      <ion-item slot="header" color="light">
+        <ion-icon slot="start" name="folder-open-outline"></ion-icon>
+        <ion-label>Tags</ion-label>
+        <ion-badge slot="end" color="primary">{{ tags().length }}</ion-badge>
+      </ion-item>
+      <div class="ion-padding-bottom" slot="content">
+        <ion-list lines="none">
+          @for (tag of tags(); track tag.id) {
+            <ion-item lines="none">
+              <ion-label>
+                <h3>{{ tag.tagName }}</h3>
+              </ion-label>
+              @if (tag.budgetCap) {
+                <span slot="end" class="ion-text-end text-danger font-bold">
+                  {{ tag.budgetCap | currency }} <ion-icon name="stop-circle-outline"></ion-icon>
+                </span>
+              } @else {
+                <span slot="end" class="ion-text-end text-danger font-bold">
+                  No Limit
+                </span>
+              }
+            </ion-item>
+          } @empty {
+            <div class="ion-padding ion-text-center text-medium">
+              No Tags
+            </div>
+          }
+        </ion-list>
+      </div>
+    </ion-accordion>
+
   </ion-accordion-group>
 </ion-content>
