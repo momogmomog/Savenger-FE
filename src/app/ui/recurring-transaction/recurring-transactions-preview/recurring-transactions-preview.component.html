@@ -24,29 +24,9 @@
 
       <ion-list lines="none">
         @for (item of upcomingTransactions(); track item.id) {
-          <ion-item [button]="true" [detail]="false" class="transaction-item">
-            <div slot="start" class="type-icon" [ngClass]="item.type">
-              <ion-icon [name]="getIcon(item.type)"></ion-icon>
-            </div>
-
-            <ion-label>
-              <h3 class="category-name">{{ getCategoryName(item.categoryId) }}</h3>
-              <p class="meta-info">
-                <span class="date">{{ item.nextDate | date: 'mediumDate'  }}</span>
-                <span class="dot">•</span>
-                <span class="recurrence">{{ RRuleUtils.toHumanReadableText(item.recurringRule) }}</span>
-              </p>
-            </ion-label>
-
-            <div slot="end" class="amount-wrapper">
-              <ion-text [color]="getColor(item.type)" class="amount">
-                {{ getSign(item.type) }}{{ item.amount | currency }}
-              </ion-text>
-              @if (item.autoExecute) {
-                <div class="auto-badge">Auto</div>
-              }
-            </div>
-          </ion-item>
+          <app-recurring-transaction-card
+            [transaction]="item"
+            [categoryName]="getCategoryName(item.categoryId)"></app-recurring-transaction-card>
         }
       </ion-list>
 

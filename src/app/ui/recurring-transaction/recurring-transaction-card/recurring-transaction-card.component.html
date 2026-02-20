@@ -1,0 +1,23 @@
+<ion-item [button]="true" [detail]="false" class="transaction-item">
+  <div slot="start" class="type-icon" [ngClass]="transaction().type">
+    <ion-icon [name]="getIcon(transaction().type)"></ion-icon>
+  </div>
+
+  <ion-label>
+    <h3 class="category-name">{{ categoryName() }}</h3>
+    <p class="meta-info">
+      <span class="date">{{ transaction().nextDate | date: 'mediumDate'  }}</span>
+      <span class="dot">•</span>
+      <span class="recurrence">{{ RRuleUtils.toHumanReadableText(transaction().recurringRule) }}</span>
+    </p>
+  </ion-label>
+
+  <div slot="end" class="amount-wrapper">
+    <ion-text [color]="getColor(transaction().type)" class="amount">
+      {{ getSign(transaction().type) }}{{ transaction().amount | currency }}
+    </ion-text>
+    @if (transaction().autoExecute) {
+      <div class="auto-badge">Auto</div>
+    }
+  </div>
+</ion-item>

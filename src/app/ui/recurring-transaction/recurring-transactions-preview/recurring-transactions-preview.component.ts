@@ -6,15 +6,13 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import {
   IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonIcon,
-  IonItem,
-  IonLabel,
   IonList,
   IonText,
 } from '@ionic/angular/standalone';
@@ -33,10 +31,10 @@ import { RecurringTransactionService } from '../../../api/transaction/recurring/
 import { ModalService } from '../../../shared/modal/modal.service';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
-import { TransactionType } from '../../../api/transaction/transaction.type';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
 import { EmptyBudget } from '../../../api/budget/budget';
+import { RecurringTransactionCardComponent } from '../recurring-transaction-card/recurring-transaction-card.component';
 
 @Component({
   selector: 'app-recurring-transactions-preview',
@@ -45,18 +43,16 @@ import { EmptyBudget } from '../../../api/budget/budget';
   standalone: true,
   imports: [
     CommonModule,
-    CurrencyPipe,
     DatePipe,
     IonCard,
     IonCardHeader,
     IonCardContent,
-    IonItem,
-    IonLabel,
     IonButton,
     IonIcon,
     IonList,
     IonText,
     ReactiveFormsModule,
+    RecurringTransactionCardComponent,
   ],
 })
 export class RecurringTransactionsPreviewComponent implements OnInit {
@@ -136,39 +132,8 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
     }
   }
 
-  openAllPendingModal(): void {
-    // TODO: Implement the modal opening logic here
-    console.log('Open modal for all pending items');
-  }
-
   getCategoryName(id: number): string {
     const cat = this.categories().find((c) => c.id === id);
     return cat ? cat.categoryName : 'Uncategorized';
-  }
-
-  getIcon(type: TransactionType): string {
-    switch (type) {
-      case TransactionType.INCOME:
-        return 'arrow-down-circle';
-      case TransactionType.EXPENSE:
-        return 'arrow-up-circle';
-      default:
-        return 'swap-horizontal';
-    }
-  }
-
-  getColor(type: TransactionType): string {
-    switch (type) {
-      case TransactionType.INCOME:
-        return 'success';
-      case TransactionType.EXPENSE:
-        return 'danger';
-      default:
-        return 'medium';
-    }
-  }
-
-  getSign(type: TransactionType): string {
-    return type === TransactionType.EXPENSE ? '-' : '+';
   }
 }
