@@ -1,49 +1,30 @@
-<ion-card class="preview-card">
-  <ion-card-header class="ion-no-padding">
-    <div class="header-row ion-padding-horizontal ion-padding-top">
-      <div class="title-section">
-        <ion-icon name="time-outline" color="primary"></ion-icon>
-        <ion-text color="light">
-          <h4 class="card-title">Upcoming</h4>
-        </ion-text>
+@if (upcomingTransactions().length) {
+  <ion-card class="preview-card">
+    <ion-card-header class="ion-no-padding">
+      <div class="header-row ion-padding-horizontal ion-padding-top">
+        <div class="title-section">
+          <ion-icon name="time-outline" color="primary"></ion-icon>
+          <ion-text color="light">
+            <h4 class="card-title">Upcoming ({{ totalUpcomingTransactions() }})</h4>
+          </ion-text>
+        </div>
+
+        <ion-button
+          fill="clear"
+          size="small"
+          class="filter-btn"
+          color="medium">
+          <span>Until {{ currentMaxDate() | date:'MM/dd' }}</span>
+          <ion-icon name="calendar-outline" slot="end"></ion-icon>
+        </ion-button>
       </div>
+    </ion-card-header>
 
-      <ion-button
-        id="date-trigger"
-        fill="clear"
-        size="small"
-        class="filter-btn"
-        color="medium">
-        <span>Until {{ currentMaxDate() | date:'MM/dd' }}</span>
-        <ion-icon name="calendar-outline" slot="end"></ion-icon>
-      </ion-button>
+    <ion-card-content class="ion-no-padding">
 
-      <ion-popover trigger="date-trigger" [dismissOnSelect]="true">
-        <ng-template>
-          <div class="popover-content ion-padding">
-            <ion-text color="medium"><small>Show transactions until:</small></ion-text>
-            <app-date-picker
-              [formControl]="lookAheadDateControl"
-              label="Until Date">
-            </app-date-picker>
-          </div>
-        </ng-template>
-      </ion-popover>
-    </div>
-  </ion-card-header>
-
-  <ion-card-content class="ion-no-padding">
-
-    @if (isLoading()) {
-      <div class="state-container">
-        <ion-spinner name="bubbles" color="primary"></ion-spinner>
-      </div>
-    }
-
-    @else if (upcomingTransactions().length > 0) {
       <ion-list lines="none">
         @for (item of upcomingTransactions(); track item.id) {
-          <ion-item button [detail]="false" class="transaction-item">
+          <ion-item [button]="true" [detail]="false" class="transaction-item">
             <div slot="start" class="type-icon" [ngClass]="item.type">
               <ion-icon [name]="getIcon(item.type)"></ion-icon>
             </div>
@@ -51,9 +32,9 @@
             <ion-label>
               <h3 class="category-name">{{ getCategoryName(item.categoryId) }}</h3>
               <p class="meta-info">
-                <span class="date">{{ item.nextDate | date:'MMM d' }}</span>
+                <span class="date">{{ item.nextDate | date: 'mediumDate'  }}</span>
                 <span class="dot">•</span>
-                <span class="recurrence">{{ item.recurringRule }}</span>
+                <span class="recurrence">{{ RRuleUtils.toHumanReadableText(item.recurringRule) }}</span>
               </p>
             </ion-label>
 
@@ -61,21 +42,14 @@
               <ion-text [color]="getColor(item.type)" class="amount">
                 {{ getSign(item.type) }}{{ item.amount | currency }}
               </ion-text>
-              @if(item.autoExecute) {
+              @if (item.autoExecute) {
                 <div class="auto-badge">Auto</div>
               }
             </div>
           </ion-item>
         }
       </ion-list>
-    }
 
-    @else {
-      <div class="state-container empty">
-        <ion-text color="medium">
-          <p>No upcoming payments due by {{ currentMaxDate() | date:'MMM d' }}</p>
-        </ion-text>
-      </div>
-    }
-  </ion-card-content>
-</ion-card>
+    </ion-card-content>
+  </ion-card>
+}

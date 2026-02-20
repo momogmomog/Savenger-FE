@@ -18,6 +18,7 @@ export interface BudgetFull extends Budget {
 }
 
 export class EmptyBudget implements BudgetFull {
+  public static readonly EMPTY_BUDGET_ID = -1;
   active = false;
   autoRevise = false;
   balance = 0;
@@ -25,7 +26,7 @@ export class EmptyBudget implements BudgetFull {
   budgetName = 'Empty Budget';
   dateStarted: string = new Date().toISOString();
   dueDate: string = new Date().toISOString();
-  id = -1;
+  id = EmptyBudget.EMPTY_BUDGET_ID;
   ownerId = -1;
   recurringRule = '';
   participants = [];

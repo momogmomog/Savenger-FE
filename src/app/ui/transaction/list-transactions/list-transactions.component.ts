@@ -226,6 +226,13 @@ export class ListTransactionsComponent implements OnInit {
       header: 'More Options',
       buttons: [
         {
+          text: 'View Upcoming Transactions',
+          icon: 'time-outline',
+          handler: (): void => {
+            alert('prepayments!!');
+          },
+        },
+        {
           text: 'Pre-payment',
           icon: 'calendar-outline',
           handler: (): void => {
