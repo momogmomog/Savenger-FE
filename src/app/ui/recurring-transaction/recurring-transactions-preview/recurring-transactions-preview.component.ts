@@ -10,8 +10,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import {
   IonButton,
   IonCard,
-  IonCardContent,
-  IonCardHeader,
   IonIcon,
   IonList,
   IonText,
@@ -35,6 +33,11 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
 import { EmptyBudget } from '../../../api/budget/budget';
 import { RecurringTransactionCardComponent } from '../recurring-transaction-card/recurring-transaction-card.component';
+import {
+  ListRecurringTransactionsModal,
+  ListRecurringTransactionsModalPayload,
+} from '../list-recurring-transactions/list-recurring-transactions.modal';
+import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 
 @Component({
   selector: 'app-recurring-transactions-preview',
@@ -45,8 +48,6 @@ import { RecurringTransactionCardComponent } from '../recurring-transaction-card
     CommonModule,
     DatePipe,
     IonCard,
-    IonCardHeader,
-    IonCardContent,
     IonButton,
     IonIcon,
     IonList,
@@ -135,5 +136,16 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
   getCategoryName(id: number): string {
     const cat = this.categories().find((c) => c.id === id);
     return cat ? cat.categoryName : 'Uncategorized';
+  }
+
+  async openListRecurringTransactions(): Promise<void> {
+    void this.modalService.openAndWait(
+      ListRecurringTransactionsModal,
+      new ListRecurringTransactionsModalPayload(this.budgetId()),
+      {
+        shellType: ShellType.HEADER,
+        title: 'Recurring Transactions',
+      },
+    );
   }
 }

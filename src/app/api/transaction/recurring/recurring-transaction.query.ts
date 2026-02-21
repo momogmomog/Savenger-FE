@@ -17,6 +17,7 @@ export interface RecurringTransactionQuery {
   amount: BetweenQuery<number> | null;
   prepaymentId: number | null;
   categoryIds: number[];
+  completed: boolean | null;
   debtId: number | null;
   tagIds: number[];
 }
@@ -37,6 +38,7 @@ export class RecurringTransactionQueryImpl
   amount: BetweenQuery<number> | null = null;
   prepaymentId: number | null = null;
   categoryIds: number[] = [];
+  completed: boolean | null = false;
   debtId: number | null = null;
   tagIds: number[] = [];
 
