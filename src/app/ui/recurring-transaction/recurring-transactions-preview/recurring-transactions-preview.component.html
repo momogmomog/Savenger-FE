@@ -1,35 +1,29 @@
 @if (upcomingTransactions().length) {
   <ion-card class="preview-card">
-    <ion-card-header class="ion-no-padding">
-      <div class="header-row ion-padding-horizontal ion-padding-top">
-        <div class="title-section">
-          <ion-icon name="time-outline" color="primary"></ion-icon>
-          <ion-text color="light">
-            <h4 class="card-title">Upcoming ({{ totalUpcomingTransactions() }})</h4>
-          </ion-text>
-        </div>
-
-        <ion-button
-          fill="clear"
-          size="small"
-          class="filter-btn"
-          color="medium">
-          <span>Until {{ currentMaxDate() | date:'MM/dd' }}</span>
-          <ion-icon name="calendar-outline" slot="end"></ion-icon>
-        </ion-button>
+    <div class="header-row ion-padding-horizontal ion-padding-top">
+      <div class="title-section">
+        <ion-icon name="time-outline" color="primary"></ion-icon>
+        <ion-text color="light">
+          <h4 class="card-title">Upcoming ({{ totalUpcomingTransactions() }})</h4>
+        </ion-text>
       </div>
-    </ion-card-header>
 
-    <ion-card-content class="ion-no-padding">
+      <ion-button
+        fill="clear"
+        size="small"
+        class="filter-btn"
+        color="medium">
+        <span>Until {{ currentMaxDate() | date:'MM/dd' }}</span>
+        <ion-icon name="calendar-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
 
-      <ion-list lines="none">
-        @for (item of upcomingTransactions(); track item.id) {
-          <app-recurring-transaction-card
-            [transaction]="item"
-            [categoryName]="getCategoryName(item.categoryId)"></app-recurring-transaction-card>
-        }
-      </ion-list>
-
-    </ion-card-content>
+    <ion-list lines="none">
+      @for (item of upcomingTransactions(); track item.id) {
+        <app-recurring-transaction-card
+          [transaction]="item"
+          [categoryName]="getCategoryName(item.categoryId)"></app-recurring-transaction-card>
+      }
+    </ion-list>
   </ion-card>
 }

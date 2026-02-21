@@ -48,8 +48,10 @@
     </div>
   </div>
 
-  <app-recurring-transactions-preview
-    [budgetId]="budget().id"></app-recurring-transactions-preview>
+  <div style="margin: 10px;">
+    <app-recurring-transactions-preview
+      [budgetId]="budget().id"></app-recurring-transactions-preview>
+  </div>
 
   @for (group of groupedTransactions(); track group.dateLabel) {
 
