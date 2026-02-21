@@ -33,11 +33,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
 import { EmptyBudget } from '../../../api/budget/budget';
 import { RecurringTransactionCardComponent } from '../recurring-transaction-card/recurring-transaction-card.component';
-import {
-  ListRecurringTransactionsModal,
-  ListRecurringTransactionsModalPayload,
-} from '../list-recurring-transactions/list-recurring-transactions.modal';
-import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
+import { ObjectUtils } from '../../../shared/util/object-utils';
 
 @Component({
   selector: 'app-recurring-transactions-preview',
@@ -61,6 +58,7 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
 
   private recurringTransactionService = inject(RecurringTransactionService);
   private modalService = inject(ModalService);
+  private modalPresetsService = inject(ModalPresetsService);
   private budgetSliderService = inject(BudgetSliderService);
 
   budgetId = input.required<number>();
@@ -138,14 +136,27 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
     return cat ? cat.categoryName : 'Uncategorized';
   }
 
+  async onTransactionClick(transaction: RecurringTransaction): Promise<void> {
+    const maybeRTransaction =
+      await this.modalPresetsService.openRecurringTransactionDetails(
+        transaction,
+        this.getCategoryName(transaction.categoryId) || '',
+      );
+
+    if (!ObjectUtils.isNil(maybeRTransaction)) {
+      await this.refreshData();
+    }
+  }
+
   async openListRecurringTransactions(): Promise<void> {
-    void this.modalService.openAndWait(
-      ListRecurringTransactionsModal,
-      new ListRecurringTransactionsModalPayload(this.budgetId()),
-      {
-        shellType: ShellType.HEADER,
-        title: 'Recurring Transactions',
-      },
+    const resp = await this.modalPresetsService.openListRecurringTransactions(
+      this.budgetId(),
     );
+
+    resp.ifConfirmed(async (refresh) => {
+      if (refresh) {
+        await this.refreshData();
+      }
+    });
   }
 }

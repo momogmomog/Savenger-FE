@@ -56,10 +56,7 @@ import { TransfersModalPayload } from '../../transfer/transfers-modal/transfers.
 import { CreateRecurringTransactionModal } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal';
 import { CreateRecurringTransactionModalPayload } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal.payload';
 import { RecurringTransactionsPreviewComponent } from '../../recurring-transaction/recurring-transactions-preview/recurring-transactions-preview.component';
-import {
-  ListRecurringTransactionsModal,
-  ListRecurringTransactionsModalPayload,
-} from '../../recurring-transaction/list-recurring-transactions/list-recurring-transactions.modal';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 
 @Component({
   selector: 'app-list-transactions',
@@ -126,6 +123,7 @@ export class ListTransactionsComponent implements OnInit {
     private actionSheetCtrl: ActionSheetController,
     private alertCtrl: AlertController,
     private modalService: ModalService,
+    private modalPresetsService: ModalPresetsService,
   ) {
     addIcons({
       ellipsisVertical,
@@ -232,15 +230,17 @@ export class ListTransactionsComponent implements OnInit {
         {
           text: 'View Upcoming Transactions',
           icon: 'time-outline',
-          handler: (): void => {
-            this.modalService.openAndWait(
-              ListRecurringTransactionsModal,
-              new ListRecurringTransactionsModalPayload(this.budget().id),
-              {
-                shellType: ShellType.HEADER,
-                title: 'Upcoming Transactions',
-              },
-            );
+          handler: async (): Promise<void> => {
+            const resp =
+              await this.modalPresetsService.openListRecurringTransactions(
+                this.budget().id,
+              );
+
+            resp.ifConfirmed(async (refresh) => {
+              if (refresh) {
+                await this.onFilterChange();
+              }
+            });
           },
         },
         {

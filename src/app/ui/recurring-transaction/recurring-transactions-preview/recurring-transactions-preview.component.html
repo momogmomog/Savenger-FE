@@ -22,6 +22,7 @@
     <ion-list lines="none">
       @for (item of upcomingTransactions(); track item.id) {
         <app-recurring-transaction-card
+          (onClick)="onTransactionClick($event)"
           [transaction]="item"
           [categoryName]="getCategoryName(item.categoryId)"></app-recurring-transaction-card>
       }

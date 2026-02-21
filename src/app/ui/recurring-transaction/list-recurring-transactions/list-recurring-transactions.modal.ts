@@ -27,6 +27,7 @@ import { TransactionType } from '../../../api/transaction/transaction.type';
 import { ObjectUtils } from '../../../shared/util/object-utils';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
 import { RecurringTransactionCardComponent } from '../recurring-transaction-card/recurring-transaction-card.component';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 
 export class ListRecurringTransactionsModalPayload {
   constructor(public readonly budgetId: number) {}
@@ -60,6 +61,7 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   private actionSheetCtrl = inject(ActionSheetController);
   private alertCtrl = inject(AlertController);
   private budgetSliderService = inject(BudgetSliderService);
+  private modalPresetsService = inject(ModalPresetsService);
 
   categories = this.budgetSliderService.currentCategories;
   transactionsList = signal<RecurringTransaction[]>([]);
@@ -147,9 +149,16 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
     return this.categories().find((c) => c.id === categoryId)?.categoryName;
   }
 
-  onTransactionClick(transaction: RecurringTransaction): void {
-    // TODO: Implement transaction details/edit modal opening
-    console.log('Clicked recurring transaction:', transaction);
+  async onTransactionClick(transaction: RecurringTransaction): Promise<void> {
+    const maybeRTransaction =
+      await this.modalPresetsService.openRecurringTransactionDetails(
+        transaction,
+        this.getCategoryName(transaction.categoryId) || '',
+      );
+
+    if (!ObjectUtils.isNil(maybeRTransaction)) {
+      await this.onFilterChange();
+    }
   }
 
   async presentFilterOptions(): Promise<void> {
