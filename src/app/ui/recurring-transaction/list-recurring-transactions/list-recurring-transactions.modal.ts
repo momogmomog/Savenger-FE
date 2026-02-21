@@ -126,7 +126,7 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
         pageData.page.totalPages - 1 > this.query.page.pageNumber,
       );
 
-      this.isFiltering.set(!!this.query.transactionType || !!this.query.amount);
+      this.isFiltering.set(!!this.query.type || !!this.query.amount);
     } else {
       console.error('Failed to load recurring transactions', resp.errors);
     }
@@ -157,7 +157,7 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
       header: 'Filter Upcoming Transactions',
       buttons: [
         {
-          text: `Type: ${this.query.transactionType || 'All'}`,
+          text: `Type: ${this.query.type || 'All'}`,
           icon: 'filter',
           handler: (): void => {
             void this.presentTypeFilterSheet();
@@ -174,7 +174,7 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
           text: 'Clear Filters',
           role: 'destructive',
           handler: (): void => {
-            this.query.transactionType = null;
+            this.query.type = null;
             this.query.amount = null;
             void this.onFilterChange();
           },
@@ -243,7 +243,7 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   }
 
   private applyTypeFilter(type: TransactionType | null): void {
-    this.query.transactionType = type;
+    this.query.type = type;
     void this.onFilterChange();
   }
 }

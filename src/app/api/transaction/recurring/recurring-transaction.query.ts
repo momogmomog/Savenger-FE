@@ -11,7 +11,7 @@ export interface RecurringTransactionQuery {
   sort: SortQuery;
 
   budgetId: number;
-  transactionType: TransactionType | null;
+  type: TransactionType | null;
   nextDate: BetweenQuery<Date> | null;
   autoExecute: boolean | null;
   amount: BetweenQuery<number> | null;
@@ -32,7 +32,7 @@ export class RecurringTransactionQueryImpl
   };
 
   budgetId: number;
-  transactionType: TransactionType | null = null;
+  type: TransactionType | null = null;
   nextDate: BetweenQuery<Date> | null = null;
   autoExecute: boolean | null = null;
   amount: BetweenQuery<number> | null = null;

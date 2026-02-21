@@ -1,4 +1,3 @@
-
 .transaction-item {
   --background: transparent;
   --padding-start: 16px;
@@ -50,6 +49,23 @@
     .recurrence {
       text-transform: capitalize;
     }
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .tag-pill {
+    font-size: 0.7rem;
+    background-color: var(--ion-color-step-150, #333);
+    color: var(--ion-text-color, #fff);
+    padding: 2px 8px;
+    border-radius: 4px;
+    opacity: 0.9;
+    white-space: nowrap;
   }
 
   .amount-wrapper {

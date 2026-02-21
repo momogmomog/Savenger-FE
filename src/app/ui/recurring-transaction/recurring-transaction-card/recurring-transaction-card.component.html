@@ -1,4 +1,4 @@
-<ion-item [button]="true" [detail]="false" class="transaction-item">
+<ion-item [button]="true" [detail]="false" class="transaction-item" (click)="onClick.emit(transaction())">
   <div slot="start" class="type-icon" [ngClass]="transaction().type">
     <ion-icon [name]="getIcon(transaction().type)"></ion-icon>
   </div>
@@ -10,6 +10,14 @@
       <span class="dot">•</span>
       <span class="recurrence">{{ RRuleUtils.toHumanReadableText(transaction().recurringRule) }}</span>
     </p>
+
+    @if (transaction().tags && transaction().tags.length > 0) {
+      <div class="tags-row">
+        @for (tag of transaction().tags; track tag.id) {
+          <span class="tag-pill">{{ tag.tagName }}</span>
+        }
+      </div>
+    }
   </ion-label>
 
   <div slot="end" class="amount-wrapper">
