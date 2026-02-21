@@ -56,8 +56,6 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   ListRecurringTransactionsModalPayload,
   boolean
 > {
-  readonly TransactionType = TransactionType;
-
   private recurringTransactionService = inject(RecurringTransactionService);
   private actionSheetCtrl = inject(ActionSheetController);
   private alertCtrl = inject(AlertController);
