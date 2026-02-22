@@ -270,6 +270,9 @@ export class ListTransactionsComponent implements OnInit {
             resp.ifConfirmed(async (data): Promise<void> => {
               if (data?.id) {
                 await this.transactionsChanged();
+                this.recurringTransactionUpdateTrigger.update(
+                  (c) => (c || 0) + 1,
+                );
               }
             });
           },
