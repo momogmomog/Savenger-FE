@@ -22,6 +22,22 @@ export class RecurringTransactionRepository {
     );
   }
 
+  public edit(
+    id: number,
+    payload: RecurringTransactionPayload,
+  ): Observable<RecurringTransaction> {
+    return this.http.put<RecurringTransactionPayload, RecurringTransaction>(
+      RouteUtils.setPathParams(Endpoints.RECURRING_TRANSACTION, [id]),
+      payload,
+    );
+  }
+
+  public get(id: number): Observable<RecurringTransaction> {
+    return this.http.get<RecurringTransaction>(
+      RouteUtils.setPathParams(Endpoints.RECURRING_TRANSACTION, [id]),
+    );
+  }
+
   public search(
     query: RecurringTransactionQuery,
   ): Observable<Page<RecurringTransaction>> {

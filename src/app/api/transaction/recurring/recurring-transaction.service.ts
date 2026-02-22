@@ -22,6 +22,19 @@ export class RecurringTransactionService {
     ).execute();
   }
 
+  public async edit(
+    id: number,
+    payload: RecurringTransactionPayload,
+  ): Promise<WrappedResponse<RecurringTransaction>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.edit(id, payload),
+    ).execute();
+  }
+
+  public async get(id: number): Promise<WrappedResponse<RecurringTransaction>> {
+    return await new FieldErrorWrapper(() => this.repository.get(id)).execute();
+  }
+
   public async search(
     query: RecurringTransactionQuery,
   ): Promise<WrappedResponse<Page<RecurringTransaction>>> {

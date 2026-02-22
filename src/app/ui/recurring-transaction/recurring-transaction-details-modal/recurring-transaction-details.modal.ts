@@ -10,6 +10,8 @@ import {
 } from '../recurring-transaction-execution-modal/recurring-transaction-execution.modal';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { ObjectUtils } from '../../../shared/util/object-utils';
+import { EditRecurringTransactionModal } from '../edit-recurring-transaction-modal/edit-recurring-transaction.modal';
+import { EditRecurringTransactionModalPayload } from '../edit-recurring-transaction-modal/edit-recurring-transaction.modal.payload';
 
 export class RecurringTransactionDetailsModalPayload {
   constructor(
@@ -55,25 +57,17 @@ export class RecurringTransactionDetailsModal
   }
 
   async onEdit(): Promise<void> {
-    // TODO: Create and implement EditRecurringTransactionModal
-    /*
     const resp = await this.modalService.openAndWait(
       EditRecurringTransactionModal,
       new EditRecurringTransactionModalPayload(this.transaction()!),
       { shellType: ShellType.HEADER, title: '' },
     );
 
-    resp.ifConfirmed(async (data) => {
-      if (data?.id) {
-        this.setDismissalData(true);
-        // Refresh local transaction state if needed
+    resp.ifConfirmed(async (trans) => {
+      if (!ObjectUtils.isNil(trans?.id)) {
+        this.transactionUpdated(trans);
       }
     });
-    */
-    console.log(
-      'Edit triggered for recurring transaction',
-      this.transaction()?.id,
-    );
   }
 
   async onDelete(): Promise<void> {
@@ -103,11 +97,15 @@ export class RecurringTransactionDetailsModal
     );
 
     resp.ifConfirmed((trans) => {
-      if (!ObjectUtils.isNil(trans)) {
-        this.setDismissalData(trans);
-        this.transaction.set(trans);
-        // TODO: update list of transactions when this is added.
+      if (!ObjectUtils.isNil(trans?.id)) {
+        this.transactionUpdated(trans);
       }
     });
+  }
+
+  private transactionUpdated(trans: RecurringTransaction): void {
+    this.setDismissalData(trans);
+    this.transaction.set(trans);
+    // TODO: update list of transactions when this is added.
   }
 }
