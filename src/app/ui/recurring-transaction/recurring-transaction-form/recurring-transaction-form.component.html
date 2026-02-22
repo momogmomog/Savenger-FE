@@ -5,8 +5,7 @@
       fieldName=""></app-field-error>
 
     <div class="ion-margin-top">
-      <app-select formControlName="type" [options]="transactionTypeOptions"></app-select>
-      <app-field-error [errors]="errors()" fieldName="type"></app-field-error>
+      <app-select [errors]="errors()" formControlName="type" [options]="transactionTypeOptions"></app-select>
     </div>
 
     <div class="ion-margin-top">
@@ -15,6 +14,12 @@
         placeholder="Amount"
         formControlName="amount"
         [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-date-picker [errors]="errors()"
+                       label="Start From"
+                       formControlName="startFrom"></app-date-picker>
     </div>
 
     <div class="ion-margin-top recurrence-picker-container"
@@ -37,6 +42,21 @@
     </div>
 
     <div class="ion-margin-top">
+      <app-checkbox
+        label="Include In Balance"
+        formControlName="includeInBalance"></app-checkbox>
+      <app-field-error [errors]="errors()" fieldName="includeInBalance"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top">
+      <app-input
+        type="textarea"
+        placeholder="Comment"
+        formControlName="comment"
+        [errors]="errors()"></app-input>
+    </div>
+
+    <div class="ion-margin-top">
       <app-category-select-control formControlName="categoryId"
                                    [budgetId]="budgetId()"></app-category-select-control>
       <app-field-error [errors]="errors()" fieldName="categoryId"></app-field-error>
@@ -47,7 +67,7 @@
         [budgetId]="budgetId()"
         [form]="form"
         [shouldInitTags]="initTags()"
-        [existingTags]=""></app-tag-multiselect-control>
+        [existingTags]="recurringTransaction()?.tags"></app-tag-multiselect-control>
     </div>
 
     <div class="ion-margin-top ion-text-end">

@@ -1,0 +1,48 @@
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="filter-container ion-padding-horizontal ion-padding-top">
+    <ion-button
+      fill="clear"
+      size="small"
+      class="filter-btn"
+      color="medium"
+      (click)="presentFilterOptions()">
+      <ion-icon slot="start" [name]="isFiltering() ? 'funnel' : 'filter'"></ion-icon>
+      Filters
+    </ion-button>
+  </div>
+
+  @for (group of groupedTransactions(); track group.dateLabel) {
+    <div class="ion-padding-start ion-padding-bottom ion-margin-top">
+      <ion-text color="medium">
+        <small class="group-header-text">
+          {{ group.dateObj | date:'mediumDate' }}
+        </small>
+      </ion-text>
+    </div>
+
+    <ion-card class="group-card">
+      <ion-list lines="none" class="ion-no-padding">
+        @for (item of group.items; track item.id; let last = $last) {
+          <app-recurring-transaction-card
+            [transaction]="item"
+            [categoryName]="getCategoryName(item.categoryId)"
+            (onClick)="onTransactionClick($event)">
+          </app-recurring-transaction-card>
+        }
+      </ion-list>
+    </ion-card>
+  } @empty {
+    <div class="ion-text-center ion-padding ion-margin-top text-medium empty-state">
+      <ion-icon name="time-outline" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></ion-icon>
+      <p>No upcoming transactions found.</p>
+    </div>
+  }
+
+  <ion-infinite-scroll [disabled]="!hasNextPage()" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

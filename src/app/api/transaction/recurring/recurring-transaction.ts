@@ -1,5 +1,5 @@
 import { TransactionType } from '../transaction.type';
-import { Prepayment } from '../../prepayment/prepayment';
+import { Tag } from '../../tag/tag';
 
 export interface RecurringTransaction {
   id: number;
@@ -12,5 +12,9 @@ export interface RecurringTransaction {
   completed: boolean;
   categoryId: number;
   budgetId: number;
-  prepayment: Prepayment;
+  comment: string;
+  occurrences: number;
+  startFrom: string;
+  includeInBalance: boolean;
+  tags: Tag[];
 }

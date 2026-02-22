@@ -55,6 +55,8 @@ import { TransfersModal } from '../../transfer/transfers-modal/transfers.modal';
 import { TransfersModalPayload } from '../../transfer/transfers-modal/transfers.modal.payload';
 import { CreateRecurringTransactionModal } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal';
 import { CreateRecurringTransactionModalPayload } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal.payload';
+import { RecurringTransactionsPreviewComponent } from '../../recurring-transaction/recurring-transactions-preview/recurring-transactions-preview.component';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 
 @Component({
   selector: 'app-list-transactions',
@@ -78,11 +80,13 @@ import { CreateRecurringTransactionModalPayload } from '../../recurring-transact
     IonText,
     DatePipe,
     IonCard,
+    RecurringTransactionsPreviewComponent,
   ],
 })
 export class ListTransactionsComponent implements OnInit {
   readonly TransactionType = TransactionType;
   budget = this.budgetSliderService.currentBudget;
+  recurringTransactionUpdateTrigger = signal<number | null>(null);
 
   categories = this.budgetSliderService.currentCategories;
 
@@ -120,6 +124,7 @@ export class ListTransactionsComponent implements OnInit {
     private actionSheetCtrl: ActionSheetController,
     private alertCtrl: AlertController,
     private modalService: ModalService,
+    private modalPresetsService: ModalPresetsService,
   ) {
     addIcons({
       ellipsisVertical,
@@ -224,6 +229,25 @@ export class ListTransactionsComponent implements OnInit {
       header: 'More Options',
       buttons: [
         {
+          text: 'View Upcoming Transactions',
+          icon: 'time-outline',
+          handler: async (): Promise<void> => {
+            const resp =
+              await this.modalPresetsService.openListRecurringTransactions(
+                this.budget().id,
+              );
+
+            resp.ifConfirmed(async (refresh) => {
+              if (refresh) {
+                await this.transactionsChanged();
+                this.recurringTransactionUpdateTrigger.update(
+                  (value) => (value || 0) + 1,
+                );
+              }
+            });
+          },
+        },
+        {
           text: 'Pre-payment',
           icon: 'calendar-outline',
           handler: (): void => {
@@ -246,6 +270,9 @@ export class ListTransactionsComponent implements OnInit {
             resp.ifConfirmed(async (data): Promise<void> => {
               if (data?.id) {
                 await this.transactionsChanged();
+                this.recurringTransactionUpdateTrigger.update(
+                  (c) => (c || 0) + 1,
+                );
               }
             });
           },

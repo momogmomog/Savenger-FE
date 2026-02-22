@@ -6,6 +6,9 @@ import {
   WrappedResponse,
 } from '../../../shared/util/field-error-wrapper';
 import { RecurringTransaction } from './recurring-transaction';
+import { RecurringTransactionQuery } from './recurring-transaction.query';
+import { Page } from '../../../shared/util/page';
+import { CreateTransactionPayload } from '../dto/create-transaction.payload';
 
 @Injectable({ providedIn: 'root' })
 export class RecurringTransactionService {
@@ -16,6 +19,36 @@ export class RecurringTransactionService {
   ): Promise<WrappedResponse<RecurringTransaction>> {
     return await new FieldErrorWrapper(() =>
       this.repository.create(payload),
+    ).execute();
+  }
+
+  public async edit(
+    id: number,
+    payload: RecurringTransactionPayload,
+  ): Promise<WrappedResponse<RecurringTransaction>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.edit(id, payload),
+    ).execute();
+  }
+
+  public async get(id: number): Promise<WrappedResponse<RecurringTransaction>> {
+    return await new FieldErrorWrapper(() => this.repository.get(id)).execute();
+  }
+
+  public async search(
+    query: RecurringTransactionQuery,
+  ): Promise<WrappedResponse<Page<RecurringTransaction>>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.search(query),
+    ).execute();
+  }
+
+  public async execute(
+    rTransactionId: number,
+    override: CreateTransactionPayload,
+  ): Promise<WrappedResponse<RecurringTransaction>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.execute(rTransactionId, override),
     ).execute();
   }
 }
