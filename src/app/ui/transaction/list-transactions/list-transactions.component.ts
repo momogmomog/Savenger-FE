@@ -86,6 +86,7 @@ import { ModalPresetsService } from '../../../shared/modal/modal-presets.service
 export class ListTransactionsComponent implements OnInit {
   readonly TransactionType = TransactionType;
   budget = this.budgetSliderService.currentBudget;
+  recurringTransactionUpdateTrigger = signal<number | null>(null);
 
   categories = this.budgetSliderService.currentCategories;
 
@@ -238,7 +239,10 @@ export class ListTransactionsComponent implements OnInit {
 
             resp.ifConfirmed(async (refresh) => {
               if (refresh) {
-                await this.onFilterChange();
+                await this.transactionsChanged();
+                this.recurringTransactionUpdateTrigger.update(
+                  (value) => (value || 0) + 1,
+                );
               }
             });
           },

@@ -50,6 +50,8 @@
 
   <div style="margin: 10px;">
     <app-recurring-transactions-preview
+      (updateTriggered)="transactionsChanged()"
+      [externalUpdateTrigger]="recurringTransactionUpdateTrigger()"
       [budgetId]="budget().id"></app-recurring-transactions-preview>
   </div>
 

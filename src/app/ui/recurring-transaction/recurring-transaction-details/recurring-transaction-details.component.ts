@@ -21,13 +21,19 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  calculatorOutline,
   calendarOutline,
+  chatboxOutline,
+  checkmarkCircleOutline,
   createOutline,
   ellipsisVertical,
+  flagOutline,
   flashOutline,
   folderOpenOutline,
+  playOutline,
   pricetagOutline,
   repeatOutline,
+  syncOutline,
   trashOutline,
   walletOutline,
 } from 'ionicons/icons';
@@ -35,6 +41,7 @@ import { RecurringTransaction } from '../../../api/transaction/recurring/recurri
 import { TransactionType } from '../../../api/transaction/transaction.type';
 import { AppRoutingPath } from '../../../app-routing.path';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
+import { ObjectUtils } from '../../../shared/util/object-utils';
 
 @Component({
   selector: 'app-recurring-transaction-details',
@@ -52,13 +59,13 @@ import { RRuleUtils } from '../../../shared/util/rrule-utils';
     IonIcon,
     IonContent,
     IonCard,
-    IonCardContent,
     IonBadge,
     IonList,
     IonItem,
     IonLabel,
-    IonText,
     IonChip,
+    IonCardContent,
+    IonText,
   ],
   templateUrl: './recurring-transaction-details.component.html',
   styleUrls: ['./recurring-transaction-details.component.scss'],
@@ -73,6 +80,7 @@ export class RecurringTransactionDetailsComponent {
   navigateAway = output<void>();
   editTriggered = output<void>();
   deleteTriggered = output<void>();
+  executeTriggered = output<void>();
 
   isIncome = computed(() => {
     return this.transaction().type === TransactionType.INCOME;
@@ -89,6 +97,12 @@ export class RecurringTransactionDetailsComponent {
       trashOutline,
       repeatOutline,
       flashOutline,
+      chatboxOutline,
+      playOutline,
+      checkmarkCircleOutline,
+      syncOutline,
+      flagOutline,
+      calculatorOutline,
     });
   }
 
@@ -118,4 +132,5 @@ export class RecurringTransactionDetailsComponent {
   }
 
   protected readonly AppRoutingPath = AppRoutingPath;
+  protected readonly ObjectUtils = ObjectUtils;
 }

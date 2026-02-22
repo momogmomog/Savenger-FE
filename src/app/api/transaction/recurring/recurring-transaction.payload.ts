@@ -7,5 +7,8 @@ export interface RecurringTransactionPayload {
   autoExecute: boolean;
   categoryId: number;
   budgetId: number;
+  includeInBalance: boolean;
+  comment: string | null;
+  startFrom: Date | null;
   tagIds: number[];
 }

@@ -8,6 +8,7 @@ import {
 import { RecurringTransaction } from './recurring-transaction';
 import { RecurringTransactionQuery } from './recurring-transaction.query';
 import { Page } from '../../../shared/util/page';
+import { CreateTransactionPayload } from '../dto/create-transaction.payload';
 
 @Injectable({ providedIn: 'root' })
 export class RecurringTransactionService {
@@ -26,6 +27,15 @@ export class RecurringTransactionService {
   ): Promise<WrappedResponse<Page<RecurringTransaction>>> {
     return await new FieldErrorWrapper(() =>
       this.repository.search(query),
+    ).execute();
+  }
+
+  public async execute(
+    rTransactionId: number,
+    override: CreateTransactionPayload,
+  ): Promise<WrappedResponse<RecurringTransaction>> {
+    return await new FieldErrorWrapper(() =>
+      this.repository.execute(rTransactionId, override),
     ).execute();
   }
 }

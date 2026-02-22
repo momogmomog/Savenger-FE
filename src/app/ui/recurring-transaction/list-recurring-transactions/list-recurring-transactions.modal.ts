@@ -158,6 +158,7 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
 
     if (!ObjectUtils.isNil(maybeRTransaction)) {
       await this.onFilterChange();
+      this.setDismissalData(true);
     }
   }
 

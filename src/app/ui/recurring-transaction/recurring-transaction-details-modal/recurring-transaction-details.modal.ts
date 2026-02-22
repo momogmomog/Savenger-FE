@@ -4,6 +4,12 @@ import { ModalService } from '../../../shared/modal/modal.service';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { RecurringTransactionDetailsComponent } from '../recurring-transaction-details/recurring-transaction-details.component';
 import { RecurringTransactionService } from '../../../api/transaction/recurring/recurring-transaction.service';
+import {
+  RecurringTransactionExecutionModal,
+  RecurringTransactionExecutionModalPayload,
+} from '../recurring-transaction-execution-modal/recurring-transaction-execution.modal';
+import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
+import { ObjectUtils } from '../../../shared/util/object-utils';
 
 export class RecurringTransactionDetailsModalPayload {
   constructor(
@@ -21,6 +27,7 @@ export class RecurringTransactionDetailsModalPayload {
         [categoryName]="payload().categoryName"
         (navigateAway)="dismiss()"
         (editTriggered)="onEdit()"
+        (executeTriggered)="onExecute()"
         (deleteTriggered)="onDelete()"
       ></app-recurring-transaction-details>
     }
@@ -83,5 +90,24 @@ export class RecurringTransactionDetailsModal
       this.transaction()?.id,
     );
     void this.dismiss(null);
+  }
+
+  async onExecute(): Promise<void> {
+    const resp = await this.modalService.openAndWait(
+      RecurringTransactionExecutionModal,
+      new RecurringTransactionExecutionModalPayload(this.payload().transaction),
+      {
+        shellType: ShellType.HEADER,
+        title: 'Execute transaction',
+      },
+    );
+
+    resp.ifConfirmed((trans) => {
+      if (!ObjectUtils.isNil(trans)) {
+        this.setDismissalData(trans);
+        this.transaction.set(trans);
+        // TODO: update list of transactions when this is added.
+      }
+    });
   }
 }

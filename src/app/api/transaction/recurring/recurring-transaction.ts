@@ -12,5 +12,9 @@ export interface RecurringTransaction {
   completed: boolean;
   categoryId: number;
   budgetId: number;
+  comment: string;
+  occurrences: number;
+  startFrom: string;
+  includeInBalance: boolean;
   tags: Tag[];
 }

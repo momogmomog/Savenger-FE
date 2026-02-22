@@ -23,6 +23,13 @@
   opacity: 0.8;
 }
 
+.badges-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .recurrence-text {
   text-transform: capitalize;
 }
@@ -41,4 +48,19 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  font-weight: 600;
+}
+
+.comment-text {
+  font-size: 1rem;
+  line-height: 1.5;
 }

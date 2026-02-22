@@ -9,7 +9,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { TransactionType } from '../../../api/transaction/transaction.type';
-import { TransactionDetailed } from '../../../api/transaction/transaction';
 import { SelectOptions } from '../../../api/common/select-options';
 import { FieldError } from '../../../shared/field-error/field-error';
 import { DatePickerComponent } from '../../../shared/form-controls/date-picker/date-picker.component';
@@ -22,6 +21,17 @@ import { addIcons } from 'ionicons';
 import { closeCircle } from 'ionicons/icons';
 import { TagMultiselectControlComponent } from '../../tag/tag-multiselect-control/tag-multiselect-control.component';
 import { CategorySelectControlComponent } from '../../category/category-select-control/category-select-control.component';
+import { Tag } from '../../../api/tag/tag';
+
+export interface TransactionFormPrepopulate {
+  type: TransactionType;
+  amount: number;
+  dateCreated: string;
+  comment: string;
+  categoryId: number;
+  budgetId: number;
+  tags: Tag[];
+}
 
 @Component({
   selector: 'app-transaction-form',
@@ -47,9 +57,10 @@ export class TransactionFormComponent
   transactionTypeOptions = SelectOptions.transactionTypeOptions();
 
   errors = input.required<FieldError[]>();
-  transaction = input<TransactionDetailed>();
+  transaction = input<TransactionFormPrepopulate>();
   budgetId = input.required<number>();
   type = input<TransactionType>();
+  hideDateCreated = input<boolean>(false);
 
   initTags = signal<boolean>(false);
 
@@ -91,6 +102,10 @@ export class TransactionFormComponent
   }
 
   onFormSubmit(): void {
-    this.formSubmitted.emit(this.form.getRawValue());
+    const formVal = this.form.getRawValue();
+    if (this.hideDateCreated()) {
+      formVal.dateCreated = null!;
+    }
+    this.formSubmitted.emit(formVal);
   }
 }

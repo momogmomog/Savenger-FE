@@ -17,12 +17,14 @@
         [errors]="errors()"></app-input>
     </div>
 
-    <div class="ion-margin-top">
-      <app-date-picker
-        [errors]="errors()"
-        label="Date"
-        formControlName="dateCreated"></app-date-picker>
-    </div>
+    @if (!hideDateCreated()) {
+      <div class="ion-margin-top">
+        <app-date-picker
+          [errors]="errors()"
+          label="Date"
+          formControlName="dateCreated"></app-date-picker>
+      </div>
+    }
 
     <div class="ion-margin-top">
       <app-input
@@ -38,13 +40,13 @@
       <app-field-error [errors]="errors()" fieldName="categoryId"></app-field-error>
     </div>
 
-   <div class="ion-margin-top">
-     <app-tag-multiselect-control
-       [budgetId]="budgetId()"
-       [form]="form"
-       [shouldInitTags]="initTags()"
-       [existingTags]="transaction()?.tags"></app-tag-multiselect-control>
-   </div>
+    <div class="ion-margin-top">
+      <app-tag-multiselect-control
+        [budgetId]="budgetId()"
+        [form]="form"
+        [shouldInitTags]="initTags()"
+        [existingTags]="transaction()?.tags"></app-tag-multiselect-control>
+    </div>
 
     <div class="ion-margin-top ion-text-end">
       <ion-button [form]="transactionForm"

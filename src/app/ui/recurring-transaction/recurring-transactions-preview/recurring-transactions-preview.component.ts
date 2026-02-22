@@ -4,6 +4,7 @@ import {
   inject,
   input,
   OnInit,
+  output,
   signal,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -30,7 +31,6 @@ import { ModalService } from '../../../shared/modal/modal.service';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { RRuleUtils } from '../../../shared/util/rrule-utils';
 import { EmptyBudget } from '../../../api/budget/budget';
 import { RecurringTransactionCardComponent } from '../recurring-transaction-card/recurring-transaction-card.component';
 import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
@@ -54,14 +54,13 @@ import { ObjectUtils } from '../../../shared/util/object-utils';
   ],
 })
 export class RecurringTransactionsPreviewComponent implements OnInit {
-  protected readonly RRuleUtils = RRuleUtils;
-
   private recurringTransactionService = inject(RecurringTransactionService);
   private modalService = inject(ModalService);
   private modalPresetsService = inject(ModalPresetsService);
   private budgetSliderService = inject(BudgetSliderService);
 
   budgetId = input.required<number>();
+  externalUpdateTrigger = input<number | null>(null);
 
   upcomingTransactions = signal<RecurringTransaction[]>([]);
   totalUpcomingTransactions = signal<number>(0);
@@ -69,6 +68,8 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
 
   lookAheadDateControl = new FormControl<Date>(this.getDefaultLookAhead());
   currentMaxDate = signal<Date>(this.getDefaultLookAhead());
+
+  updateTriggered = output<void>();
 
   private query = new RecurringTransactionQueryImpl(null);
 
@@ -81,6 +82,15 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
       swapHorizontal,
       timeOutline,
       eyeOutline,
+    });
+
+    effect(async () => {
+      const trigger = this.externalUpdateTrigger();
+      if (ObjectUtils.isNil(trigger)) {
+        return;
+      }
+
+      await this.refreshData();
     });
 
     effect(async () => {
@@ -145,6 +155,7 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
 
     if (!ObjectUtils.isNil(maybeRTransaction)) {
       await this.refreshData();
+      this.updateTriggered.emit();
     }
   }
 

@@ -6,6 +6,8 @@ import { RecurringTransaction } from './recurring-transaction';
 import { Endpoints } from '../../../shared/http/endpoints';
 import { RecurringTransactionQuery } from './recurring-transaction.query';
 import { Page } from '../../../shared/util/page';
+import { CreateTransactionPayload } from '../dto/create-transaction.payload';
+import { RouteUtils } from '../../../shared/routing/route-utils';
 
 @Injectable({ providedIn: 'root' })
 export class RecurringTransactionRepository {
@@ -27,5 +29,17 @@ export class RecurringTransactionRepository {
       RecurringTransactionQuery,
       Page<RecurringTransaction>
     >(Endpoints.RECURRING_TRANSACTIONS_SEARCH, query);
+  }
+
+  public execute(
+    rTransactionId: number,
+    transactionOverride: CreateTransactionPayload,
+  ): Observable<RecurringTransaction> {
+    return this.http.post<CreateTransactionPayload, RecurringTransaction>(
+      RouteUtils.setPathParams(Endpoints.RECURRING_TRANSACTIONS_EXECUTE, [
+        rTransactionId,
+      ]),
+      transactionOverride,
+    );
   }
 }
