@@ -1,0 +1,20 @@
+<app-select-search
+  label="Category"
+  placeholder="Pick Categories"
+  [payload]="categoriesPayload()"
+  [clearOnSelect]="true"
+  [(searchTerm)]="searchTerm"
+  (selectionChange)="onCategoryChange($event)"
+  (loadMore)="onCategoryLoadMore($event)">
+</app-select-search>
+
+@if (selectedCategories().length > 0) {
+  <div class="ion-padding-top" style="display: flex; flex-wrap: wrap; gap: 4px;">
+    @for (cat of selectedCategories(); track cat.id) {
+      <ion-chip (click)="removeCategory(cat.id)" [outline]="true" color="primary">
+        <ion-label>{{ cat.categoryName }}</ion-label>
+        <ion-icon name="close-circle"></ion-icon>
+      </ion-chip>
+    }
+  </div>
+}

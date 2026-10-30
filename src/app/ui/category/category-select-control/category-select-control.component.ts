@@ -25,6 +25,8 @@ import {
 } from '../../../api/category/category.query';
 import { Category } from '../../../api/category/category';
 import { EmptyPage, Page, PageImpl } from '../../../shared/util/page';
+import { addIcons } from 'ionicons';
+import { closeCircle } from 'ionicons/icons';
 
 @Component({
   selector: 'app-category-select-control',
@@ -58,6 +60,7 @@ export class CategorySelectControlComponent
 
   constructor(private categoryService: CategoryService) {
     super();
+    addIcons({ closeCircle });
 
     effect(() => {
       this.categoryQuery.budgetId = this.budgetId();

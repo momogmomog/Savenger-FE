@@ -4,6 +4,7 @@ import {
   input,
   model,
   OnInit,
+  output,
   signal,
   untracked,
 } from '@angular/core';
@@ -21,6 +22,8 @@ import { StringUtils } from '../../../shared/util/string-utils';
 import { ObjectUtils } from '../../../shared/util/object-utils';
 import { AutoUnsubComponent } from '../../../shared/util/auto-unsub.component';
 import { IonChip, IonIcon, IonLabel } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { closeCircle } from 'ionicons/icons';
 import { CreateTransactionPayload } from '../../../api/transaction/dto/create-transaction.payload';
 import { RecurringTransactionPayload } from '../../../api/transaction/recurring/recurring-transaction.payload';
 
@@ -44,6 +47,8 @@ export class TagMultiselectControlComponent
   existingTags = input<Tag[]>();
   shouldInitTags = input<boolean>();
 
+  selectedTagsChange = output<Tag[]>();
+
   tags: Tag[] = [];
   excludedTags: Tag[] = [];
   protected tagsPayload = model<Page<SelectSearchItem<Tag>>>(new EmptyPage());
@@ -54,6 +59,7 @@ export class TagMultiselectControlComponent
 
   constructor(private tagService: TagService) {
     super();
+    addIcons({ closeCircle });
     effect(() => {
       const searchTerm = this.searchTerm();
       this.onTagSearch(searchTerm);
@@ -161,14 +167,16 @@ export class TagMultiselectControlComponent
     const selectedTags = this.form()
       .controls.tagIds.getRawValue()
       .map(
-        (tagId) =>
+        (tagId: number) =>
           this.tags.find((tag) => tag.id === tagId) ||
           this.excludedTags.find((tag) => tag.id === tagId),
       )
-      .filter((tag) => !ObjectUtils.isNil(tag));
+      .filter((tag: Tag | undefined) => !ObjectUtils.isNil(tag));
 
     this.selectedTags.set(selectedTags);
     this.tagQuery.excludeIds = this.form().controls.tagIds.getRawValue();
+
+    this.selectedTagsChange.emit(selectedTags);
 
     this.tagQuery.tagName = null;
     void this.reloadTags();

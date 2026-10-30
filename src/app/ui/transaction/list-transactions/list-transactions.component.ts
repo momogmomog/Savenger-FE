@@ -2,7 +2,6 @@ import { Component, computed, effect, OnInit, signal } from '@angular/core';
 import { BudgetSliderComponent } from '../../budget/budget-slider/budget-slider.component';
 import {
   ActionSheetController,
-  AlertController,
   InfiniteScrollCustomEvent,
   IonButton,
   IonButtons,
@@ -55,6 +54,14 @@ import { TransfersModal } from '../../transfer/transfers-modal/transfers.modal';
 import { TransfersModalPayload } from '../../transfer/transfers-modal/transfers.modal.payload';
 import { CreateRecurringTransactionModal } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal';
 import { CreateRecurringTransactionModalPayload } from '../../recurring-transaction/create-recurring-transaction-modal/create-recurring-transaction.modal.payload';
+import { TransactionFilterModalComponent } from '../transaction-filter-modal/transaction-filter-modal.component';
+import {
+  TransactionFilterModalPayload,
+  TransactionFilterModalResult,
+} from '../transaction-filter-modal/transaction-filter-modal.payload';
+import { Tag } from '../../../api/tag/tag';
+import { Category } from '../../../api/category/category';
+import { OtherUser } from '../../../api/user/user';
 
 @Component({
   selector: 'app-list-transactions',
@@ -90,6 +97,10 @@ export class ListTransactionsComponent implements OnInit {
   hasNextPage = signal<boolean>(true);
   isFiltering = signal<boolean>(false);
 
+  activeFilterTags = signal<Tag[]>([]);
+  activeFilterCategories = signal<Category[]>([]);
+  activeFilterUsers = signal<OtherUser[]>([]);
+
   groupedTransactions = computed(() => {
     const transactions = this.transactionsList();
     const groups = new Map<string, Transaction[]>();
@@ -111,14 +122,12 @@ export class ListTransactionsComponent implements OnInit {
     }));
   });
 
-  private readonly query: TransactionSearchQuery =
-    new TransactionSearchQueryImpl(null);
+  private query: TransactionSearchQuery = new TransactionSearchQueryImpl(null);
 
   constructor(
     private budgetSliderService: BudgetSliderService,
     private transactionService: TransactionService,
     private actionSheetCtrl: ActionSheetController,
-    private alertCtrl: AlertController,
     private modalService: ModalService,
   ) {
     addIcons({
@@ -136,6 +145,8 @@ export class ListTransactionsComponent implements OnInit {
     effect(() => {
       const budget = this.budgetSliderService.currentBudget();
       if (budget.id >= 0) {
+        this.query = new TransactionSearchQueryImpl(null);
+        this.clearFilterObjects();
         void this.onFilterChange();
       }
     });
@@ -162,7 +173,15 @@ export class ListTransactionsComponent implements OnInit {
         pageData.page.totalPages - 1 > this.query.page.pageNumber,
       );
 
-      this.isFiltering.set(!!this.query.type || !!this.query.amount);
+      this.isFiltering.set(
+        !!this.query.type ||
+          !!this.query.amount ||
+          !!this.query.dateCreated ||
+          !!this.query.comment ||
+          this.query.categoryIds.length > 0 ||
+          this.query.tagIds.length > 0 ||
+          this.query.userIds.length > 0,
+      );
     }
   }
 
@@ -261,98 +280,26 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   async presentFilterOptions(): Promise<void> {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Filter Transactions',
-      buttons: [
-        {
-          text: `Type: ${this.query.type || 'All'}`,
-          icon: 'filter',
-          handler: (): void => {
-            void this.presentTypeFilterSheet();
-          },
-        },
-        {
-          text: 'Amount Range',
-          icon: 'cash-outline',
-          handler: (): void => {
-            void this.presentAmountFilterAlert();
-          },
-        },
-        {
-          text: 'Clear Filters',
-          role: 'destructive',
-          handler: (): void => {
-            this.query.type = null;
-            this.query.amount = null;
-            void this.onFilterChange();
-          },
-        },
-        { text: 'Cancel', role: 'cancel' },
-      ],
+    const payload = new TransactionFilterModalPayload(
+      this.budget().id,
+      this.query,
+      this.activeFilterTags(),
+      this.activeFilterCategories(),
+      this.activeFilterUsers(),
+    );
+
+    const resp = await this.modalService.openAndWait(
+      TransactionFilterModalComponent,
+      payload,
+      {
+        shellType: ShellType.HEADER,
+        title: 'Filter Transactions',
+      },
+    );
+
+    resp.ifConfirmed((result: TransactionFilterModalResult) => {
+      this.setFilterObjects(result);
     });
-    await actionSheet.present();
-  }
-
-  async presentTypeFilterSheet(): Promise<void> {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Filter by Type',
-      buttons: [
-        { text: 'All', handler: (): void => this.applyTypeFilter(null) },
-        {
-          text: 'Expense',
-          handler: (): void => this.applyTypeFilter(TransactionType.EXPENSE),
-        },
-        {
-          text: 'Income',
-          handler: (): void => this.applyTypeFilter(TransactionType.INCOME),
-        },
-        { text: 'Cancel', role: 'cancel' },
-      ],
-    });
-    await actionSheet.present();
-  }
-
-  async presentAmountFilterAlert(): Promise<void> {
-    const alert = await this.alertCtrl.create({
-      header: 'Filter by Amount',
-      inputs: [
-        {
-          name: 'min',
-          type: 'number',
-          placeholder: 'Min Amount',
-          value: this.query.amount?.min,
-        },
-        {
-          name: 'max',
-          type: 'number',
-          placeholder: 'Max Amount',
-          value: this.query.amount?.max,
-        },
-      ],
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Apply',
-          handler: (data): void => {
-            const min = data.min ? parseFloat(data.min) : undefined;
-            const max = data.max ? parseFloat(data.max) : undefined;
-
-            if (min !== undefined || max !== undefined) {
-              this.query.amount = { min, max };
-            } else {
-              this.query.amount = null;
-            }
-            void this.onFilterChange();
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
-  private applyTypeFilter(type: TransactionType | null): void {
-    this.query.type = type;
-    void this.onFilterChange();
   }
 
   getCategoryName(categoryId: number): string | undefined {
@@ -370,5 +317,20 @@ export class ListTransactionsComponent implements OnInit {
         await this.transactionsChanged();
       }
     });
+  }
+
+  private setFilterObjects(result: TransactionFilterModalResult): void {
+    this.activeFilterTags.set(result.selectedTags);
+    this.activeFilterCategories.set(result.selectedCategories);
+    this.activeFilterUsers.set(result.selectedUsers);
+
+    Object.assign(this.query, result.query);
+    void this.onFilterChange();
+  }
+
+  private clearFilterObjects(): void {
+    this.activeFilterUsers.set([]);
+    this.activeFilterCategories.set([]);
+    this.activeFilterTags.set([]);
   }
 }
