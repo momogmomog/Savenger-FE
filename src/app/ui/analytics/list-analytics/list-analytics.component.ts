@@ -2,8 +2,6 @@ import { Component, effect, OnInit, signal, ViewChild } from '@angular/core';
 import { CurrencyPipe, DatePipe, PercentPipe } from '@angular/common';
 import { BudgetSliderComponent } from '../../budget/budget-slider/budget-slider.component';
 import {
-  ActionSheetController,
-  AlertController,
   IonButton,
   IonButtons,
   IonCard,
@@ -49,6 +47,16 @@ import {
   TransactionQuery,
   TransactionQueryImpl,
 } from '../../../api/transaction/transactionSearchQuery';
+import { ModalService } from '../../../shared/modal/modal.service';
+import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
+import { TransactionFilterModalComponent } from '../../transaction/transaction-filter-modal/transaction-filter-modal.component';
+import {
+  TransactionFilterModalPayload,
+  TransactionFilterModalResult,
+} from '../../transaction/transaction-filter-modal/transaction-filter-modal.payload';
+import { Tag } from '../../../api/tag/tag';
+import { Category } from '../../../api/category/category';
+import { OtherUser } from '../../../api/user/user';
 
 enum ChartMode {
   EXPENSE = 'EXPENSE',
@@ -108,6 +116,10 @@ export class ListAnalyticsComponent implements OnInit {
   chartMode = signal<ChartMode>(ChartMode.EXPENSE);
   isFiltering = signal<boolean>(false);
 
+  activeFilterTags = signal<Tag[]>([]);
+  activeFilterCategories = signal<Category[]>([]);
+  activeFilterUsers = signal<OtherUser[]>([]);
+
   categoryChartData = signal<ChartData<'doughnut'>>({
     labels: [],
     datasets: [],
@@ -140,8 +152,7 @@ export class ListAnalyticsComponent implements OnInit {
   constructor(
     private budgetSliderService: BudgetSliderService,
     private analyticsService: AnalyticsService,
-    private actionSheetCtrl: ActionSheetController,
-    private alertCtrl: AlertController,
+    private modalService: ModalService,
   ) {
     addIcons({
       filter,
@@ -156,6 +167,7 @@ export class ListAnalyticsComponent implements OnInit {
     effect(async () => {
       const budgetId = this.budget().id;
       if (budgetId !== BudgetSliderService.INITIAL_BUDGET.id) {
+        this.clearFilterObjects();
         await this.updateQuery(budgetId);
       }
     });
@@ -195,7 +207,13 @@ export class ListAnalyticsComponent implements OnInit {
 
   private async fetchAnalytics(): Promise<void> {
     this.isFiltering.set(
-      !!this.query.amount || !!this.query.dateCreated || !!this.query.comment,
+      !!this.query.type ||
+        !!this.query.amount ||
+        !!this.query.dateCreated ||
+        !!this.query.comment ||
+        this.query.categoryIds.length > 0 ||
+        this.query.tagIds.length > 0 ||
+        this.query.userIds.length > 0,
     );
 
     const [catResp, tagResp] = await Promise.all([
@@ -313,105 +331,41 @@ export class ListAnalyticsComponent implements OnInit {
   }
 
   async presentFilterOptions(): Promise<void> {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Filter Analytics',
-      buttons: [
-        {
-          text: 'Date Range',
-          icon: 'calendar',
-          handler: (): void => void this.presentDateFilterAlert(),
-        },
-        {
-          text: 'Amount Range',
-          icon: 'filter',
-          handler: (): void => void this.presentAmountFilterAlert(),
-        },
-        {
-          text: 'Clear Filters',
-          role: 'destructive',
-          handler: (): void => {
-            this.query.amount = null;
-            this.query.dateCreated = null;
-            this.query.comment = null;
-            void this.fetchAnalytics();
-          },
-        },
-        { text: 'Cancel', role: 'cancel' },
-      ],
+    const payload = new TransactionFilterModalPayload(
+      this.budget().id,
+      this.query,
+      this.activeFilterTags(),
+      this.activeFilterCategories(),
+      this.activeFilterUsers(),
+    );
+
+    const resp = await this.modalService.openAndWait(
+      TransactionFilterModalComponent,
+      payload,
+      {
+        shellType: ShellType.HEADER,
+        title: 'Filter Analytics',
+      },
+    );
+
+    resp.ifConfirmed((result: TransactionFilterModalResult) => {
+      this.setFilterObjects(result);
     });
-    await actionSheet.present();
   }
 
-  async presentDateFilterAlert(): Promise<void> {
-    const alert = await this.alertCtrl.create({
-      header: 'Date Range',
-      inputs: [
-        {
-          name: 'min',
-          type: 'date',
-          placeholder: 'From',
-          value: this.query.dateCreated?.min,
-        },
-        {
-          name: 'max',
-          type: 'date',
-          placeholder: 'To',
-          value: this.query.dateCreated?.max,
-        },
-      ],
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Apply',
-          handler: (data): void => {
-            if (data.min || data.max) {
-              this.query.dateCreated = { min: data.min, max: data.max };
-            } else {
-              this.query.dateCreated = null;
-            }
-            void this.fetchAnalytics();
-          },
-        },
-      ],
-    });
-    await alert.present();
+  private setFilterObjects(result: TransactionFilterModalResult): void {
+    this.activeFilterTags.set(result.selectedTags);
+    this.activeFilterCategories.set(result.selectedCategories);
+    this.activeFilterUsers.set(result.selectedUsers);
+
+    Object.assign(this.query, result.query);
+    void this.fetchAnalytics();
   }
 
-  async presentAmountFilterAlert(): Promise<void> {
-    const alert = await this.alertCtrl.create({
-      header: 'Filter by Amount',
-      inputs: [
-        {
-          name: 'min',
-          type: 'number',
-          placeholder: 'Min',
-          value: this.query.amount?.min,
-        },
-        {
-          name: 'max',
-          type: 'number',
-          placeholder: 'Max',
-          value: this.query.amount?.max,
-        },
-      ],
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Apply',
-          handler: (data): void => {
-            const min = data.min ? parseFloat(data.min) : undefined;
-            const max = data.max ? parseFloat(data.max) : undefined;
-            if (min !== undefined || max !== undefined) {
-              this.query.amount = { min, max };
-            } else {
-              this.query.amount = null;
-            }
-            void this.fetchAnalytics();
-          },
-        },
-      ],
-    });
-    await alert.present();
+  private clearFilterObjects(): void {
+    this.activeFilterUsers.set([]);
+    this.activeFilterCategories.set([]);
+    this.activeFilterTags.set([]);
   }
 
   getPercentage(current: number, max: number): number {
