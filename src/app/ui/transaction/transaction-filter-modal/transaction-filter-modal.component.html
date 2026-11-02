@@ -1,0 +1,58 @@
+<ion-content>
+  <form [formGroup]="form">
+
+    <app-select formControlName="type" [options]="transactionTypeOptions" placeholder="Transaction Type"></app-select>
+
+    <app-input type="text" placeholder="Search by comment..." formControlName="comment"></app-input>
+
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col>
+          <app-input type="number" placeholder="Min Amount" formControlName="amountMin"></app-input>
+        </ion-col>
+        <ion-col>
+          <app-input type="number" placeholder="Max Amount" formControlName="amountMax"></app-input>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <app-date-picker label="From Date" formControlName="dateMin"></app-date-picker>
+    <app-date-picker label="To Date" formControlName="dateMax"></app-date-picker>
+
+<!--    <app-user-multiselect-control-->
+<!--      [budgetId]="payload().budgetId"-->
+<!--      [form]="form"-->
+<!--      [shouldInitUsers]="true"-->
+<!--      [existingUsers]="payload().selectedUsers"-->
+<!--      (selectedUsersChange)="activeUsers = $event">-->
+<!--    </app-user-multiselect-control>-->
+
+    <app-category-multiselect-control
+      [budgetId]="payload().budgetId"
+      [form]="form"
+      [shouldInitCategories]="true"
+      [existingCategories]="payload().selectedCategories"
+      (selectedCategoriesChange)="activeCategories = $event">
+    </app-category-multiselect-control>
+
+    <app-tag-multiselect-control
+      [budgetId]="payload().budgetId"
+      [form]="form"
+      [shouldInitTags]="true"
+      [existingTags]="payload().selectedTags"
+      (selectedTagsChange)="activeTags = $event">
+    </app-tag-multiselect-control>
+
+  </form>
+
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="clearFilters()">Clear</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button color="primary" fill="solid" (click)="applyFilters()">Apply Filters</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-content>
+
+
