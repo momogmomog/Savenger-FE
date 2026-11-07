@@ -1,0 +1,93 @@
+.transaction-item {
+  --background: transparent;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 0;
+  margin-bottom: 4px;
+
+  .type-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-right: 12px;
+
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+    color: var(--ion-color-primary);
+
+    &.EXPENSE {
+      background: rgba(var(--ion-color-danger-rgb), 0.1);
+      color: var(--ion-color-danger);
+    }
+
+    &.INCOME {
+      background: rgba(var(--ion-color-success-rgb), 0.1);
+      color: var(--ion-color-success);
+    }
+  }
+
+  .category-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+
+  .meta-info {
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+    display: flex;
+    align-items: center;
+
+    .dot {
+      margin: 0 4px;
+      font-size: 0.6rem;
+    }
+
+    .recurrence {
+      text-transform: capitalize;
+    }
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .tag-pill {
+    font-size: 0.7rem;
+    background-color: var(--ion-color-step-150, #333);
+    color: var(--ion-text-color, #fff);
+    padding: 2px 8px;
+    border-radius: 4px;
+    opacity: 0.9;
+    white-space: nowrap;
+  }
+
+  .amount-wrapper {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+
+    .amount {
+      font-weight: 700;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    .auto-badge {
+      font-size: 0.6rem;
+      background: var(--ion-color-step-150);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--ion-text-color);
+      opacity: 0.8;
+    }
+  }
+}
