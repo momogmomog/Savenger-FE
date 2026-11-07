@@ -7,6 +7,7 @@ import {
 } from '../../shared/util/field-error-wrapper';
 import { CategoryAnalytic } from './dto/category-analytic';
 import { TagAnalytic } from './dto/tag-analytic';
+import { AnalyticsSummaryDto } from './dto/analytics-summary.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
@@ -14,7 +15,7 @@ export class AnalyticsService {
 
   public async getCategoryAnalytics(
     query: TransactionQuery,
-  ): Promise<WrappedResponse<CategoryAnalytic[]>> {
+  ): Promise<WrappedResponse<AnalyticsSummaryDto<CategoryAnalytic>>> {
     return await new FieldErrorWrapper(() =>
       this.repository.getCategoryAnalytics(query),
     ).execute();
@@ -22,7 +23,7 @@ export class AnalyticsService {
 
   public async getTagAnalytics(
     query: TransactionQuery,
-  ): Promise<WrappedResponse<TagAnalytic[]>> {
+  ): Promise<WrappedResponse<AnalyticsSummaryDto<TagAnalytic>>> {
     return await new FieldErrorWrapper(() =>
       this.repository.getTagAnalytics(query),
     ).execute();

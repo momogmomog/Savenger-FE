@@ -1,9 +1,6 @@
 import { Category } from '../../category/category';
-import { TransactionSumAndCount } from './transaction-sum-and-count';
+import { AnalyticDto } from './analytic.dto';
 
-export interface CategoryAnalytic {
+export interface CategoryAnalytic extends AnalyticDto {
   category: Category;
-
-  incomes: TransactionSumAndCount;
-  expenses: TransactionSumAndCount;
 }

@@ -52,3 +52,54 @@ ion-card.list-card {
   display: flex;
   align-items: center;
 }
+
+.summary-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ion-color-step-150, rgba(255, 255, 255, 0.1));
+
+  .summary-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .summary-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+    font-weight: 600;
+  }
+
+  .summary-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .summary-sub {
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+  }
+
+  .summary-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--ion-color-step-150, rgba(255, 255, 255, 0.1));
+  }
+}
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .details-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}

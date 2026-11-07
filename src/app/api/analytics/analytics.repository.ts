@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { CategoryAnalytic } from './dto/category-analytic';
 import { Endpoints } from '../../shared/http/endpoints';
 import { TagAnalytic } from './dto/tag-analytic';
+import { AnalyticsSummaryDto } from './dto/analytics-summary.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsRepository {
@@ -12,15 +13,17 @@ export class AnalyticsRepository {
 
   public getCategoryAnalytics(
     query: TransactionQuery,
-  ): Observable<CategoryAnalytic[]> {
-    return this.http.post<TransactionQuery, CategoryAnalytic[]>(
-      Endpoints.ANALYTICS_CATEGORIES,
-      query,
-    );
+  ): Observable<AnalyticsSummaryDto<CategoryAnalytic>> {
+    return this.http.post<
+      TransactionQuery,
+      AnalyticsSummaryDto<CategoryAnalytic>
+    >(Endpoints.ANALYTICS_CATEGORIES, query);
   }
 
-  public getTagAnalytics(query: TransactionQuery): Observable<TagAnalytic[]> {
-    return this.http.post<TransactionQuery, TagAnalytic[]>(
+  public getTagAnalytics(
+    query: TransactionQuery,
+  ): Observable<AnalyticsSummaryDto<TagAnalytic>> {
+    return this.http.post<TransactionQuery, AnalyticsSummaryDto<TagAnalytic>>(
       Endpoints.ANALYTICS_TAGS,
       query,
     );
