@@ -44,6 +44,10 @@ import { AnalyticsService } from '../../../api/analytics/analytics.service';
 import { CategoryAnalytic } from '../../../api/analytics/dto/category-analytic';
 import { TagAnalytic } from '../../../api/analytics/dto/tag-analytic';
 import {
+  AnalyticsSummaryDto,
+  EmptyAnalyticsSummaryDto,
+} from '../../../api/analytics/dto/analytics-summary.dto';
+import {
   TransactionQuery,
   TransactionQueryImpl,
 } from '../../../api/transaction/transactionSearchQuery';
@@ -109,6 +113,12 @@ export class ListAnalyticsComponent implements OnInit {
   ChartMode = ChartMode;
 
   budget = this.budgetSliderService.currentBudget;
+  categorySummary = signal<AnalyticsSummaryDto<CategoryAnalytic>>(
+    new EmptyAnalyticsSummaryDto(),
+  );
+  tagSummary = signal<AnalyticsSummaryDto<TagAnalytic>>(
+    new EmptyAnalyticsSummaryDto(),
+  );
   categoryAnalytics = signal<CategoryAnalytic[]>([]);
   tagAnalytics = signal<TagAnalytic[]>([]);
 
@@ -222,13 +232,15 @@ export class ListAnalyticsComponent implements OnInit {
     ]);
 
     if (catResp.isSuccess) {
-      this.categoryAnalytics.set(catResp.response);
-      this.updateCategoryChart(catResp.response);
+      this.categorySummary.set(catResp.response);
+      this.categoryAnalytics.set(catResp.response.items);
+      this.updateCategoryChart(catResp.response.items);
     }
 
     if (tagResp.isSuccess) {
-      this.tagAnalytics.set(tagResp.response);
-      this.updateTagChart(tagResp.response);
+      this.tagSummary.set(tagResp.response);
+      this.tagAnalytics.set(tagResp.response.items);
+      this.updateTagChart(tagResp.response.items);
     }
   }
 

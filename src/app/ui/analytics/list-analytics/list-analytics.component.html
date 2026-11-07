@@ -74,12 +74,45 @@
                   [options]="categoryChartOptions">
           </canvas>
         </div>
+
+        <div class="summary-section">
+          @if (chartMode() === ChartMode.EXPENSE) {
+            <div class="summary-box">
+              <span class="summary-label">Expenses</span>
+              <ion-text color="danger">
+                <strong class="summary-value">-{{ categorySummary().expensesSum | currency }}</strong>
+              </ion-text>
+              <span class="summary-sub">{{ categorySummary().expensesCount }} transactions</span>
+            </div>
+          } @else {
+            <div class="summary-box">
+              <span class="summary-label">Incomes</span>
+              <ion-text color="success">
+                <strong class="summary-value">+{{ categorySummary().incomesSum | currency }}</strong>
+              </ion-text>
+              <span class="summary-sub">{{ categorySummary().incomesCount }} deposits</span>
+            </div>
+          }
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-box ion-text-end">
+            <span class="summary-label">Total</span>
+            <ion-text [color]="categorySummary().total >= 0 ? 'success' : 'danger'">
+              <strong class="summary-value">{{ categorySummary().total > 0 ? '+' : '' }}{{ categorySummary().total | currency }}</strong>
+            </ion-text>
+            <span class="summary-sub">{{ categorySummary().totalCount }} total transactions</span>
+          </div>
+        </div>
       </ion-card-content>
     </ion-card>
 
-    <div class="ion-padding-start ion-padding-top">
+    <div class="details-header ion-padding-horizontal ion-padding-top">
       <ion-text color="medium">
-        <small style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Details</small>
+        <small class="details-title">Details</small>
+      </ion-text>
+      <ion-text color="medium">
+        <small>{{ categorySummary().totalCount }} transactions</small>
       </ion-text>
     </div>
 
@@ -180,8 +213,47 @@
                   [options]="tagChartOptions">
           </canvas>
         </div>
+
+        <div class="summary-section">
+          @if (chartMode() === ChartMode.EXPENSE) {
+            <div class="summary-box">
+              <span class="summary-label">Expenses</span>
+              <ion-text color="danger">
+                <strong class="summary-value">-{{ tagSummary().expensesSum | currency }}</strong>
+              </ion-text>
+              <span class="summary-sub">{{ tagSummary().expensesCount }} transactions</span>
+            </div>
+          } @else {
+            <div class="summary-box">
+              <span class="summary-label">Incomes</span>
+              <ion-text color="success">
+                <strong class="summary-value">+{{ tagSummary().incomesSum | currency }}</strong>
+              </ion-text>
+              <span class="summary-sub">{{ tagSummary().incomesCount }} deposits</span>
+            </div>
+          }
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-box ion-text-end">
+            <span class="summary-label">Total</span>
+            <ion-text [color]="tagSummary().total >= 0 ? 'success' : 'danger'">
+              <strong class="summary-value">{{ tagSummary().total > 0 ? '+' : '' }}{{ tagSummary().total | currency }}</strong>
+            </ion-text>
+            <span class="summary-sub">{{ tagSummary().totalCount }} total transactions</span>
+          </div>
+        </div>
       </ion-card-content>
     </ion-card>
+
+    <div class="details-header ion-padding-horizontal ion-padding-top">
+      <ion-text color="medium">
+        <small class="details-title">Details</small>
+      </ion-text>
+      <ion-text color="medium">
+        <small>{{ tagSummary().totalCount }} transactions</small>
+      </ion-text>
+    </div>
 
     <ion-card class="list-card">
       <ion-list lines="none">
