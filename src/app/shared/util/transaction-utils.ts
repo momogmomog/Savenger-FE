@@ -135,8 +135,16 @@ export class TransactionUtils {
 
   public static getUtilizationColor(current: number, max: number): string {
     const pct = TransactionUtils.getUtilizationPercentage(current, max);
-    if (pct >= 1) {
+    if (pct > 1.05) {
       return 'danger';
+    }
+
+    if (pct > 0.9) {
+      return 'warning';
+    }
+
+    if (pct > 0.7) {
+      return 'success';
     }
 
     return 'primary';

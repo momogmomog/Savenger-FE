@@ -19,6 +19,8 @@
   --color-action-transfer: var(--ion-color-secondary);
   --color-action-other: var(--ion-color-tertiary);
 
-  --color-utilization-normal: var(--ion-color-primary);
+  --color-utilization-low: var(--ion-color-primary);
+  --color-utilization-moderate: var(--ion-color-success);
+  --color-utilization-high: var(--ion-color-warning);
   --color-utilization-exceeded: var(--ion-color-danger);
 }
