@@ -17,13 +17,14 @@ import {
   RefresherCustomEvent,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cashOutline, filter, funnel } from 'ionicons/icons';
+import { cashOutline, timeOutline } from 'ionicons/icons';
 
 import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-content-base.component';
 import { RecurringTransactionService } from '../../../api/transaction/recurring/recurring-transaction.service';
 import { RecurringTransactionQueryImpl } from '../../../api/transaction/recurring/recurring-transaction.query';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { TransactionType } from '../../../api/transaction/transaction.type';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 import { ObjectUtils } from '../../../shared/util/object-utils';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
 import { RecurringTransactionCardComponent } from '../recurring-transaction-card/recurring-transaction-card.component';
@@ -57,6 +58,7 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   ListRecurringTransactionsModalPayload,
   boolean
 > {
+  protected readonly TransactionUtils = TransactionUtils;
   private recurringTransactionService = inject(RecurringTransactionService);
   private actionSheetCtrl = inject(ActionSheetController);
   private alertCtrl = inject(AlertController);
@@ -94,7 +96,7 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   constructor() {
     super();
 
-    addIcons({ filter, funnel, cashOutline });
+    addIcons({ cashOutline, timeOutline });
 
     effect(() => {
       const payload = this.payload();

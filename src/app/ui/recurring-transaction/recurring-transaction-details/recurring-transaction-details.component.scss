@@ -1,10 +1,1 @@
-.badges-container {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.recurrence-text {
-  text-transform: capitalize;
-}
+@use '../../../../theme/transaction-details.scss';

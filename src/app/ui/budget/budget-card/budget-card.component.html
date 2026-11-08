@@ -21,8 +21,8 @@
             <ion-icon slot="icon-only" name="pencil-outline" style="font-size: 1.1em;"></ion-icon>
           </ion-button>
         }
-        <ion-badge [color]="budget().active ? 'success' : 'medium'">
-          {{ budget().active ? 'Active' : 'Archived' }}
+        <ion-badge [color]="TransactionUtils.getStatusColor(budget().active)">
+          {{ TransactionUtils.getStatusLabel(budget().active) }}
         </ion-badge>
       </div>
     </div>
@@ -32,15 +32,15 @@
     <ion-row class="ion-margin-vertical">
 
       <ion-col size="6" class="ion-no-padding">
-        <div class="stat-label">Current Balance</div>
+        <div class="budget-stat-label">Current Balance</div>
         <div class="balance-value">
           {{ budget().balance | currency }}
         </div>
       </ion-col>
 
       <ion-col size="6" class="ion-no-padding"
-               style="border-left: 1px solid var(--ion-color-light); padding-left: 16px;">
-        <div class="stat-label">Budget Cap</div>
+               style="border-left: 1px solid var(--ion-color-step-150); padding-left: 16px;">
+        <div class="budget-stat-label">Budget Cap</div>
         <div class="cap-value">
           {{ budget().budgetCap | currency }}
         </div>
@@ -48,7 +48,7 @@
 
     </ion-row>
 
-    <ion-row class="ion-align-items-center" style="border-top: 1px solid var(--ion-color-light); padding-top: 10px;">
+    <ion-row class="ion-align-items-center" style="border-top: 1px solid var(--ion-color-step-150); padding-top: 10px;">
       <ion-col size="7" class="ion-no-padding">
         <div class="budget-meta">
           <ion-icon name="calendar-outline"></ion-icon>

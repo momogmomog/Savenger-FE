@@ -27,8 +27,6 @@ import {
   calendarOutline,
   ellipsisHorizontalOutline,
   ellipsisVertical,
-  filter,
-  funnel,
   repeatOutline,
   swapHorizontalOutline,
 } from 'ionicons/icons';
@@ -138,8 +136,6 @@ export class ListTransactionsComponent implements OnInit {
     addIcons({
       ellipsisVertical,
       ellipsisHorizontalOutline,
-      filter,
-      funnel,
       swapHorizontalOutline,
       calendarOutline,
       repeatOutline,

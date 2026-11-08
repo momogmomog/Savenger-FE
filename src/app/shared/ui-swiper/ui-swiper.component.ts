@@ -62,6 +62,12 @@ export interface ProgrammaticSwipe {
       swiper-container {
         width: 100%;
         height: 100%;
+        --swiper-pagination-color: var(--ion-color-primary-contrast, #ffffff);
+        --swiper-pagination-bullet-inactive-color: var(
+          --ion-color-primary-contrast,
+          #ffffff
+        );
+        --swiper-pagination-bullet-inactive-opacity: 0.35;
       }
     `,
   ],

@@ -1,0 +1,47 @@
+/*
+ * Cross-Domain Global Utility & Placeholder Styles
+ */
+
+.text-success,
+.text-income {
+  color: var(--color-income, var(--ion-color-success));
+}
+
+.text-danger,
+.text-expense {
+  color: var(--color-expense, var(--ion-color-danger));
+}
+
+.text-primary,
+.text-compensate {
+  color: var(--color-compensate, var(--ion-color-primary));
+}
+
+.text-medium {
+  color: var(--ion-color-medium);
+}
+
+.text-dark {
+  color: var(--ion-text-color, var(--ion-color-dark));
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.empty-list-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px 16px;
+  color: var(--ion-color-medium);
+
+  .empty-list-icon,
+  ion-icon {
+    font-size: 3rem;
+    opacity: 0.5;
+    margin-bottom: 12px;
+  }
+}

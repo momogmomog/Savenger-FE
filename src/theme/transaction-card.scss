@@ -1,0 +1,120 @@
+/*
+ * Shared styles for transaction list item cards
+ * Used by: TransactionCardComponent, RecurringTransactionCardComponent
+ */
+
+.transaction-card-item {
+  --background: transparent;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 0;
+  margin-bottom: 4px;
+}
+
+.transaction-type-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: rgba(
+    var(--color-compensate-rgb, var(--ion-color-primary-rgb)),
+    0.1
+  );
+  color: var(--color-compensate, var(--ion-color-primary));
+
+  &.EXPENSE {
+    background: rgba(
+      var(--color-expense-rgb, var(--ion-color-danger-rgb)),
+      0.1
+    );
+    color: var(--color-expense, var(--ion-color-danger));
+  }
+
+  &.INCOME {
+    background: rgba(
+      var(--color-income-rgb, var(--ion-color-success-rgb)),
+      0.1
+    );
+    color: var(--color-income, var(--ion-color-success));
+  }
+}
+
+.transaction-card-item .transaction-type-icon {
+  width: 36px;
+  height: 36px;
+  margin-right: 12px;
+}
+
+.transaction-category-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  color: var(--ion-text-color);
+}
+
+.transaction-card-meta {
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+
+  .meta-separator {
+    margin: 0 4px;
+  }
+
+  .meta-recurrence {
+    text-transform: capitalize;
+  }
+
+  .meta-comment-preview {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-style: italic;
+    opacity: 0.8;
+  }
+}
+
+.transaction-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.transaction-tag-pill {
+  font-size: 0.7rem;
+  background-color: var(--ion-color-step-150);
+  color: var(--ion-text-color);
+  padding: 2px 8px;
+  border-radius: 4px;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+.transaction-card-amount-col {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.transaction-card-amount {
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.recurring-auto-badge {
+  font-size: 0.6rem;
+  background: var(--ion-color-step-150);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--ion-text-color);
+  opacity: 0.8;
+}

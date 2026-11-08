@@ -17,12 +17,9 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  arrowDownCircle,
-  arrowUpCircle,
   calendarOutline,
   chevronForward,
   eyeOutline,
-  swapHorizontal,
   timeOutline,
 } from 'ionicons/icons';
 import { RecurringTransactionQueryImpl } from '../../../api/transaction/recurring/recurring-transaction.query';
@@ -77,9 +74,6 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
     addIcons({
       calendarOutline,
       chevronForward,
-      arrowUpCircle,
-      arrowDownCircle,
-      swapHorizontal,
       timeOutline,
       eyeOutline,
     });

@@ -5,6 +5,8 @@ import {
   arrowDownCircle,
   arrowUp,
   arrowUpCircle,
+  filter,
+  funnel,
   remove,
   swapHorizontal,
   swapHorizontalOutline,
@@ -16,6 +18,8 @@ import { TransactionType } from '../../api/transaction/transaction.type';
 export class TransactionUtils {
   public static readonly CHART_INCOME_COLOR = '#2dd36f';
   public static readonly CHART_EXPENSE_COLOR = '#428cff';
+  public static readonly CHART_TEXT_COLOR = '#9d9fa6';
+  public static readonly CHART_GRID_COLOR = 'rgba(157, 159, 166, 0.2)';
 
   public static readonly CHART_INCOME_PALETTE: string[] = [
     '#2dd36f',
@@ -51,6 +55,8 @@ export class TransactionUtils {
       arrowUp,
       add,
       remove,
+      filter,
+      funnel,
     });
   }
 
@@ -148,5 +154,25 @@ export class TransactionUtils {
     }
 
     return 'primary';
+  }
+
+  public static getFilterIcon(isFiltering: boolean): string {
+    return isFiltering ? 'funnel' : 'filter';
+  }
+
+  public static getStatusColor(active: boolean): string {
+    return active ? 'success' : 'medium';
+  }
+
+  public static getStatusLabel(active: boolean): string {
+    return active ? 'Active' : 'Archived';
+  }
+
+  public static getUserAvatarUrl(
+    username: string,
+    randomBackground = false,
+  ): string {
+    const base = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`;
+    return randomBackground ? `${base}&background=random` : base;
   }
 }

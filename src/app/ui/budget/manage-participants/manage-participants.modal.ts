@@ -21,6 +21,7 @@ import { ModalService } from '../../../shared/modal/modal.service';
 import { AddParticipantModalPayload } from '../add-participant/add-participant.modal.payload';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-content-base.component';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 
 @Component({
   selector: 'app-manage-participants',
@@ -53,11 +54,7 @@ import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-co
           <ion-item class="participant-item">
             <ion-avatar slot="start">
               <img
-                [src]="
-                  'https://ui-avatars.com/api/?name=' +
-                  user.username +
-                  '&background=random'
-                "
+                [src]="TransactionUtils.getUserAvatarUrl(user.username, true)"
                 alt="avatar"
               />
             </ion-avatar>
@@ -76,8 +73,8 @@ import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-co
             </ion-button>
           </ion-item>
         } @empty {
-          <div class="empty-state">
-            <ion-icon name="people-outline" class="empty-icon"></ion-icon>
+          <div class="empty-list-placeholder">
+            <ion-icon name="people-outline" class="empty-list-icon"></ion-icon>
             <p>No participants yet.</p>
             <ion-button fill="outline" size="small" (click)="openAddModal()">
               Invite Someone
@@ -98,16 +95,6 @@ import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-co
         font-weight: 700;
         font-size: 1.1em;
       }
-      .empty-state {
-        text-align: center;
-        padding: 30px 10px;
-        color: var(--ion-color-medium);
-      }
-      .empty-icon {
-        font-size: 3rem;
-        opacity: 0.5;
-        margin-bottom: 10px;
-      }
     `,
   ],
 })
@@ -115,6 +102,7 @@ export class ManageParticipantsModal
   extends ModalContentBaseComponent<BudgetFull, BudgetFull>
   implements OnInit
 {
+  protected readonly TransactionUtils = TransactionUtils;
   private budgetService = inject(BudgetService);
   private alertCtrl = inject(AlertController);
   private modalService = inject(ModalService);

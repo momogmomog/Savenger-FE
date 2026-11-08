@@ -42,10 +42,7 @@ import {
   personAddOutline,
   pricetagsOutline,
   stopCircleOutline,
-  swapHorizontalOutline,
   trashOutline,
-  trendingDownOutline,
-  trendingUpOutline,
   walletOutline,
 } from 'ionicons/icons';
 import { BudgetStatistics } from '../../../api/budget/budget.statistics';
@@ -135,10 +132,7 @@ export class BudgetDetailsPage implements OnInit {
     addIcons({
       ellipsisVertical,
       walletOutline,
-      trendingUpOutline,
-      trendingDownOutline,
       peopleOutline,
-      swapHorizontalOutline,
       pencilOutline,
       stopCircleOutline,
       trashOutline,

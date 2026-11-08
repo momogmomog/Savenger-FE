@@ -23,39 +23,45 @@ import { TransactionUtils } from '../../../shared/util/transaction-utils';
       [detail]="false"
       [button]="true"
     >
-      <div slot="start" class="transaction-icon" [ngClass]="transaction().type">
+      <div
+        slot="start"
+        class="transaction-type-icon"
+        [ngClass]="transaction().type"
+      >
         <ion-icon
           [name]="TransactionUtils.getIcon(transaction().type)"
         ></ion-icon>
       </div>
 
       <ion-label>
-        <h3 class="font-bold">
+        <h3 class="transaction-category-title">
           {{ categoryName() || transaction().type }}
         </h3>
 
-        <p class="sub-text">
+        <p class="transaction-card-meta">
           <span>{{ transaction().dateCreated | date: 'mediumDate' }}</span>
 
           @if (transaction().comment) {
-            <span class="separator">•</span>
-            <span class="comment-preview">{{ transaction().comment }}</span>
+            <span class="meta-separator">•</span>
+            <span class="meta-comment-preview">{{
+              transaction().comment
+            }}</span>
           }
         </p>
 
         @if (transaction().tags && transaction().tags.length > 0) {
-          <div class="tags-row">
+          <div class="transaction-card-tags">
             @for (tag of transaction().tags; track tag.id) {
-              <span class="tag-pill">{{ tag.tagName }}</span>
+              <span class="transaction-tag-pill">{{ tag.tagName }}</span>
             }
           </div>
         }
       </ion-label>
 
-      <div slot="end" class="amount-container">
+      <div slot="end" class="transaction-card-amount-col">
         <ion-text
           [color]="TransactionUtils.getColor(transaction().type)"
-          class="amount-text"
+          class="transaction-card-amount"
         >
           {{ TransactionUtils.getSign(transaction().type)
           }}{{ transaction().amount | currency }}
@@ -63,35 +69,11 @@ import { TransactionUtils } from '../../../shared/util/transaction-utils';
       </div>
     </ion-item>
   `,
+  styleUrls: ['../../../../theme/transaction-card.scss'],
   styles: [
     `
       :host {
         display: block;
-      }
-      .font-bold {
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 2px;
-      }
-
-      .sub-text {
-        font-size: 0.8rem;
-        color: var(--ion-color-medium);
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-      }
-
-      .separator {
-        margin: 0 4px;
-      }
-
-      .comment-preview {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        font-style: italic;
-        opacity: 0.8;
       }
     `,
   ],

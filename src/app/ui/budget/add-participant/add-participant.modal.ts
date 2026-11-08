@@ -25,6 +25,7 @@ import { AddParticipantModalPayload } from './add-participant.modal.payload';
 import { InputComponent } from '../../../shared/form-controls/input/input.component';
 import { BudgetFull } from '../../../api/budget/budget';
 import { ModalService } from '../../../shared/modal/modal.service';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 
 @Component({
   selector: 'app-add-participant-modal',
@@ -52,13 +53,13 @@ import { ModalService } from '../../../shared/modal/modal.service';
         align-items: center;
         gap: 8px;
         padding: 10px;
-        background: var(--ion-color-danger-contrast);
+        background: rgba(var(--ion-color-danger-rgb), 0.1);
         border: 1px solid var(--ion-color-danger);
         border-radius: 8px;
       }
       .found-user-card {
-        border: 1px solid var(--ion-color-light-shade);
-        border-radius: 12px;
+        border: 1px solid var(--ion-color-step-150);
+        border-radius: var(--card-border-radius-sm, 12px);
         padding: 12px;
       }
       .user-item {
@@ -72,6 +73,7 @@ export class AddParticipantModal extends ModalContentBaseComponent<
   AddParticipantModalPayload,
   BudgetFull
 > {
+  protected readonly TransactionUtils = TransactionUtils;
   private modalService = inject(ModalService);
   private userService = inject(UserService);
   private budgetService = inject(BudgetService);

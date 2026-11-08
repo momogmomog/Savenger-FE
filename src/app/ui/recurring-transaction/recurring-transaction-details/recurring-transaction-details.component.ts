@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import {
   ActionSheetController,
@@ -38,7 +38,6 @@ import {
   walletOutline,
 } from 'ionicons/icons';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
-import { TransactionType } from '../../../api/transaction/transaction.type';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
 import { AppRoutingPath } from '../../../app-routing.path';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
@@ -82,10 +81,6 @@ export class RecurringTransactionDetailsComponent {
   editTriggered = output<void>();
   deleteTriggered = output<void>();
   executeTriggered = output<void>();
-
-  isIncome = computed(() => {
-    return this.transaction().type === TransactionType.INCOME;
-  });
 
   constructor() {
     addIcons({

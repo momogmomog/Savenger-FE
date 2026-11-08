@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import {
   ActionSheetController,
@@ -34,7 +34,6 @@ import {
 } from 'ionicons/icons';
 import { TransactionDetailed } from '../../../api/transaction/transaction';
 import { Budget } from '../../../api/budget/budget';
-import { TransactionType } from '../../../api/transaction/transaction.type';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
 import { AppRoutingPath } from '../../../app-routing.path';
 
@@ -75,11 +74,6 @@ export class TransactionDetailsComponent {
   navigateAway = output<void>();
   editTriggered = output<void>();
   deleteTriggered = output<void>();
-
-  isIncome = computed(() => {
-    const t = this.transaction();
-    return t.type === TransactionType.INCOME;
-  });
 
   constructor() {
     addIcons({

@@ -3,7 +3,7 @@
     <ion-title>Transactions</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="presentFilterOptions()">
-        <ion-icon slot="icon-only" [name]="isFiltering() ? 'funnel' : 'filter'"></ion-icon>
+        <ion-icon slot="icon-only" [name]="TransactionUtils.getFilterIcon(isFiltering())"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -18,30 +18,30 @@
     <app-budget-slider></app-budget-slider>
   </div>
 
-  <div class="quick-actions ion-padding-vertical">
-    <div class="action-item" (click)="openAddTransaction(TransactionType.EXPENSE)">
-      <div class="action-btn expense">
+  <div class="transaction-quick-actions ion-padding-vertical">
+    <div class="quick-action-item" (click)="openAddTransaction(TransactionType.EXPENSE)">
+      <div class="quick-action-btn expense">
         <ion-icon [name]="TransactionUtils.getActionIcon(TransactionType.EXPENSE)"></ion-icon>
       </div>
       <span>Expense</span>
     </div>
 
-    <div class="action-item" (click)="openAddTransaction(TransactionType.INCOME)">
-      <div class="action-btn income">
+    <div class="quick-action-item" (click)="openAddTransaction(TransactionType.INCOME)">
+      <div class="quick-action-btn income">
         <ion-icon [name]="TransactionUtils.getActionIcon(TransactionType.INCOME)"></ion-icon>
       </div>
       <span>Income</span>
     </div>
 
-    <div class="action-item" (click)="openTransfers()">
-      <div class="action-btn transfer">
+    <div class="quick-action-item" (click)="openTransfers()">
+      <div class="quick-action-btn transfer">
         <ion-icon name="swap-horizontal-outline"></ion-icon>
       </div>
       <span>Transfer</span>
     </div>
 
-    <div class="action-item" (click)="showMoreTransactionOptions()">
-      <div class="action-btn other">
+    <div class="quick-action-item" (click)="showMoreTransactionOptions()">
+      <div class="quick-action-btn other">
         <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
       </div>
       <span>More</span>
@@ -59,13 +59,13 @@
 
     <div class="ion-padding-start ion-padding-bottom ion-margin-top">
       <ion-text color="medium">
-        <small style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem;">
+        <small class="transaction-group-date-header">
           {{ group.dateObj | date:'mediumDate' }}
         </small>
       </ion-text>
     </div>
 
-    <ion-card style="border-radius: 24px;">
+    <ion-card class="transaction-group-card">
 
       <ion-list lines="none" class="ion-no-padding">
         @for (item of group.items; track item.id; let last = $last) {
@@ -80,7 +80,7 @@
     </ion-card>
 
   } @empty {
-    <div class="ion-text-center ion-padding ion-margin-top text-medium">
+    <div class="empty-list-placeholder ion-margin-top">
       <p>No transactions found</p>
     </div>
   }

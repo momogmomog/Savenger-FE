@@ -1,0 +1,16 @@
+/*
+ * Shared styles for date-grouped transaction lists
+ * Used by: ListTransactionsComponent, ListRecurringTransactionsModal
+ */
+
+.transaction-group-date-header {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.transaction-group-card {
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+}

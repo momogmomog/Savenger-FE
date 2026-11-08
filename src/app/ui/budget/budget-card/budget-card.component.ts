@@ -19,6 +19,7 @@ import {
   pencilOutline,
 } from 'ionicons/icons';
 import { Budget } from '../../../api/budget/budget';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 
 @Component({
   selector: 'app-budget-card',
@@ -39,24 +40,21 @@ import { Budget } from '../../../api/budget/budget';
     IonButton,
   ],
   templateUrl: './budget-card.component.html',
+  styleUrls: ['../../../../theme/budget.scss'],
   styles: [
     `
       ion-card {
         cursor: pointer;
         margin-bottom: 16px;
-        border-radius: 16px;
+        border-radius: var(--card-border-radius-md, 16px);
       }
-      .stat-label {
-        font-size: 0.75em;
-        text-transform: uppercase;
-        color: var(--ion-color-medium);
-        letter-spacing: 0.5px;
+      .budget-stat-label {
         margin-bottom: 4px;
       }
       .balance-value {
         font-weight: 800;
         font-size: 1.2em;
-        color: var(--ion-color-dark);
+        color: var(--ion-text-color, var(--ion-color-dark));
       }
       .cap-value {
         font-weight: 600;
@@ -74,6 +72,7 @@ import { Budget } from '../../../api/budget/budget';
   ],
 })
 export class BudgetCardComponent {
+  protected readonly TransactionUtils = TransactionUtils;
   budget = input.required<Budget>();
   editTriggered = output<Budget>();
 

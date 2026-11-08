@@ -67,8 +67,8 @@ import { Transfer } from '../../../api/transfer/transfer';
   styles: [
     `
       .transfer-card {
-        background: var(--ion-card-background, #1e1e1e);
-        border-radius: 16px;
+        background: var(--ion-card-background);
+        border-radius: var(--card-border-radius-md, 16px);
         margin-bottom: 16px;
       }
 
@@ -90,7 +90,7 @@ import { Transfer } from '../../../api/transfer/transfer';
         font-size: 1.2rem;
         font-weight: 600;
         margin: 0;
-        color: var(--ion-text-color, #fff);
+        color: var(--ion-text-color);
       }
 
       .card-body {
@@ -100,7 +100,7 @@ import { Transfer } from '../../../api/transfer/transfer';
       .action-row {
         display: flex;
         gap: 12px;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-top: 1px solid var(--ion-color-step-100);
         padding-top: 12px;
       }
 

@@ -32,11 +32,7 @@
     <ion-item lines="none" class="user-item">
       <ion-avatar slot="start">
         <img
-          [src]="
-                  'https://ui-avatars.com/api/?name=' +
-                  user.username +
-                  '&background=random'
-                "
+          [src]="TransactionUtils.getUserAvatarUrl(user.username, true)"
           alt="avatar"
         />
       </ion-avatar>

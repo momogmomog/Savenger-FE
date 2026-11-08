@@ -3,7 +3,7 @@
     <ion-title>Analytics</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="presentFilterOptions()">
-        <ion-icon slot="icon-only" [name]="isFiltering() ? 'funnel' : 'filter'"></ion-icon>
+        <ion-icon slot="icon-only" [name]="TransactionUtils.getFilterIcon(isFiltering())"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -55,7 +55,7 @@
             <ion-card-title>By Category</ion-card-title>
           </div>
           <div style="width: 150px;">
-            <ion-segment [value]="chartMode()" (ionChange)="setChartMode($any($event).detail.value)" mode="ios" style="--background: rgba(255,255,255,0.1);">
+            <ion-segment [value]="chartMode()" (ionChange)="setChartMode($any($event).detail.value)" mode="ios" class="analytics-mode-segment">
               <ion-segment-button [value]="ChartMode.EXPENSE">
                 <ion-label>Exp</ion-label>
               </ion-segment-button>
@@ -107,16 +107,16 @@
       </ion-card-content>
     </ion-card>
 
-    <div class="details-header ion-padding-horizontal ion-padding-top">
+    <div class="analytics-details-header ion-padding-horizontal ion-padding-top">
       <ion-text color="medium">
-        <small class="details-title">Details</small>
+        <small class="analytics-details-title">Details</small>
       </ion-text>
       <ion-text color="medium">
         <small>{{ categorySummary().totalCount }} transactions</small>
       </ion-text>
     </div>
 
-    <ion-card class="list-card">
+    <ion-card class="analytics-list-card">
       <ion-list lines="full">
         @for (item of categoryAnalytics(); track item.category.id) {
           @if (item.expenses.count > 0 || item.incomes.count > 0) {
@@ -137,7 +137,7 @@
                   </div>
 
                   @if (item.category.budgetCap > 0) {
-                    <div class="progress-wrapper">
+                    <div class="category-budget-progress">
                       <ion-progress-bar
                         [value]="getPercentage(item.expenses.sum, item.category.budgetCap)"
                         [color]="TransactionUtils.getUtilizationColor(item.expenses.sum, item.category.budgetCap)">
@@ -155,7 +155,7 @@
                 }
 
                 @if (item.expenses.count > 0 && item.incomes.count > 0) {
-                  <div style="margin: 10px 0; border-top: 1px solid var(--ion-color-step-150);"></div>
+                  <div class="category-income-expense-divider"></div>
                 }
 
                 @if (item.incomes.count > 0) {
@@ -194,7 +194,7 @@
             <ion-card-title>By Tag</ion-card-title>
           </div>
           <div style="width: 150px;">
-            <ion-segment [value]="chartMode()" (ionChange)="setChartMode($any($event).detail.value)" mode="ios" style="--background: rgba(255,255,255,0.1);">
+            <ion-segment [value]="chartMode()" (ionChange)="setChartMode($any($event).detail.value)" mode="ios" class="analytics-mode-segment">
               <ion-segment-button [value]="ChartMode.EXPENSE">
                 <ion-label>Exp</ion-label>
               </ion-segment-button>
@@ -246,16 +246,16 @@
       </ion-card-content>
     </ion-card>
 
-    <div class="details-header ion-padding-horizontal ion-padding-top">
+    <div class="analytics-details-header ion-padding-horizontal ion-padding-top">
       <ion-text color="medium">
-        <small class="details-title">Details</small>
+        <small class="analytics-details-title">Details</small>
       </ion-text>
       <ion-text color="medium">
         <small>{{ tagSummary().totalCount }} transactions</small>
       </ion-text>
     </div>
 
-    <ion-card class="list-card">
+    <ion-card class="analytics-list-card">
       <ion-list lines="none">
         @for (item of tagAnalytics(); track item.tag.id) {
           @if(item.expenses.count > 0 || item.incomes.count > 0) {

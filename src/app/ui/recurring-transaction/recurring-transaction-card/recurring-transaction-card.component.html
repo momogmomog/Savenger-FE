@@ -1,31 +1,31 @@
-<ion-item [button]="true" [detail]="false" class="transaction-item" (click)="onClick.emit(transaction())">
-  <div slot="start" class="type-icon" [ngClass]="transaction().type">
+<ion-item [button]="true" [detail]="false" class="transaction-card-item" (click)="onClick.emit(transaction())">
+  <div slot="start" class="transaction-type-icon" [ngClass]="transaction().type">
     <ion-icon [name]="TransactionUtils.getIcon(transaction().type)"></ion-icon>
   </div>
 
   <ion-label>
-    <h3 class="category-name">{{ categoryName() }}</h3>
-    <p class="meta-info">
+    <h3 class="transaction-category-title">{{ categoryName() }}</h3>
+    <p class="transaction-card-meta">
       <span class="date">{{ transaction().nextDate | date: 'mediumDate'  }}</span>
-      <span class="dot">•</span>
-      <span class="recurrence">{{ RRuleUtils.toHumanReadableText(transaction().recurringRule) }}</span>
+      <span class="meta-separator">•</span>
+      <span class="meta-recurrence">{{ RRuleUtils.toHumanReadableText(transaction().recurringRule) }}</span>
     </p>
 
     @if (transaction().tags && transaction().tags.length > 0) {
-      <div class="tags-row">
+      <div class="transaction-card-tags">
         @for (tag of transaction().tags; track tag.id) {
-          <span class="tag-pill">{{ tag.tagName }}</span>
+          <span class="transaction-tag-pill">{{ tag.tagName }}</span>
         }
       </div>
     }
   </ion-label>
 
-  <div slot="end" class="amount-wrapper">
-    <ion-text [color]="TransactionUtils.getColor(transaction().type)" class="amount">
+  <div slot="end" class="transaction-card-amount-col">
+    <ion-text [color]="TransactionUtils.getColor(transaction().type)" class="transaction-card-amount">
       {{ TransactionUtils.getSign(transaction().type) }}{{ transaction().amount | currency }}
     </ion-text>
     @if (transaction().autoExecute) {
-      <div class="auto-badge">Auto</div>
+      <div class="recurring-auto-badge">Auto</div>
     }
   </div>
 </ion-item>

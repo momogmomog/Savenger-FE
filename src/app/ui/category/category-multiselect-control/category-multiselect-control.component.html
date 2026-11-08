@@ -9,7 +9,7 @@
 </app-select-search>
 
 @if (selectedCategories().length > 0) {
-  <div class="ion-padding-top" style="display: flex; flex-wrap: wrap; gap: 4px;">
+  <div class="tags-container ion-padding-top">
     @for (cat of selectedCategories(); track cat.id) {
       <ion-chip (click)="removeCategory(cat.id)" [outline]="true" color="primary">
         <ion-label>{{ cat.categoryName }}</ion-label>

@@ -3,12 +3,12 @@
 
   &.ng-invalid  {
     .ctrl {
-      border-bottom: 1px #f8bd4b solid;
+      border-bottom: 1px var(--color-control-invalid, #f8bd4b) solid;
     }
 
     &.ng-dirty {
       .ctrl  {
-        border-bottom: 1px darkred solid;
+        border-bottom: 1px var(--color-control-invalid-dirty, darkred) solid;
       }
     }
   }

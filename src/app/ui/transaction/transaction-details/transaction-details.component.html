@@ -16,14 +16,14 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div class="hero-section ion-padding-vertical">
+  <div class="transaction-details-hero ion-padding-vertical">
     <div
-      class="amount-display"
+      class="hero-amount"
       [ngClass]="transaction().type"
     >
       {{ TransactionUtils.getSign(transaction().type) }}{{ transaction().amount | currency }}
     </div>
-    <div class="date-display ion-text-muted">
+    <div class="hero-date ion-text-muted">
       <ion-icon
         name="calendar-outline"
         style="vertical-align: text-bottom;"
@@ -65,12 +65,9 @@
 
       @if (transaction().user) {
         <ion-item>
-          <ion-avatar slot="start" class="small-avatar">
+          <ion-avatar slot="start" class="transaction-creator-avatar">
             <img
-              [src]="
-                  'https://ui-avatars.com/api/?name=' +
-                  transaction().user.username
-                "
+              [src]="TransactionUtils.getUserAvatarUrl(transaction().user.username)"
               alt="avatar"
             />
           </ion-avatar>
@@ -85,11 +82,11 @@
 
   @if (transaction().tags.length > 0) {
     <div class="ion-padding-horizontal ion-margin-top">
-      <ion-label color="medium" class="section-label">
+      <ion-label color="medium" class="transaction-tags-section-label">
         <ion-icon name="pricetag-outline"></ion-icon>
         Tags
       </ion-label>
-      <div class="tags-container">
+      <div class="transaction-tags-chip-list">
         @for (tag of transaction().tags; track tag.id) {
           <ion-chip>
             <ion-label>{{ tag.tagName }}</ion-label>
@@ -102,12 +99,12 @@
   @if (transaction().comment) {
     <ion-card class="ion-margin">
       <ion-card-content>
-        <div class="comment-header">
+        <div class="transaction-note-header">
           <ion-icon name="chatbox-outline" color="medium"></ion-icon>
           <span>Note</span>
         </div>
         <ion-text color="dark">
-          <p class="comment-text">{{ transaction().comment }}</p>
+          <p class="transaction-note-text">{{ transaction().comment }}</p>
         </ion-text>
       </ion-card-content>
     </ion-card>

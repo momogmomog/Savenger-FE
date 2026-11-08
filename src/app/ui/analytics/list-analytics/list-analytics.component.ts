@@ -27,15 +27,7 @@ import {
   RefresherCustomEvent,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import {
-  arrowDown,
-  arrowUp,
-  calendar,
-  filter,
-  funnel,
-  pricetag,
-  wallet,
-} from 'ionicons/icons';
+import { calendar, pricetag, wallet } from 'ionicons/icons';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 
@@ -147,7 +139,10 @@ export class ListAnalyticsComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'right', labels: { color: '#9d9fa6', boxWidth: 12 } },
+      legend: {
+        position: 'right',
+        labels: { color: TransactionUtils.CHART_TEXT_COLOR, boxWidth: 12 },
+      },
     },
     elements: { arc: { borderWidth: 0 } },
   };
@@ -158,8 +153,14 @@ export class ListAnalyticsComponent implements OnInit {
     indexAxis: 'y',
     plugins: { legend: { display: false } },
     scales: {
-      x: { grid: { color: '#333' }, ticks: { color: '#9d9fa6' } },
-      y: { grid: { display: false }, ticks: { color: '#fff' } },
+      x: {
+        grid: { color: TransactionUtils.CHART_GRID_COLOR },
+        ticks: { color: TransactionUtils.CHART_TEXT_COLOR },
+      },
+      y: {
+        grid: { display: false },
+        ticks: { color: TransactionUtils.CHART_TEXT_COLOR },
+      },
     },
   };
 
@@ -169,13 +170,9 @@ export class ListAnalyticsComponent implements OnInit {
     private modalService: ModalService,
   ) {
     addIcons({
-      filter,
-      funnel,
       wallet,
       pricetag,
       calendar,
-      arrowDown,
-      arrowUp,
     });
 
     effect(async () => {

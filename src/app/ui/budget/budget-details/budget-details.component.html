@@ -31,8 +31,8 @@
     <ion-card-header>
       <div style="display: flex; justify-content: space-between;">
         <ion-card-subtitle>{{ stats().budget.recurringRule }}</ion-card-subtitle>
-        <ion-badge [color]="stats().budget.active ? 'success' : 'medium'">
-          {{ stats().budget.active ? 'Active' : 'Archived' }}
+        <ion-badge [color]="TransactionUtils.getStatusColor(stats().budget.active)">
+          {{ TransactionUtils.getStatusLabel(stats().budget.active) }}
         </ion-badge>
       </div>
     </ion-card-header>
@@ -52,25 +52,25 @@
   <ion-grid class="ion-padding-horizontal">
     <ion-row>
       <ion-col size="6">
-        <div class="stat-card">
+        <div class="budget-stat-card">
           <ion-icon
             [name]="TransactionUtils.getTrendIcon(TransactionType.EXPENSE)"
             [color]="TransactionUtils.getColor(TransactionType.EXPENSE)">
           </ion-icon>
-          <div class="stat-label">Expenses</div>
-          <div class="stat-value" [ngClass]="TransactionUtils.getTextColorClass(TransactionType.EXPENSE)">
+          <div class="budget-stat-label">Expenses</div>
+          <div class="budget-stat-value" [ngClass]="TransactionUtils.getTextColorClass(TransactionType.EXPENSE)">
             {{ stats().expensesAmount | currency }}
           </div>
         </div>
       </ion-col>
       <ion-col size="6">
-        <div class="stat-card">
+        <div class="budget-stat-card">
           <ion-icon
             [name]="TransactionUtils.getTrendIcon(TransactionType.INCOME)"
             [color]="TransactionUtils.getColor(TransactionType.INCOME)">
           </ion-icon>
-          <div class="stat-label">Earnings</div>
-          <div class="stat-value" [ngClass]="TransactionUtils.getTextColorClass(TransactionType.INCOME)">
+          <div class="budget-stat-label">Earnings</div>
+          <div class="budget-stat-value" [ngClass]="TransactionUtils.getTextColorClass(TransactionType.INCOME)">
             {{ stats().earningsAmount | currency }}
           </div>
         </div>
@@ -118,7 +118,7 @@
           @for (user of stats().budget.participants; track user.id) {
             <ion-item>
               <ion-avatar slot="start">
-                <img [src]="'https://ui-avatars.com/api/?name=' + user.username" alt="avatar" />
+                <img [src]="TransactionUtils.getUserAvatarUrl(user.username)" alt="avatar" />
               </ion-avatar>
               <ion-label>
                 {{ user.username }}
