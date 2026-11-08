@@ -19,10 +19,9 @@
   <div class="hero-section ion-padding-vertical">
     <div
       class="amount-display"
-      [class.income]="isIncome()"
-      [class.expense]="!isIncome()"
+      [ngClass]="transaction().type"
     >
-      {{ transaction().amount | currency }}
+      {{ TransactionUtils.getSign(transaction().type) }}{{ transaction().amount | currency }}
     </div>
 
     <div class="date-display ion-text-muted">

@@ -61,6 +61,8 @@ import {
 import { Tag } from '../../../api/tag/tag';
 import { Category } from '../../../api/category/category';
 import { OtherUser } from '../../../api/user/user';
+import { TransactionType } from '../../../api/transaction/transaction.type';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 
 enum ChartMode {
   EXPENSE = 'EXPENSE',
@@ -111,6 +113,8 @@ export class ListAnalyticsComponent implements OnInit {
 
   ChartSegment = ChartSegment;
   ChartMode = ChartMode;
+  protected readonly TransactionType = TransactionType;
+  protected readonly TransactionUtils = TransactionUtils;
 
   budget = this.budgetSliderService.currentBudget;
   categorySummary = signal<AnalyticsSummaryDto<CategoryAnalytic>>(
@@ -262,26 +266,8 @@ export class ListAnalyticsComponent implements OnInit {
     );
 
     const colors = isIncome
-      ? [
-          '#2dd36f',
-          '#28ba62',
-          '#22a053',
-          '#1c8645',
-          '#42d77d',
-          '#59db8c',
-          '#6fe09b',
-          '#86e4a9',
-        ]
-      : [
-          '#428cff',
-          '#50c8ff',
-          '#a58fff',
-          '#ffc409',
-          '#eb445a',
-          '#2dd36f',
-          '#e0e0e0',
-          '#808080',
-        ];
+      ? TransactionUtils.CHART_INCOME_PALETTE
+      : TransactionUtils.CHART_EXPENSE_PALETTE;
 
     this.categoryChartData.set({
       labels: labels,
@@ -324,7 +310,9 @@ export class ListAnalyticsComponent implements OnInit {
           data: activeData.map((d) =>
             isIncome ? d.incomes.sum : d.expenses.sum,
           ),
-          backgroundColor: isIncome ? '#2dd36f' : '#428cff',
+          backgroundColor: isIncome
+            ? TransactionUtils.CHART_INCOME_COLOR
+            : TransactionUtils.CHART_EXPENSE_COLOR,
           borderRadius: 4,
           barThickness: 20,
         },
@@ -381,7 +369,6 @@ export class ListAnalyticsComponent implements OnInit {
   }
 
   getPercentage(current: number, max: number): number {
-    if (!max || max === 0) return 0;
-    return Math.min(current / max, 1);
+    return TransactionUtils.getUtilizationPercentage(current, max);
   }
 }

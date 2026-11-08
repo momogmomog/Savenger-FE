@@ -1,2 +1,24 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
+
+:root {
+  --color-income: var(--ion-color-success);
+  --color-income-rgb: var(--ion-color-success-rgb);
+
+  --color-expense: var(--ion-color-danger);
+  --color-expense-rgb: var(--ion-color-danger-rgb);
+
+  --color-compensate: var(--ion-color-primary);
+  --color-compensate-rgb: var(--ion-color-primary-rgb);
+
+  --color-transfer: var(--ion-color-secondary);
+  --color-transfer-rgb: var(--ion-color-secondary-rgb);
+
+  --color-action-expense: var(--ion-color-primary);
+  --color-action-income: var(--ion-color-success);
+  --color-action-transfer: var(--ion-color-secondary);
+  --color-action-other: var(--ion-color-tertiary);
+
+  --color-utilization-normal: var(--ion-color-primary);
+  --color-utilization-exceeded: var(--ion-color-danger);
+}

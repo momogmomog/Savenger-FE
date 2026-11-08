@@ -59,6 +59,8 @@ import { CreateCategoryModal } from '../../category/create-category.modal';
 import { TagService } from '../../../api/tag/tag.service';
 import { Tag } from '../../../api/tag/tag';
 import { CreateTagModal } from '../../tag/create-tag.modal';
+import { TransactionType } from '../../../api/transaction/transaction.type';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 
 @Component({
   selector: 'app-budget-details',
@@ -101,6 +103,8 @@ export class BudgetDetailsPage implements OnInit {
   private tagService = inject(TagService);
 
   routes = AppRoutingPath;
+  protected readonly TransactionType = TransactionType;
+  protected readonly TransactionUtils = TransactionUtils;
   stats = model.required<BudgetStatistics>();
   protected categories = model<Category[]>([]);
   protected tags = model<Tag[]>([]);
@@ -110,16 +114,17 @@ export class BudgetDetailsPage implements OnInit {
   budgetUpdated = output<void>();
 
   usagePercentage = computed(() => {
-    const cap = this.stats().budget.budgetCap;
-    if (!cap || cap === 0) return 0;
-    return Math.min(this.stats().expensesAmount / cap, 1);
+    return TransactionUtils.getUtilizationPercentage(
+      this.stats().expensesAmount,
+      this.stats().budget.budgetCap,
+    );
   });
 
   healthColor = computed(() => {
-    const pct = this.usagePercentage();
-    if (pct >= 1) return 'danger';
-    if (pct > 0.85) return 'warning';
-    return 'primary';
+    return TransactionUtils.getUtilizationColor(
+      this.stats().expensesAmount,
+      this.stats().budget.budgetCap,
+    );
   });
 
   pendingTransactions = computed(() => {

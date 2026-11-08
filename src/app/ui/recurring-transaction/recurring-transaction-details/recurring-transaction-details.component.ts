@@ -39,6 +39,7 @@ import {
 } from 'ionicons/icons';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { TransactionType } from '../../../api/transaction/transaction.type';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 import { AppRoutingPath } from '../../../app-routing.path';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
 import { ObjectUtils } from '../../../shared/util/object-utils';
@@ -133,4 +134,5 @@ export class RecurringTransactionDetailsComponent {
 
   protected readonly AppRoutingPath = AppRoutingPath;
   protected readonly ObjectUtils = ObjectUtils;
+  protected readonly TransactionUtils = TransactionUtils;
 }

@@ -21,15 +21,14 @@ import {
 } from '@ionic/angular/standalone';
 import { TransactionCardComponent } from '../transaction-card/transaction-card.component';
 import { TransactionType } from '../../../api/transaction/transaction.type';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 import { addIcons } from 'ionicons';
 import {
-  add,
   calendarOutline,
   ellipsisHorizontalOutline,
   ellipsisVertical,
   filter,
   funnel,
-  remove,
   repeatOutline,
   swapHorizontalOutline,
 } from 'ionicons/icons';
@@ -92,6 +91,7 @@ import { OtherUser } from '../../../api/user/user';
 })
 export class ListTransactionsComponent implements OnInit {
   readonly TransactionType = TransactionType;
+  protected readonly TransactionUtils = TransactionUtils;
   budget = this.budgetSliderService.currentBudget;
   recurringTransactionUpdateTrigger = signal<number | null>(null);
 
@@ -138,8 +138,6 @@ export class ListTransactionsComponent implements OnInit {
     addIcons({
       ellipsisVertical,
       ellipsisHorizontalOutline,
-      add,
-      remove,
       filter,
       funnel,
       swapHorizontalOutline,

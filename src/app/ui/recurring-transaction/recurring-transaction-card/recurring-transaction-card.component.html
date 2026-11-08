@@ -1,6 +1,6 @@
 <ion-item [button]="true" [detail]="false" class="transaction-item" (click)="onClick.emit(transaction())">
   <div slot="start" class="type-icon" [ngClass]="transaction().type">
-    <ion-icon [name]="getIcon(transaction().type)"></ion-icon>
+    <ion-icon [name]="TransactionUtils.getIcon(transaction().type)"></ion-icon>
   </div>
 
   <ion-label>
@@ -21,8 +21,8 @@
   </ion-label>
 
   <div slot="end" class="amount-wrapper">
-    <ion-text [color]="getColor(transaction().type)" class="amount">
-      {{ getSign(transaction().type) }}{{ transaction().amount | currency }}
+    <ion-text [color]="TransactionUtils.getColor(transaction().type)" class="amount">
+      {{ TransactionUtils.getSign(transaction().type) }}{{ transaction().amount | currency }}
     </ion-text>
     @if (transaction().autoExecute) {
       <div class="auto-badge">Auto</div>

@@ -21,14 +21,14 @@
   <div class="quick-actions ion-padding-vertical">
     <div class="action-item" (click)="openAddTransaction(TransactionType.EXPENSE)">
       <div class="action-btn expense">
-        <ion-icon name="remove"></ion-icon>
+        <ion-icon [name]="TransactionUtils.getActionIcon(TransactionType.EXPENSE)"></ion-icon>
       </div>
       <span>Expense</span>
     </div>
 
     <div class="action-item" (click)="openAddTransaction(TransactionType.INCOME)">
       <div class="action-btn income">
-        <ion-icon name="add"></ion-icon>
+        <ion-icon [name]="TransactionUtils.getActionIcon(TransactionType.INCOME)"></ion-icon>
       </div>
       <span>Income</span>
     </div>

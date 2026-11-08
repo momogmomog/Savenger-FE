@@ -53,18 +53,24 @@
     <ion-row>
       <ion-col size="6">
         <div class="stat-card">
-          <ion-icon name="trending-down-outline" color="danger"></ion-icon>
+          <ion-icon
+            [name]="TransactionUtils.getTrendIcon(TransactionType.EXPENSE)"
+            [color]="TransactionUtils.getColor(TransactionType.EXPENSE)">
+          </ion-icon>
           <div class="stat-label">Expenses</div>
-          <div class="stat-value text-danger">
+          <div class="stat-value" [ngClass]="TransactionUtils.getTextColorClass(TransactionType.EXPENSE)">
             {{ stats().expensesAmount | currency }}
           </div>
         </div>
       </ion-col>
       <ion-col size="6">
         <div class="stat-card">
-          <ion-icon name="trending-up-outline" color="success"></ion-icon>
+          <ion-icon
+            [name]="TransactionUtils.getTrendIcon(TransactionType.INCOME)"
+            [color]="TransactionUtils.getColor(TransactionType.INCOME)">
+          </ion-icon>
           <div class="stat-label">Earnings</div>
-          <div class="stat-value text-success">
+          <div class="stat-value" [ngClass]="TransactionUtils.getTextColorClass(TransactionType.INCOME)">
             {{ stats().earningsAmount | currency }}
           </div>
         </div>

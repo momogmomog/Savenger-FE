@@ -79,16 +79,16 @@
           @if (chartMode() === ChartMode.EXPENSE) {
             <div class="summary-box">
               <span class="summary-label">Expenses</span>
-              <ion-text color="danger">
-                <strong class="summary-value">-{{ categorySummary().expensesSum | currency }}</strong>
+              <ion-text [color]="TransactionUtils.getColor(TransactionType.EXPENSE)">
+                <strong class="summary-value">{{ TransactionUtils.getSign(TransactionType.EXPENSE) }}{{ categorySummary().expensesSum | currency }}</strong>
               </ion-text>
               <span class="summary-sub">{{ categorySummary().expensesCount }} transactions</span>
             </div>
           } @else {
             <div class="summary-box">
               <span class="summary-label">Incomes</span>
-              <ion-text color="success">
-                <strong class="summary-value">+{{ categorySummary().incomesSum | currency }}</strong>
+              <ion-text [color]="TransactionUtils.getColor(TransactionType.INCOME)">
+                <strong class="summary-value">{{ TransactionUtils.getSign(TransactionType.INCOME) }}{{ categorySummary().incomesSum | currency }}</strong>
               </ion-text>
               <span class="summary-sub">{{ categorySummary().incomesCount }} deposits</span>
             </div>
@@ -98,8 +98,8 @@
 
           <div class="summary-box ion-text-end">
             <span class="summary-label">Total</span>
-            <ion-text [color]="categorySummary().total >= 0 ? 'success' : 'danger'">
-              <strong class="summary-value">{{ categorySummary().total > 0 ? '+' : '' }}{{ categorySummary().total | currency }}</strong>
+            <ion-text [color]="TransactionUtils.getAmountColor(categorySummary().total)">
+              <strong class="summary-value">{{ TransactionUtils.getAmountSign(categorySummary().total) }}{{ categorySummary().total | currency }}</strong>
             </ion-text>
             <span class="summary-sub">{{ categorySummary().totalCount }} total transactions</span>
           </div>
@@ -130,8 +130,8 @@
                       <p>{{ item.expenses.count }} transactions</p>
                     </ion-label>
                     <div class="amount-display ion-text-end">
-                      <ion-text color="danger">
-                        <h3>-{{ item.expenses.sum | currency }}</h3>
+                      <ion-text [color]="TransactionUtils.getColor(TransactionType.EXPENSE)">
+                        <h3>{{ TransactionUtils.getSign(TransactionType.EXPENSE) }}{{ item.expenses.sum | currency }}</h3>
                       </ion-text>
                     </div>
                   </div>
@@ -140,7 +140,7 @@
                     <div class="progress-wrapper">
                       <ion-progress-bar
                         [value]="getPercentage(item.expenses.sum, item.category.budgetCap)"
-                        [color]="item.expenses.sum > item.category.budgetCap ? 'danger' : 'primary'">
+                        [color]="TransactionUtils.getUtilizationColor(item.expenses.sum, item.category.budgetCap)">
                       </ion-progress-bar>
                       <div class="progress-labels">
                         <ion-note class="text-tiny">
@@ -165,8 +165,8 @@
                       <p>{{ item.incomes.count }} deposits</p>
                     </ion-label>
                     <div class="amount-display ion-text-end">
-                      <ion-text color="success">
-                        <h3>+{{ item.incomes.sum | currency }}</h3>
+                      <ion-text [color]="TransactionUtils.getColor(TransactionType.INCOME)">
+                        <h3>{{ TransactionUtils.getSign(TransactionType.INCOME) }}{{ item.incomes.sum | currency }}</h3>
                       </ion-text>
                     </div>
                   </div>
@@ -218,16 +218,16 @@
           @if (chartMode() === ChartMode.EXPENSE) {
             <div class="summary-box">
               <span class="summary-label">Expenses</span>
-              <ion-text color="danger">
-                <strong class="summary-value">-{{ tagSummary().expensesSum | currency }}</strong>
+              <ion-text [color]="TransactionUtils.getColor(TransactionType.EXPENSE)">
+                <strong class="summary-value">{{ TransactionUtils.getSign(TransactionType.EXPENSE) }}{{ tagSummary().expensesSum | currency }}</strong>
               </ion-text>
               <span class="summary-sub">{{ tagSummary().expensesCount }} transactions</span>
             </div>
           } @else {
             <div class="summary-box">
               <span class="summary-label">Incomes</span>
-              <ion-text color="success">
-                <strong class="summary-value">+{{ tagSummary().incomesSum | currency }}</strong>
+              <ion-text [color]="TransactionUtils.getColor(TransactionType.INCOME)">
+                <strong class="summary-value">{{ TransactionUtils.getSign(TransactionType.INCOME) }}{{ tagSummary().incomesSum | currency }}</strong>
               </ion-text>
               <span class="summary-sub">{{ tagSummary().incomesCount }} deposits</span>
             </div>
@@ -237,8 +237,8 @@
 
           <div class="summary-box ion-text-end">
             <span class="summary-label">Total</span>
-            <ion-text [color]="tagSummary().total >= 0 ? 'success' : 'danger'">
-              <strong class="summary-value">{{ tagSummary().total > 0 ? '+' : '' }}{{ tagSummary().total | currency }}</strong>
+            <ion-text [color]="TransactionUtils.getAmountColor(tagSummary().total)">
+              <strong class="summary-value">{{ TransactionUtils.getAmountSign(tagSummary().total) }}{{ tagSummary().total | currency }}</strong>
             </ion-text>
             <span class="summary-sub">{{ tagSummary().totalCount }} total transactions</span>
           </div>
@@ -265,14 +265,14 @@
                 @if(item.expenses.count > 0) {
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                     <div style="display:flex; align-items:center;">
-                      <ion-icon name="pricetag" color="medium" style="margin-right: 10px;"></ion-icon>
+                      <ion-icon name="pricetag" [color]="TransactionUtils.getColor(TransactionType.EXPENSE)" style="margin-right: 10px;"></ion-icon>
                       <ion-label>
                         <h2>#{{ item.tag.tagName }}</h2>
                         <p class="ion-no-margin" style="font-size: 0.8em;">{{ item.expenses.count }} txns</p>
                       </ion-label>
                     </div>
-                    <ion-text color="dark">
-                      <strong>-{{ item.expenses.sum | currency }}</strong>
+                    <ion-text [color]="TransactionUtils.getColor(TransactionType.EXPENSE)">
+                      <strong>{{ TransactionUtils.getSign(TransactionType.EXPENSE) }}{{ item.expenses.sum | currency }}</strong>
                     </ion-text>
                   </div>
                 }
@@ -284,14 +284,14 @@
                 @if(item.incomes.count > 0) {
                   <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div style="display:flex; align-items:center;">
-                      <ion-icon name="pricetag" color="success" style="margin-right: 10px;"></ion-icon>
+                      <ion-icon name="pricetag" [color]="TransactionUtils.getColor(TransactionType.INCOME)" style="margin-right: 10px;"></ion-icon>
                       <ion-label>
                         <h2>#{{ item.tag.tagName }}</h2>
                         <p class="ion-no-margin" style="font-size: 0.8em;">{{ item.incomes.count }} deposits</p>
                       </ion-label>
                     </div>
-                    <ion-text color="success">
-                      <strong>+{{ item.incomes.sum | currency }}</strong>
+                    <ion-text [color]="TransactionUtils.getColor(TransactionType.INCOME)">
+                      <strong>{{ TransactionUtils.getSign(TransactionType.INCOME) }}{{ item.incomes.sum | currency }}</strong>
                     </ion-text>
                   </div>
                 }

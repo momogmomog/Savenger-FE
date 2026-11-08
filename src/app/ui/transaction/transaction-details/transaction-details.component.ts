@@ -35,6 +35,7 @@ import {
 import { TransactionDetailed } from '../../../api/transaction/transaction';
 import { Budget } from '../../../api/budget/budget';
 import { TransactionType } from '../../../api/transaction/transaction.type';
+import { TransactionUtils } from '../../../shared/util/transaction-utils';
 import { AppRoutingPath } from '../../../app-routing.path';
 
 @Component({
@@ -120,4 +121,5 @@ export class TransactionDetailsComponent {
   }
 
   protected readonly AppRoutingPath = AppRoutingPath;
+  protected readonly TransactionUtils = TransactionUtils;
 }
