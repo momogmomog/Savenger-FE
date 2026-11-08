@@ -113,4 +113,9 @@ export class BudgetSliderService {
 
     return newList;
   }
+
+  public getCategoryName(categoryId: number): string | undefined {
+    return this._currentCategories().find((c) => c.id === categoryId)
+      ?.categoryName;
+  }
 }

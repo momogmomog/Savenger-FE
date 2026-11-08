@@ -75,7 +75,7 @@ export class RecurringTransactionDetailsComponent {
   private actionSheetCtrl = inject(ActionSheetController);
 
   transaction = input.required<RecurringTransaction>();
-  categoryName = input<string | undefined>('Uncategorized');
+  categoryName = input<string | undefined>(undefined);
 
   navigateAway = output<void>();
   editTriggered = output<void>();

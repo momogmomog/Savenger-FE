@@ -4,7 +4,7 @@
   </div>
 
   <ion-label>
-    <h3 class="transaction-category-title">{{ categoryName() }}</h3>
+    <h3 class="transaction-category-title">{{ categoryName() || transaction().type }}</h3>
     <p class="transaction-card-meta">
       <span class="date">{{ transaction().nextDate | date: 'mediumDate'  }}</span>
       <span class="meta-separator">•</span>

@@ -17,7 +17,7 @@ export class ModalPresetsService {
 
   public async openRecurringTransactionDetails(
     transaction: RecurringTransaction,
-    categoryName: string,
+    categoryName?: string,
   ): Promise<RecurringTransaction | null> {
     const resp = await this.modalService.openAndWait(
       RecurringTransactionDetailsModal,

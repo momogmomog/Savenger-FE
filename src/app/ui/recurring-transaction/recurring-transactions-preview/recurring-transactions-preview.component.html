@@ -24,7 +24,7 @@
         <app-recurring-transaction-card
           (onClick)="onTransactionClick($event)"
           [transaction]="item"
-          [categoryName]="getCategoryName(item.categoryId)"></app-recurring-transaction-card>
+          [categoryName]="budgetSliderService.getCategoryName(item.categoryId)"></app-recurring-transaction-card>
       }
     </ion-list>
   </ion-card>

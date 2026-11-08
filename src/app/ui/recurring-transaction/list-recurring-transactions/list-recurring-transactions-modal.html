@@ -29,7 +29,7 @@
         @for (item of group.items; track item.id; let last = $last) {
           <app-recurring-transaction-card
             [transaction]="item"
-            [categoryName]="getCategoryName(item.categoryId)"
+            [categoryName]="budgetSliderService.getCategoryName(item.categoryId)"
             (onClick)="onTransactionClick($event)">
           </app-recurring-transaction-card>
         }

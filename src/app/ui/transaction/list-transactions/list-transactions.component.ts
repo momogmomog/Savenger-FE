@@ -93,8 +93,6 @@ export class ListTransactionsComponent implements OnInit {
   budget = this.budgetSliderService.currentBudget;
   recurringTransactionUpdateTrigger = signal<number | null>(null);
 
-  categories = this.budgetSliderService.currentCategories;
-
   transactionsList = signal<Transaction[]>([]);
   hasNextPage = signal<boolean>(true);
   isFiltering = signal<boolean>(false);
@@ -110,7 +108,7 @@ export class ListTransactionsComponent implements OnInit {
   private query: TransactionSearchQuery = new TransactionSearchQueryImpl(null);
 
   constructor(
-    private budgetSliderService: BudgetSliderService,
+    protected budgetSliderService: BudgetSliderService,
     private transactionService: TransactionService,
     private actionSheetCtrl: ActionSheetController,
     private modalService: ModalService,
@@ -304,10 +302,6 @@ export class ListTransactionsComponent implements OnInit {
     resp.ifConfirmed((result: TransactionFilterModalResult) => {
       this.setFilterObjects(result);
     });
-  }
-
-  getCategoryName(categoryId: number): string | undefined {
-    return this.categories().find((c) => c.id === categoryId)?.categoryName;
   }
 
   async onTransactionClick(transaction: Transaction): Promise<void> {

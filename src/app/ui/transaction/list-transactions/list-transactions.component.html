@@ -72,7 +72,7 @@
           <app-transaction-card
             (onClick)="onTransactionClick($event)"
             [transaction]="item"
-            [categoryName]="getCategoryName(item.categoryId)">
+            [categoryName]="budgetSliderService.getCategoryName(item.categoryId)">
           </app-transaction-card>
         }
       </ion-list>

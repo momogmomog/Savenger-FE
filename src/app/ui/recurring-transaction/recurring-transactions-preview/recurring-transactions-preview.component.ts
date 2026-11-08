@@ -54,14 +54,13 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
   private recurringTransactionService = inject(RecurringTransactionService);
   private modalService = inject(ModalService);
   private modalPresetsService = inject(ModalPresetsService);
-  private budgetSliderService = inject(BudgetSliderService);
+  protected budgetSliderService = inject(BudgetSliderService);
 
   budgetId = input.required<number>();
   externalUpdateTrigger = input<number | null>(null);
 
   upcomingTransactions = signal<RecurringTransaction[]>([]);
   totalUpcomingTransactions = signal<number>(0);
-  categories = this.budgetSliderService.currentCategories;
 
   lookAheadDateControl = new FormControl<Date>(this.getDefaultLookAhead());
   currentMaxDate = signal<Date>(this.getDefaultLookAhead());
@@ -135,16 +134,11 @@ export class RecurringTransactionsPreviewComponent implements OnInit {
     }
   }
 
-  getCategoryName(id: number): string {
-    const cat = this.categories().find((c) => c.id === id);
-    return cat ? cat.categoryName : 'Uncategorized';
-  }
-
   async onTransactionClick(transaction: RecurringTransaction): Promise<void> {
     const maybeRTransaction =
       await this.modalPresetsService.openRecurringTransactionDetails(
         transaction,
-        this.getCategoryName(transaction.categoryId) || '',
+        this.budgetSliderService.getCategoryName(transaction.categoryId),
       );
 
     if (!ObjectUtils.isNil(maybeRTransaction)) {

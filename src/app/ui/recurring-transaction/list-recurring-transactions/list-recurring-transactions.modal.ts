@@ -62,10 +62,9 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   private recurringTransactionService = inject(RecurringTransactionService);
   private actionSheetCtrl = inject(ActionSheetController);
   private alertCtrl = inject(AlertController);
-  private budgetSliderService = inject(BudgetSliderService);
+  protected budgetSliderService = inject(BudgetSliderService);
   private modalPresetsService = inject(ModalPresetsService);
 
-  categories = this.budgetSliderService.currentCategories;
   transactionsList = signal<RecurringTransaction[]>([]);
   hasNextPage = signal<boolean>(true);
   isFiltering = signal<boolean>(false);
@@ -130,15 +129,11 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
     void event.target.complete();
   }
 
-  getCategoryName(categoryId: number): string | undefined {
-    return this.categories().find((c) => c.id === categoryId)?.categoryName;
-  }
-
   async onTransactionClick(transaction: RecurringTransaction): Promise<void> {
     const maybeRTransaction =
       await this.modalPresetsService.openRecurringTransactionDetails(
         transaction,
-        this.getCategoryName(transaction.categoryId) || '',
+        this.budgetSliderService.getCategoryName(transaction.categoryId),
       );
 
     if (!ObjectUtils.isNil(maybeRTransaction)) {
