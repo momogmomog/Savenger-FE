@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  .filter-btn {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    height: 32px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+}
+
+.group-header-text {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.group-card {
+  border-radius: 24px;
+  margin: 0 16px 16px 16px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50%;
+  color: var(--ion-color-medium);
+}

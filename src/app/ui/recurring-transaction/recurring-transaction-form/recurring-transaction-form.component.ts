@@ -24,6 +24,8 @@ import { RrulePickerModalPayload } from '../../../shared/components/rrule-picker
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { addIcons } from 'ionicons';
 import { calendarClearOutline, chevronDownOutline } from 'ionicons/icons';
+import { CheckboxComponent } from '../../../shared/form-controls/checkbox/checkbox.component';
+import { DatePickerComponent } from '../../../shared/form-controls/date-picker/date-picker.component';
 
 @Component({
   selector: 'app-recurring-transaction-form',
@@ -40,6 +42,8 @@ import { calendarClearOutline, chevronDownOutline } from 'ionicons/icons';
     TagMultiselectControlComponent,
     IonInput,
     IonIcon,
+    CheckboxComponent,
+    DatePickerComponent,
   ],
 })
 export class RecurringTransactionFormComponent implements OnInit {
@@ -64,6 +68,9 @@ export class RecurringTransactionFormComponent implements OnInit {
       budgetId: FormUtil.requiredNumber(),
       recurringRule: FormUtil.requiredString(),
       categoryId: FormUtil.requiredNumber(),
+      comment: FormUtil.optionalString(),
+      includeInBalance: FormUtil.requiredBool(false),
+      startFrom: FormUtil.optionalField<Date>(new Date()),
       tagIds: new FormArray<FormControl<number>>([]),
     });
   }
@@ -77,6 +84,8 @@ export class RecurringTransactionFormComponent implements OnInit {
         ...rTransaction,
       };
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.form.patchValue(formValue);
     }
 
