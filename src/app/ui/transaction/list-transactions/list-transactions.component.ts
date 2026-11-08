@@ -54,13 +54,8 @@ import { CreateRecurringTransactionModalPayload } from '../../recurring-transact
 import { RecurringTransactionsPreviewComponent } from '../../recurring-transaction/recurring-transactions-preview/recurring-transactions-preview.component';
 import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 import { TransactionFilterModalComponent } from '../transaction-filter-modal/transaction-filter-modal.component';
-import {
-  TransactionFilterModalPayload,
-  TransactionFilterModalResult,
-} from '../transaction-filter-modal/transaction-filter-modal.payload';
-import { Tag } from '../../../api/tag/tag';
-import { Category } from '../../../api/category/category';
-import { OtherUser } from '../../../api/user/user';
+import { TransactionFilterModalResult } from '../transaction-filter-modal/transaction-filter-modal.payload';
+import { TransactionFilterState } from '../transaction-filter-modal/transaction-filter.state';
 
 @Component({
   selector: 'app-list-transactions',
@@ -95,11 +90,8 @@ export class ListTransactionsComponent implements OnInit {
 
   transactionsList = signal<Transaction[]>([]);
   hasNextPage = signal<boolean>(true);
-  isFiltering = signal<boolean>(false);
-
-  activeFilterTags = signal<Tag[]>([]);
-  activeFilterCategories = signal<Category[]>([]);
-  activeFilterUsers = signal<OtherUser[]>([]);
+  filterState = new TransactionFilterState();
+  isFiltering = this.filterState.isFiltering;
 
   groupedTransactions = computed(() =>
     TransactionUtils.groupByDate(this.transactionsList(), (t) => t.dateCreated),
@@ -126,7 +118,7 @@ export class ListTransactionsComponent implements OnInit {
       const budget = this.budgetSliderService.currentBudget();
       if (budget.id >= 0) {
         this.query = new TransactionSearchQueryImpl(null);
-        this.clearFilterObjects();
+        this.filterState.clear();
         void this.onFilterChange();
       }
     });
@@ -153,15 +145,7 @@ export class ListTransactionsComponent implements OnInit {
         pageData.page.totalPages - 1 > this.query.page.pageNumber,
       );
 
-      this.isFiltering.set(
-        !!this.query.type ||
-          !!this.query.amount ||
-          !!this.query.dateCreated ||
-          !!this.query.comment ||
-          this.query.categoryIds.length > 0 ||
-          this.query.tagIds.length > 0 ||
-          this.query.userIds.length > 0,
-      );
+      this.filterState.syncWithQuery(this.query);
     }
   }
 
@@ -282,17 +266,9 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   async presentFilterOptions(): Promise<void> {
-    const payload = new TransactionFilterModalPayload(
-      this.budget().id,
-      this.query,
-      this.activeFilterTags(),
-      this.activeFilterCategories(),
-      this.activeFilterUsers(),
-    );
-
     const resp = await this.modalService.openAndWait(
       TransactionFilterModalComponent,
-      payload,
+      this.filterState.toModalPayload(this.budget().id, this.query),
       {
         shellType: ShellType.HEADER,
         title: 'Filter Transactions',
@@ -300,7 +276,8 @@ export class ListTransactionsComponent implements OnInit {
     );
 
     resp.ifConfirmed((result: TransactionFilterModalResult) => {
-      this.setFilterObjects(result);
+      this.filterState.applyFilterResult(this.query, result);
+      void this.onFilterChange();
     });
   }
 
@@ -315,20 +292,5 @@ export class ListTransactionsComponent implements OnInit {
         await this.transactionsChanged();
       }
     });
-  }
-
-  private setFilterObjects(result: TransactionFilterModalResult): void {
-    this.activeFilterTags.set(result.selectedTags);
-    this.activeFilterCategories.set(result.selectedCategories);
-    this.activeFilterUsers.set(result.selectedUsers);
-
-    Object.assign(this.query, result.query);
-    void this.onFilterChange();
-  }
-
-  private clearFilterObjects(): void {
-    this.activeFilterUsers.set([]);
-    this.activeFilterCategories.set([]);
-    this.activeFilterTags.set([]);
   }
 }

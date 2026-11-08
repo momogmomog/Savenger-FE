@@ -46,13 +46,8 @@ import {
 import { ModalService } from '../../../shared/modal/modal.service';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { TransactionFilterModalComponent } from '../../transaction/transaction-filter-modal/transaction-filter-modal.component';
-import {
-  TransactionFilterModalPayload,
-  TransactionFilterModalResult,
-} from '../../transaction/transaction-filter-modal/transaction-filter-modal.payload';
-import { Tag } from '../../../api/tag/tag';
-import { Category } from '../../../api/category/category';
-import { OtherUser } from '../../../api/user/user';
+import { TransactionFilterModalResult } from '../../transaction/transaction-filter-modal/transaction-filter-modal.payload';
+import { TransactionFilterState } from '../../transaction/transaction-filter-modal/transaction-filter.state';
 import { TransactionType } from '../../../api/transaction/transaction.type';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
 
@@ -120,11 +115,8 @@ export class ListAnalyticsComponent implements OnInit {
 
   selectedSegment = signal<ChartSegment>(ChartSegment.CATEGORIES);
   chartMode = signal<ChartMode>(ChartMode.EXPENSE);
-  isFiltering = signal<boolean>(false);
-
-  activeFilterTags = signal<Tag[]>([]);
-  activeFilterCategories = signal<Category[]>([]);
-  activeFilterUsers = signal<OtherUser[]>([]);
+  filterState = new TransactionFilterState();
+  isFiltering = this.filterState.isFiltering;
 
   categoryChartData = signal<ChartData<'doughnut'>>({
     labels: [],
@@ -178,7 +170,7 @@ export class ListAnalyticsComponent implements OnInit {
     effect(async () => {
       const budgetId = this.budget().id;
       if (budgetId !== BudgetSliderService.INITIAL_BUDGET.id) {
-        this.clearFilterObjects();
+        this.filterState.clear();
         await this.updateQuery(budgetId);
       }
     });
@@ -217,15 +209,7 @@ export class ListAnalyticsComponent implements OnInit {
   }
 
   private async fetchAnalytics(): Promise<void> {
-    this.isFiltering.set(
-      !!this.query.type ||
-        !!this.query.amount ||
-        !!this.query.dateCreated ||
-        !!this.query.comment ||
-        this.query.categoryIds.length > 0 ||
-        this.query.tagIds.length > 0 ||
-        this.query.userIds.length > 0,
-    );
+    this.filterState.syncWithQuery(this.query);
 
     const [catResp, tagResp] = await Promise.all([
       this.analyticsService.getCategoryAnalytics(this.query),
@@ -328,17 +312,9 @@ export class ListAnalyticsComponent implements OnInit {
   }
 
   async presentFilterOptions(): Promise<void> {
-    const payload = new TransactionFilterModalPayload(
-      this.budget().id,
-      this.query,
-      this.activeFilterTags(),
-      this.activeFilterCategories(),
-      this.activeFilterUsers(),
-    );
-
     const resp = await this.modalService.openAndWait(
       TransactionFilterModalComponent,
-      payload,
+      this.filterState.toModalPayload(this.budget().id, this.query),
       {
         shellType: ShellType.HEADER,
         title: 'Filter Analytics',
@@ -346,23 +322,9 @@ export class ListAnalyticsComponent implements OnInit {
     );
 
     resp.ifConfirmed((result: TransactionFilterModalResult) => {
-      this.setFilterObjects(result);
+      this.filterState.applyFilterResult(this.query, result);
+      void this.fetchAnalytics();
     });
-  }
-
-  private setFilterObjects(result: TransactionFilterModalResult): void {
-    this.activeFilterTags.set(result.selectedTags);
-    this.activeFilterCategories.set(result.selectedCategories);
-    this.activeFilterUsers.set(result.selectedUsers);
-
-    Object.assign(this.query, result.query);
-    void this.fetchAnalytics();
-  }
-
-  private clearFilterObjects(): void {
-    this.activeFilterUsers.set([]);
-    this.activeFilterCategories.set([]);
-    this.activeFilterTags.set([]);
   }
 
   getPercentage(current: number, max: number): number {
