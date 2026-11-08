@@ -1,18 +1,5 @@
-import {
-  Component,
-  effect,
-  forwardRef,
-  input,
-  model,
-  OnInit,
-  output,
-} from '@angular/core';
-import { AutoUnsubComponent } from '../../../shared/util/auto-unsub.component';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { Component, forwardRef, input } from '@angular/core';
+import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { CategoryService } from '../../../api/category/category.service';
 import { SelectSearchComponent } from '../../../shared/form-controls/select-search/select-search.component';
 import {
@@ -24,9 +11,10 @@ import {
   CategoryQueryImpl,
 } from '../../../api/category/category.query';
 import { Category } from '../../../api/category/category';
-import { EmptyPage, Page, PageImpl } from '../../../shared/util/page';
+import { Page } from '../../../shared/util/page';
 import { addIcons } from 'ionicons';
 import { closeCircle } from 'ionicons/icons';
+import { PaginatedSelectControlBase } from '../../../shared/form-controls/select-search/paginated-select-control.base';
 
 @Component({
   selector: 'app-category-select-control',
@@ -41,88 +29,37 @@ import { closeCircle } from 'ionicons/icons';
     },
   ],
 })
-export class CategorySelectControlComponent
-  extends AutoUnsubComponent
-  implements ControlValueAccessor, OnInit
-{
-  private categoryQuery: CategoryQuery = new CategoryQueryImpl(null!);
+export class CategorySelectControlComponent extends PaginatedSelectControlBase<
+  Category,
+  CategoryQuery
+> {
+  protected readonly query: CategoryQuery = new CategoryQueryImpl(null!);
 
   label = input<string>('Category');
   budgetId = input.required<number>();
-  disabled = model<boolean>(false);
-  valueOverride = model<any>();
-  searchTerm = model<string>('');
-
-  selectionChange = output<SelectSearchItem<any> | null>();
-  onTouch = output<void>();
-
-  payload = model<Page<SelectSearchItem<Category>>>(new EmptyPage());
 
   constructor(private categoryService: CategoryService) {
     super();
     addIcons({ closeCircle });
-
-    effect(() => {
-      this.categoryQuery.budgetId = this.budgetId();
-    });
-
-    effect(() => {
-      const searchTerm = this.searchTerm();
-      void this.reloadFilters(searchTerm);
-    });
   }
 
-  ngOnInit(): void {}
-
-  protected async onLoadMode(): Promise<void> {
-    this.categoryQuery.page.pageNumber += 1;
-    await this.fetchCategories();
+  protected syncQueryInputs(): void {
+    this.query.budgetId = this.budgetId();
   }
 
-  async reloadFilters(query: string | null): Promise<void> {
-    this.categoryQuery.categoryName = query;
-    this.categoryQuery.page.pageNumber = 0;
-    this.payload.set(new EmptyPage());
-    await this.fetchCategories();
+  protected applySearchQuery(query: string | null): void {
+    this.query.categoryName = query;
   }
 
-  async fetchCategories(): Promise<void> {
-    const resp = await this.categoryService.search(this.categoryQuery);
+  protected fetchPage(): Promise<Page<Category>> {
+    return this.categoryService.search(this.query);
+  }
 
-    this.payload.set(
-      PageImpl.appendMapped(
-        this.payload(),
-        resp,
-        this.categoryQuery.page,
-        (cat) =>
-          new SelectSearchItemImpl(
-            `${cat.categoryName} (${cat.budgetCap || 'Unlimited'})`,
-            cat.id,
-            cat,
-          ),
-      ),
+  protected mapToSelectItem(cat: Category): SelectSearchItem<Category> {
+    return new SelectSearchItemImpl(
+      `${cat.categoryName} (${cat.budgetCap || 'Unlimited'})`,
+      cat.id,
+      cat,
     );
-  }
-
-  writeValue(value: any): void {
-    if (value === undefined) {
-      value = null;
-    }
-
-    this.valueOverride.set(value);
-  }
-
-  registerOnChange(fn: any): void {
-    this.sub = this.selectionChange.subscribe((val) => {
-      fn(val?.value);
-    });
-  }
-
-  registerOnTouched(fn: any): void {
-    this.sub = this.onTouch.subscribe(() => fn());
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled.set(isDisabled);
   }
 }

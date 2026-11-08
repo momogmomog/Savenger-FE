@@ -1,31 +1,19 @@
-import {
-  Component,
-  effect,
-  input,
-  model,
-  OnInit,
-  output,
-  signal,
-  untracked,
-} from '@angular/core';
+import { Component, input, output } from '@angular/core';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { SelectSearchComponent } from '../../../shared/form-controls/select-search/select-search.component';
 import { TagService } from '../../../api/tag/tag.service';
-import { DeepFormified, FormUtil } from '../../../shared/util/forms.util';
+import { DeepFormified } from '../../../shared/util/forms.util';
 import { Tag } from '../../../api/tag/tag';
-import { EmptyPage, Page, PageImpl } from '../../../shared/util/page';
+import { Page } from '../../../shared/util/page';
 import {
   SelectSearchItem,
   SelectSearchItemImpl,
 } from '../../../shared/form-controls/select-search/select-search.item';
 import { TagQuery, TagQueryImpl } from '../../../api/tag/tag.query';
-import { StringUtils } from '../../../shared/util/string-utils';
-import { ObjectUtils } from '../../../shared/util/object-utils';
-import { AutoUnsubComponent } from '../../../shared/util/auto-unsub.component';
 import { IonChip, IonIcon, IonLabel } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { closeCircle } from 'ionicons/icons';
 import { CreateTransactionPayload } from '../../../api/transaction/dto/create-transaction.payload';
 import { RecurringTransactionPayload } from '../../../api/transaction/recurring/recurring-transaction.payload';
+import { PaginatedMultiselectControlBase } from '../../../shared/form-controls/select-search/paginated-multiselect-control.base';
 
 @Component({
   selector: 'app-tag-multiselect-control',
@@ -33,148 +21,59 @@ import { RecurringTransactionPayload } from '../../../api/transaction/recurring/
   styleUrls: ['./tag-multiselect-control.component.scss'],
   imports: [SelectSearchComponent, IonIcon, IonChip, IonLabel],
 })
-export class TagMultiselectControlComponent
-  extends AutoUnsubComponent
-  implements OnInit
-{
-  private readonly tagQuery: TagQuery = new TagQueryImpl(null!);
+export class TagMultiselectControlComponent extends PaginatedMultiselectControlBase<
+  Tag,
+  TagQuery
+> {
+  protected readonly query: TagQuery = new TagQueryImpl(null!);
 
-  budgetId = input.required<number>();
   form = input.required<
     | DeepFormified<CreateTransactionPayload>
     | DeepFormified<RecurringTransactionPayload>
+    | FormGroup
   >();
   existingTags = input<Tag[]>();
   shouldInitTags = input<boolean>();
 
   selectedTagsChange = output<Tag[]>();
 
-  tags: Tag[] = [];
-  excludedTags: Tag[] = [];
-  protected tagsPayload = model<Page<SelectSearchItem<Tag>>>(new EmptyPage());
-  protected searchTerm = model('');
-  protected selectedTags = signal<Tag[]>([]);
-
-  private fetchedTagsOnce!: Promise<void>;
-
   constructor(private tagService: TagService) {
     super();
-    addIcons({ closeCircle });
-    effect(() => {
-      const searchTerm = this.searchTerm();
-      this.onTagSearch(searchTerm);
-    });
-
-    effect(() => {
-      this.tagQuery.budgetId = this.budgetId();
-      this.fetchedTagsOnce = this.fetchTags();
-    });
-
-    effect(async () => {
-      const val = this.shouldInitTags();
-      if (val) {
-        await this.fetchedTagsOnce;
-        const existingTags = untracked(this.existingTags);
-        if (!ObjectUtils.isNil(existingTags)) {
-          this.initTagControls(existingTags);
-        }
-
-        const form = untracked(this.form);
-        this.sub = form.controls.tagIds.valueChanges.subscribe(() =>
-          this.refreshTags(),
-        );
-        this.refreshTags();
-      }
-    });
   }
 
-  ngOnInit(): void {}
-
-  async fetchTags(): Promise<void> {
-    const resp = await this.tagService.search(this.tagQuery);
-    this.tags = [...this.tags, ...resp.content];
-
-    this.tagsPayload.set(
-      PageImpl.appendMapped(
-        this.tagsPayload(),
-        resp,
-        this.tagQuery.page,
-        (tag) => new SelectSearchItemImpl(tag.tagName, tag.id, tag),
-      ),
-    );
+  protected shouldInit(): boolean | undefined {
+    return this.shouldInitTags();
   }
 
-  private initTagControls(tags: Tag[]): void {
-    this.form().controls.tagIds.clear();
-    tags.forEach((tag) => {
-      this.addTagId(tag.id, false);
-    });
-    this.excludedTags = [...tags];
+  protected existingItems(): Tag[] | undefined {
+    return this.existingTags();
   }
 
-  addTagId(tagId: number, emitEvent = true): void {
-    this.form().controls.tagIds.push(FormUtil.requiredNumber(tagId), {
-      emitEvent: emitEvent,
-    });
+  protected formArray(): FormArray<FormControl<number>> {
+    return this.form().controls['tagIds'] as FormArray<FormControl<number>>;
   }
 
-  onTagSearch(val: string | null): void {
-    val = StringUtils.trimToNull(val);
-    if (this.tagQuery.tagName === val) {
-      return;
-    }
-
-    this.tagQuery.tagName = val;
-
-    this.reloadTags();
+  protected emitSelectedItems(items: Tag[]): void {
+    this.selectedTagsChange.emit(items);
   }
 
-  private reloadTags(): void {
-    this.tagQuery.page.pageNumber = 0;
-    this.tagsPayload.set(new EmptyPage());
-    this.tags = [];
-
-    void this.fetchTags();
+  protected getSearchQuery(): string | null {
+    return this.query.tagName;
   }
 
-  protected onTagLoadMore(page: number): void {
-    this.tagQuery.page.pageNumber = page;
-    void this.fetchTags();
+  protected applySearchQuery(val: string | null): void {
+    this.query.tagName = val;
   }
 
-  protected onTagChange(item: SelectSearchItem<Tag> | null): void {
-    if (item?.objRef) {
-      this.addTagId(item.objRef!.id);
-      this.excludedTags.push(item.objRef);
-    }
+  protected fetchPage(): Promise<Page<Tag>> {
+    return this.tagService.search(this.query);
   }
 
-  protected removeTag(id: number): void {
-    this.form().controls.tagIds.removeAt(
-      this.form().controls.tagIds.getRawValue().indexOf(id),
-    );
-    this.excludedTags.splice(
-      this.excludedTags.findIndex((t) => t.id === id),
-      1,
-    );
+  protected mapToSelectItem(tag: Tag): SelectSearchItem<Tag> {
+    return new SelectSearchItemImpl(tag.tagName, tag.id, tag);
   }
 
-  private refreshTags(): void {
-    const selectedTags = this.form()
-      .controls.tagIds.getRawValue()
-      .map(
-        (tagId: number) =>
-          this.tags.find((tag) => tag.id === tagId) ||
-          this.excludedTags.find((tag) => tag.id === tagId),
-      )
-      .filter((tag: Tag | undefined) => !ObjectUtils.isNil(tag));
-
-    this.selectedTags.set(selectedTags);
-    this.tagQuery.excludeIds = this.form().controls.tagIds.getRawValue();
-
-    this.selectedTagsChange.emit(selectedTags);
-
-    this.tagQuery.tagName = null;
-    void this.reloadTags();
+  protected override onSelectionRefreshed(ids: number[]): void {
+    this.query.excludeIds = ids;
   }
 }

@@ -1,17 +1,17 @@
 <app-select-search
   label="Tag"
   placeholder="Pick Tags"
-  [payload]="tagsPayload()"
+  [payload]="payload()"
   [clearOnSelect]="true"
   [(searchTerm)]="searchTerm"
-  (selectionChange)="onTagChange($event)"
-  (loadMore)="onTagLoadMore($event)">
+  (selectionChange)="onSelectionChange($event)"
+  (loadMore)="onLoadMore($event)">
 </app-select-search>
 
-@if (selectedTags().length > 0) {
+@if (selectedItems().length > 0) {
   <div class="tags-container ion-padding-top">
-    @for (tag of selectedTags(); track tag.id) {
-      <ion-chip (click)="removeTag(tag.id)" [outline]="true" color="medium">
+    @for (tag of selectedItems(); track tag.id) {
+      <ion-chip (click)="removeItem(tag.id)" [outline]="true" color="medium">
         <ion-label>{{ tag.tagName }}</ion-label>
         <ion-icon name="close-circle"></ion-icon>
       </ion-chip>
