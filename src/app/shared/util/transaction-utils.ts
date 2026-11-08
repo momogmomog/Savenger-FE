@@ -15,6 +15,12 @@ import {
 } from 'ionicons/icons';
 import { TransactionType } from '../../api/transaction/transaction.type';
 
+export interface TransactionDateGroup<T> {
+  dateLabel: string;
+  dateObj: string | Date;
+  items: T[];
+}
+
 export class TransactionUtils {
   public static readonly CHART_INCOME_COLOR = '#2dd36f';
   public static readonly CHART_EXPENSE_COLOR = '#428cff';
@@ -174,5 +180,28 @@ export class TransactionUtils {
   ): string {
     const base = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}`;
     return randomBackground ? `${base}&background=random` : base;
+  }
+
+  public static groupByDate<T>(
+    items: T[],
+    dateExtractor: (item: T) => string | Date,
+  ): TransactionDateGroup<T>[] {
+    const groups = new Map<string, T[]>();
+
+    items.forEach((item) => {
+      const date = new Date(dateExtractor(item));
+      const dateKey = date.toDateString();
+
+      if (!groups.has(dateKey)) {
+        groups.set(dateKey, []);
+      }
+      groups.get(dateKey)!.push(item);
+    });
+
+    return Array.from(groups.entries()).map(([dateLabel, groupItems]) => ({
+      dateLabel,
+      dateObj: dateExtractor(groupItems[0]),
+      items: groupItems,
+    }));
   }
 }

@@ -72,26 +72,9 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
 
   private query = new RecurringTransactionQueryImpl(null);
 
-  groupedTransactions = computed(() => {
-    const transactions = this.transactionsList();
-    const groups = new Map<string, RecurringTransaction[]>();
-
-    transactions.forEach((t) => {
-      const date = new Date(t.nextDate);
-      const dateKey = date.toDateString();
-
-      if (!groups.has(dateKey)) {
-        groups.set(dateKey, []);
-      }
-      groups.get(dateKey)!.push(t);
-    });
-
-    return Array.from(groups.entries()).map(([dateLabel, items]) => ({
-      dateLabel,
-      dateObj: items[0].nextDate,
-      items,
-    }));
-  });
+  groupedTransactions = computed(() =>
+    TransactionUtils.groupByDate(this.transactionsList(), (t) => t.nextDate),
+  );
 
   constructor() {
     super();

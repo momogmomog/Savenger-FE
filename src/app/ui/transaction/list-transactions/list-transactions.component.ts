@@ -103,26 +103,9 @@ export class ListTransactionsComponent implements OnInit {
   activeFilterCategories = signal<Category[]>([]);
   activeFilterUsers = signal<OtherUser[]>([]);
 
-  groupedTransactions = computed(() => {
-    const transactions = this.transactionsList();
-    const groups = new Map<string, Transaction[]>();
-
-    transactions.forEach((t) => {
-      const date = new Date(t.dateCreated);
-      const dateKey = date.toDateString();
-
-      if (!groups.has(dateKey)) {
-        groups.set(dateKey, []);
-      }
-      groups.get(dateKey)!.push(t);
-    });
-
-    return Array.from(groups.entries()).map(([dateLabel, items]) => ({
-      dateLabel,
-      dateObj: items[0].dateCreated,
-      items,
-    }));
-  });
+  groupedTransactions = computed(() =>
+    TransactionUtils.groupByDate(this.transactionsList(), (t) => t.dateCreated),
+  );
 
   private query: TransactionSearchQuery = new TransactionSearchQueryImpl(null);
 
