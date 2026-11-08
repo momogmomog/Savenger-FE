@@ -1,8 +1,9 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BudgetService } from '../../../api/budget/budget.service';
 import { BudgetQuery, BudgetQueryImpl } from '../../../api/budget/budget.query';
 import {
   ActionSheetController,
+  InfiniteScrollCustomEvent,
   IonButton,
   IonButtons,
   IonContent,
@@ -17,13 +18,10 @@ import {
   IonRefresherContent,
   IonTitle,
   IonToolbar,
+  RefresherCustomEvent,
 } from '@ionic/angular/standalone';
 import { BudgetCardComponent } from '../budget-card/budget-card.component';
 import { Budget } from '../../../api/budget/budget';
-import {
-  InfiniteScrollCustomEvent,
-  RefresherCustomEvent,
-} from '@ionic/angular';
 import { ModalService } from '../../../shared/modal/modal.service';
 import { BudgetDetailsModal } from '../budget-details-modal/budget-details.modal';
 import { BudgetDetailsModalPayload } from '../budget-details-modal/budget-details.modal.payload';
@@ -33,6 +31,7 @@ import { addIcons } from 'ionicons';
 import { add, archive, ellipsisVertical } from 'ionicons/icons';
 import { EditBudgetModal } from '../edit-budget-modal/edit-budget.modal';
 import { EditBudgetPayload } from '../edit-budget-modal/edit-budget.payload';
+import { PaginatedListState } from '../../../shared/util/paginated-list.state';
 
 @Component({
   selector: 'app-list-budgets',
@@ -58,8 +57,9 @@ import { EditBudgetPayload } from '../edit-budget-modal/edit-budget.payload';
 })
 export class ListBudgetsComponent implements OnInit {
   private budgetQuery: BudgetQuery = new BudgetQueryImpl();
-  budgets = signal<Budget[]>([]);
-  hasNextPage = signal<boolean>(true);
+  pagination = new PaginatedListState<Budget>();
+  budgets = this.pagination.items;
+  hasNextPage = this.pagination.hasNextPage;
 
   constructor(
     private budgetService: BudgetService,
@@ -78,24 +78,14 @@ export class ListBudgetsComponent implements OnInit {
   }
 
   private async updateFilters(): Promise<void> {
-    this.budgets.set([]);
-    this.budgetQuery.page.pageNumber = 0;
-    await this.fetchData();
-  }
-
-  public async nextPage(): Promise<void> {
-    this.budgetQuery.page.pageNumber += 1;
-    void this.fetchData();
+    await this.pagination.reload(this.budgetQuery, () => this.fetchData());
   }
 
   private async fetchData(): Promise<void> {
     const budgets = await this.budgetService.search(this.budgetQuery);
 
     if (budgets.isSuccess) {
-      this.budgets.set(this.budgets().concat(budgets.response.content));
-      this.hasNextPage.set(
-        budgets.response.page.totalPages - 1 > this.budgetQuery.page.pageNumber,
-      );
+      this.pagination.appendPage(budgets.response, this.budgetQuery);
     }
   }
 
@@ -112,8 +102,7 @@ export class ListBudgetsComponent implements OnInit {
   }
 
   protected async handleRefresh($event: RefresherCustomEvent): Promise<void> {
-    await this.updateFilters();
-    void $event.target.complete();
+    await this.pagination.handleRefresh($event, () => this.updateFilters());
   }
 
   protected async openCreateBudgetModal(): Promise<void> {
@@ -165,7 +154,8 @@ export class ListBudgetsComponent implements OnInit {
   }
 
   async onIonInfinite(event: InfiniteScrollCustomEvent): Promise<void> {
-    await this.nextPage();
-    void event.target.complete();
+    await this.pagination.loadMore(event, this.budgetQuery, () =>
+      this.fetchData(),
+    );
   }
 }

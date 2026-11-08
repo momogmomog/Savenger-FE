@@ -29,6 +29,7 @@ import { ObjectUtils } from '../../../shared/util/object-utils';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
 import { RecurringTransactionCardComponent } from '../recurring-transaction-card/recurring-transaction-card.component';
 import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
+import { PaginatedListState } from '../../../shared/util/paginated-list.state';
 
 export class ListRecurringTransactionsModalPayload {
   constructor(public readonly budgetId: number) {}
@@ -65,8 +66,9 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   protected budgetSliderService = inject(BudgetSliderService);
   private modalPresetsService = inject(ModalPresetsService);
 
-  transactionsList = signal<RecurringTransaction[]>([]);
-  hasNextPage = signal<boolean>(true);
+  pagination = new PaginatedListState<RecurringTransaction>();
+  transactionsList = this.pagination.items;
+  hasNextPage = this.pagination.hasNextPage;
   isFiltering = signal<boolean>(false);
 
   private query = new RecurringTransactionQueryImpl(null);
@@ -93,25 +95,14 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   }
 
   async onFilterChange(): Promise<void> {
-    this.query.page.pageNumber = 0;
-    this.transactionsList.set([]);
-    await this.fetchTransactions();
+    await this.pagination.reload(this.query, () => this.fetchTransactions());
   }
 
   async fetchTransactions(): Promise<void> {
     const resp = await this.recurringTransactionService.search(this.query);
 
     if (resp.isSuccess && resp.response) {
-      const pageData = resp.response;
-      this.transactionsList.update((current) => [
-        ...current,
-        ...pageData.content,
-      ]);
-
-      this.hasNextPage.set(
-        pageData.page.totalPages - 1 > this.query.page.pageNumber,
-      );
-
+      this.pagination.appendPage(resp.response, this.query);
       this.isFiltering.set(!!this.query.type || !!this.query.amount);
     } else {
       console.error('Failed to load recurring transactions', resp.errors);
@@ -119,14 +110,13 @@ export class ListRecurringTransactionsModal extends ModalContentBaseComponent<
   }
 
   async loadMore(event: InfiniteScrollCustomEvent): Promise<void> {
-    this.query.page.pageNumber += 1;
-    await this.fetchTransactions();
-    void event.target.complete();
+    await this.pagination.loadMore(event, this.query, () =>
+      this.fetchTransactions(),
+    );
   }
 
   async handleRefresh(event: RefresherCustomEvent): Promise<void> {
-    await this.onFilterChange();
-    void event.target.complete();
+    await this.pagination.handleRefresh(event, () => this.onFilterChange());
   }
 
   async onTransactionClick(transaction: RecurringTransaction): Promise<void> {

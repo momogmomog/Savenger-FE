@@ -3,7 +3,7 @@
 </ion-refresher>
 
 <div class="ion-padding">
-  @for (transfer of transfers().content; track transfer.id) {
+  @for (transfer of transfers(); track transfer.id) {
     <app-transfer-card
       [transfer]="transfer"
       (archive)="onTransferArchive($event)"

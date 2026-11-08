@@ -95,16 +95,12 @@ export class BudgetSelectControlComponent
 
     const resp = response.response;
     this.payload.set(
-      new PageImpl(
-        [...this.payload().content].concat(
-          resp.content.map(
-            (budget) =>
-              new SelectSearchItemImpl(budget.budgetName, budget.id, budget),
-          ),
-        ),
-        resp.page.totalElements,
-        resp.page.totalPages,
+      PageImpl.appendMapped(
+        this.payload(),
+        resp,
         this.budgetQuery.page,
+        (budget) =>
+          new SelectSearchItemImpl(budget.budgetName, budget.id, budget),
       ),
     );
   }

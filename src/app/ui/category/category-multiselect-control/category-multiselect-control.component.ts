@@ -90,15 +90,11 @@ export class CategoryMultiselectControlComponent
     this.categories = [...this.categories, ...resp.content];
 
     this.categoriesPayload.set(
-      new PageImpl(
-        [...this.categoriesPayload().content].concat(
-          resp.content.map(
-            (cat) => new SelectSearchItemImpl(cat.categoryName, cat.id, cat),
-          ),
-        ),
-        resp.page.totalElements,
-        resp.page.totalPages,
+      PageImpl.appendMapped(
+        this.categoriesPayload(),
+        resp,
         this.categoryQuery.page,
+        (cat) => new SelectSearchItemImpl(cat.categoryName, cat.id, cat),
       ),
     );
   }

@@ -90,20 +90,16 @@ export class CategorySelectControlComponent
     const resp = await this.categoryService.search(this.categoryQuery);
 
     this.payload.set(
-      new PageImpl(
-        [...this.payload().content].concat(
-          resp.content.map(
-            (cat) =>
-              new SelectSearchItemImpl(
-                `${cat.categoryName} (${cat.budgetCap || 'Unlimited'})`,
-                cat.id,
-                cat,
-              ),
-          ),
-        ),
-        resp.page.totalElements,
-        resp.page.totalPages,
+      PageImpl.appendMapped(
+        this.payload(),
+        resp,
         this.categoryQuery.page,
+        (cat) =>
+          new SelectSearchItemImpl(
+            `${cat.categoryName} (${cat.budgetCap || 'Unlimited'})`,
+            cat.id,
+            cat,
+          ),
       ),
     );
   }

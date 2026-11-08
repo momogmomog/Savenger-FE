@@ -1,8 +1,7 @@
-import { Component, effect, signal } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-content-base.component';
 import { TransfersModalPayload } from './transfers.modal.payload';
 import { TransferService } from '../../../api/transfer/transaction.service';
-import { EmptyPage, Page } from '../../../shared/util/page';
 import { Transfer } from '../../../api/transfer/transfer';
 import {
   TransferQuery,
@@ -28,6 +27,7 @@ import { CreateTransferModalPayload } from '../create-transfer-modal/create-tran
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { CreateTransferTransactionModalComponent } from '../../transfer-transaction/create-transfer-transaction-modal/create-transfer-transaction-modal.component';
 import { CreateTransferTransactionModalPayload } from '../../transfer-transaction/create-transfer-transaction-modal/create-transfer-transaction-modal.payload';
+import { PaginatedListState } from '../../../shared/util/paginated-list.state';
 
 @Component({
   templateUrl: './transfers.modal.html',
@@ -46,10 +46,11 @@ export class TransfersModal extends ModalContentBaseComponent<
   TransfersModalPayload,
   boolean
 > {
-  transfers = signal<Page<Transfer>>(new EmptyPage());
+  pagination = new PaginatedListState<Transfer>();
+  transfers = this.pagination.items;
 
   query: TransferQuery = new TransferQueryImpl(null);
-  hasNextPage = signal<boolean>(true);
+  hasNextPage = this.pagination.hasNextPage;
 
   constructor(
     private transferService: TransferService,
@@ -65,9 +66,7 @@ export class TransfersModal extends ModalContentBaseComponent<
   }
 
   async onFilterChange(): Promise<void> {
-    this.query.page.pageNumber = 0;
-    this.transfers.set(new EmptyPage());
-    await this.fetchTransfers();
+    await this.pagination.reload(this.query, () => this.fetchTransfers());
   }
 
   async fetchTransfers(): Promise<void> {
@@ -79,22 +78,17 @@ export class TransfersModal extends ModalContentBaseComponent<
       return;
     }
 
-    this.transfers.set(resp.response);
-
-    this.hasNextPage.set(
-      resp.response.page.totalPages - 1 > this.query.page.pageNumber,
-    );
+    this.pagination.appendPage(resp.response, this.query);
   }
 
   async loadMore(event: InfiniteScrollCustomEvent): Promise<void> {
-    this.query.page.pageNumber += 1;
-    await this.fetchTransfers();
-    void event.target.complete();
+    await this.pagination.loadMore(event, this.query, () =>
+      this.fetchTransfers(),
+    );
   }
 
   async handleRefresh(event: RefresherCustomEvent): Promise<void> {
-    await this.onFilterChange();
-    void event.target.complete();
+    await this.pagination.handleRefresh(event, () => this.onFilterChange());
   }
 
   onTransferClick(transfer: Transfer): void {

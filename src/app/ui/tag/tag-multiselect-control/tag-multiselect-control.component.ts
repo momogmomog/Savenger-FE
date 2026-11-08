@@ -95,15 +95,11 @@ export class TagMultiselectControlComponent
     this.tags = [...this.tags, ...resp.content];
 
     this.tagsPayload.set(
-      new PageImpl(
-        [...this.tagsPayload().content].concat(
-          resp.content.map(
-            (tag) => new SelectSearchItemImpl(tag.tagName, tag.id, tag),
-          ),
-        ),
-        resp.page.totalElements,
-        resp.page.totalPages,
+      PageImpl.appendMapped(
+        this.tagsPayload(),
+        resp,
         this.tagQuery.page,
+        (tag) => new SelectSearchItemImpl(tag.tagName, tag.id, tag),
       ),
     );
   }

@@ -56,6 +56,7 @@ import { ModalPresetsService } from '../../../shared/modal/modal-presets.service
 import { TransactionFilterModalComponent } from '../transaction-filter-modal/transaction-filter-modal.component';
 import { TransactionFilterModalResult } from '../transaction-filter-modal/transaction-filter-modal.payload';
 import { TransactionFilterState } from '../transaction-filter-modal/transaction-filter.state';
+import { PaginatedListState } from '../../../shared/util/paginated-list.state';
 
 @Component({
   selector: 'app-list-transactions',
@@ -88,8 +89,9 @@ export class ListTransactionsComponent implements OnInit {
   budget = this.budgetSliderService.currentBudget;
   recurringTransactionUpdateTrigger = signal<number | null>(null);
 
-  transactionsList = signal<Transaction[]>([]);
-  hasNextPage = signal<boolean>(true);
+  pagination = new PaginatedListState<Transaction>();
+  transactionsList = this.pagination.items;
+  hasNextPage = this.pagination.hasNextPage;
   filterState = new TransactionFilterState();
   isFiltering = this.filterState.isFiltering;
 
@@ -128,23 +130,14 @@ export class ListTransactionsComponent implements OnInit {
 
   async onFilterChange(): Promise<void> {
     this.query.budgetId = this.budget().id;
-    this.query.page.pageNumber = 0;
-    this.transactionsList.set([]);
-    await this.fetchTransactions();
+    await this.pagination.reload(this.query, () => this.fetchTransactions());
   }
 
   async fetchTransactions(): Promise<void> {
     const pageData = await this.transactionService.search(this.query);
 
     if (pageData) {
-      this.transactionsList.update((current) => [
-        ...current,
-        ...pageData.content,
-      ]);
-      this.hasNextPage.set(
-        pageData.page.totalPages - 1 > this.query.page.pageNumber,
-      );
-
+      this.pagination.appendPage(pageData, this.query);
       this.filterState.syncWithQuery(this.query);
     }
   }
@@ -157,15 +150,15 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   async loadMore(event: InfiniteScrollCustomEvent): Promise<void> {
-    this.query.page.pageNumber += 1;
-    await this.fetchTransactions();
-    void event.target.complete();
+    await this.pagination.loadMore(event, this.query, () =>
+      this.fetchTransactions(),
+    );
   }
 
   async handleRefresh(event: RefresherCustomEvent): Promise<void> {
-    await this.budgetSliderService.refreshStatistic(this.budget().id);
-    await this.onFilterChange();
-    void event.target.complete();
+    await this.pagination.handleRefresh(event, () =>
+      this.transactionsChanged(),
+    );
   }
 
   async openAddTransaction(type: TransactionType): Promise<void> {
