@@ -118,7 +118,7 @@ export class BudgetDetailsPage implements OnInit {
   });
 
   healthColor = computed(() => {
-    return TransactionUtils.getUtilizationColor(
+    return TransactionUtils.getUtilizationGradient(
       this.stats().expensesAmount,
       this.stats().budget.budgetCap,
     );

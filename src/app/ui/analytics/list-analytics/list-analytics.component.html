@@ -140,7 +140,7 @@
                     <div class="category-budget-progress">
                       <ion-progress-bar
                         [value]="getPercentage(item.expenses.sum, item.category.budgetCap)"
-                        [color]="TransactionUtils.getUtilizationColor(item.expenses.sum, item.category.budgetCap)">
+                        [style.--progress-background]="TransactionUtils.getUtilizationGradient(item.expenses.sum, item.category.budgetCap)">
                       </ion-progress-bar>
                       <div class="progress-labels">
                         <ion-note class="text-tiny">

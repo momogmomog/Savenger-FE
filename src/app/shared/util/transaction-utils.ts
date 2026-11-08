@@ -145,21 +145,63 @@ export class TransactionUtils {
     return current / max;
   }
 
-  public static getUtilizationColor(current: number, max: number): string {
-    const pct = TransactionUtils.getUtilizationPercentage(current, max);
-    if (pct > 1.05) {
-      return 'danger';
+  public static getUtilizationGradient(current: number, max: number): string {
+    const stageColors: Record<number, string> = {
+      60: 'var(--color-utilization-low)',
+      90: 'var(--color-utilization-moderate)',
+      105: 'var(--color-utilization-high)',
+    };
+    const exceededColor = 'var(--color-utilization-exceeded)';
+
+    const stages = Object.entries(stageColors)
+      .map(([percent, color]) => ({ percent: Number(percent), color }))
+      .sort((a, b) => a.percent - b.percent);
+
+    const pct = TransactionUtils.getUtilizationPercentage(current, max) * 100;
+    const maxStagePercent = stages[stages.length - 1]?.percent ?? 100;
+
+    if (pct > maxStagePercent) {
+      return exceededColor;
     }
 
-    if (pct > 0.9) {
-      return 'warning';
+    if (pct <= stages[0].percent) {
+      return stages[0].color;
     }
 
-    if (pct > 0.7) {
-      return 'success';
+    const fill = Math.min(pct, 100);
+    const toStop = (pos: number): string =>
+      `${Math.min(100, Math.round((pos / fill) * 1000) / 10)}%`;
+
+    const activeStages: { percent: number; color: string }[] = [];
+    for (const stage of stages) {
+      activeStages.push(stage);
+      if (pct <= stage.percent) {
+        break;
+      }
     }
 
-    return 'primary';
+    const gradientStops: string[] = [];
+    activeStages.forEach((stage, index) => {
+      const isFirst = index === 0;
+      const isLast = index === activeStages.length - 1;
+      const stageStart = isFirst ? 0 : activeStages[index - 1].percent;
+      const stageEnd = isLast ? fill : Math.min(stage.percent, fill);
+      const stageWidth = Math.max(0, stageEnd - stageStart);
+
+      const startPos = isFirst
+        ? 0
+        : Math.min(fill, stageStart + Math.min(2, stageWidth * 0.25));
+      const endPos = isLast
+        ? fill
+        : Math.max(startPos, stageEnd - Math.min(4, stageWidth * 0.25));
+
+      gradientStops.push(
+        `${stage.color} ${isFirst ? '0%' : toStop(startPos)}`,
+        `${stage.color} ${isLast ? '100%' : toStop(endPos)}`,
+      );
+    });
+
+    return `linear-gradient(90deg, ${gradientStops.join(', ')})`;
   }
 
   public static getFilterIcon(isFiltering: boolean): string {

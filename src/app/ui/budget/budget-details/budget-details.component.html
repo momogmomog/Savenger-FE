@@ -42,7 +42,7 @@
         <span class="text-dark"><strong>{{ stats().expensesAmount | currency }}</strong> spent</span>
         <span>Limit: {{ stats().budget.budgetCap | currency }}</span>
       </div>
-      <ion-progress-bar [value]="usagePercentage()" [color]="healthColor()"></ion-progress-bar>
+      <ion-progress-bar [value]="usagePercentage()" [style.--progress-background]="healthColor()"></ion-progress-bar>
       <div style="text-align: right; margin-top: 4px; font-size: 0.8em; color: var(--ion-color-medium);">
         {{ usagePercentage() | percent }} utilized
       </div>

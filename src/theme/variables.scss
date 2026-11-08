@@ -23,6 +23,7 @@
   --color-utilization-moderate: var(--ion-color-success);
   --color-utilization-high: var(--ion-color-warning);
   --color-utilization-exceeded: var(--ion-color-danger);
+  --color-utilization-track: rgba(var(--ion-color-medium-rgb), 0.25);
 
   --color-control-invalid: #f8bd4b;
   --color-control-invalid-dirty: darkred;

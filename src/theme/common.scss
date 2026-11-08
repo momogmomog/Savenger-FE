@@ -29,6 +29,10 @@
   font-weight: 700;
 }
 
+ion-progress-bar {
+  --background: var(--color-utilization-track);
+}
+
 .empty-list-placeholder {
   display: flex;
   flex-direction: column;
