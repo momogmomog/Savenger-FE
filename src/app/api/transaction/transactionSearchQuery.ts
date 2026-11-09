@@ -10,6 +10,8 @@ export interface TransactionQuery {
   dateCreated: BetweenQuery<string> | null;
   comment: string | null;
   revised: boolean | null;
+  recurringTransactionId: number | null;
+  prepaymentId: number | null;
   categoryIds: number[];
   userIds: number[];
   noDebtTransactions: boolean | null;
@@ -23,6 +25,8 @@ export class TransactionQueryImpl implements TransactionQuery {
   dateCreated: BetweenQuery<string> | null = null;
   comment: string | null = null;
   revised: boolean | null = null;
+  recurringTransactionId: number | null = null;
+  prepaymentId: number | null = null;
   categoryIds: number[] = [];
   noDebtTransactions: boolean | null = null;
   tagIds: number[] = [];

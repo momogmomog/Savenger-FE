@@ -11,6 +11,8 @@ export interface Transaction extends TransactionBasicDto {
   dateCreated: string;
   comment: string;
   revised: boolean;
+  recurringTransactionId: number;
+  prepaymentId: number;
   userId: number;
   categoryId: number;
   budgetId: number;
