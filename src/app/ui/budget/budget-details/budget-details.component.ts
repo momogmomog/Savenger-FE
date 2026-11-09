@@ -12,7 +12,6 @@ import {
   IonAccordion,
   IonAccordionGroup,
   IonAvatar,
-  IonBackButton,
   IonBadge,
   IonButton,
   IonButtons,
@@ -35,6 +34,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  arrowBack,
   ellipsisVertical,
   folderOpenOutline,
   pencilOutline,
@@ -46,7 +46,6 @@ import {
   walletOutline,
 } from 'ionicons/icons';
 import { BudgetStatistics } from '../../../api/budget/budget.statistics';
-import { AppRoutingPath } from '../../../app-routing.path';
 import { ModalService } from '../../../shared/modal/modal.service';
 import { ManageParticipantsModal } from '../manage-participants/manage-participants.modal';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
@@ -71,7 +70,6 @@ import { TransactionUtils } from '../../../shared/util/transaction-utils';
     IonTitle,
     IonToolbar,
     IonButtons,
-    IonBackButton,
     IonButton,
     IonIcon,
     IonCard,
@@ -99,7 +97,6 @@ export class BudgetDetailsPage implements OnInit {
   private categoryService = inject(CategoryService);
   private tagService = inject(TagService);
 
-  routes = AppRoutingPath;
   protected readonly TransactionType = TransactionType;
   protected readonly TransactionUtils = TransactionUtils;
   stats = model.required<BudgetStatistics>();
@@ -130,6 +127,7 @@ export class BudgetDetailsPage implements OnInit {
 
   constructor() {
     addIcons({
+      arrowBack,
       ellipsisVertical,
       walletOutline,
       peopleOutline,

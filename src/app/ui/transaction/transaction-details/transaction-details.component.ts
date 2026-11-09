@@ -3,7 +3,6 @@ import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import {
   ActionSheetController,
   IonAvatar,
-  IonBackButton,
   IonBadge,
   IonButton,
   IonButtons,
@@ -22,6 +21,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  arrowBack,
   calendarOutline,
   chatboxOutline,
   createOutline,
@@ -35,7 +35,6 @@ import {
 import { TransactionDetailed } from '../../../api/transaction/transaction';
 import { Budget } from '../../../api/budget/budget';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
-import { AppRoutingPath } from '../../../app-routing.path';
 
 @Component({
   selector: 'app-transaction-details',
@@ -47,7 +46,6 @@ import { AppRoutingPath } from '../../../app-routing.path';
     IonHeader,
     IonToolbar,
     IonButtons,
-    IonBackButton,
     IonTitle,
     IonButton,
     IonIcon,
@@ -77,6 +75,7 @@ export class TransactionDetailsComponent {
 
   constructor() {
     addIcons({
+      arrowBack,
       ellipsisVertical,
       calendarOutline,
       folderOpenOutline,
@@ -114,6 +113,5 @@ export class TransactionDetailsComponent {
     await actionSheet.present();
   }
 
-  protected readonly AppRoutingPath = AppRoutingPath;
   protected readonly TransactionUtils = TransactionUtils;
 }

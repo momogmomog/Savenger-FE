@@ -1,10 +1,9 @@
 <ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button
-        (click)="navigateAway.emit()"
-        [defaultHref]="AppRoutingPath.TAB_3_TRANSACTIONS.toString()"
-      ></ion-back-button>
+      <ion-button (click)="navigateAway.emit()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title>Upcoming Details</ion-title>
     <ion-buttons slot="end">

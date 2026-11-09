@@ -1,7 +1,9 @@
 <ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="onNavigate()" [defaultHref]="routes.TAB_4_BUDGETS.toString()"></ion-back-button>
+      <ion-button (click)="onNavigate()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title>{{ stats().budget.budgetName }}</ion-title>
     <ion-buttons slot="end">

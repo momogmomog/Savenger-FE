@@ -2,7 +2,6 @@ import { Component, inject, input, output } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import {
   ActionSheetController,
-  IonBackButton,
   IonBadge,
   IonButton,
   IonButtons,
@@ -21,6 +20,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  arrowBack,
   calculatorOutline,
   calendarOutline,
   chatboxOutline,
@@ -39,7 +39,6 @@ import {
 } from 'ionicons/icons';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
-import { AppRoutingPath } from '../../../app-routing.path';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
 import { ObjectUtils } from '../../../shared/util/object-utils';
 
@@ -53,7 +52,6 @@ import { ObjectUtils } from '../../../shared/util/object-utils';
     IonHeader,
     IonToolbar,
     IonButtons,
-    IonBackButton,
     IonTitle,
     IonButton,
     IonIcon,
@@ -84,6 +82,7 @@ export class RecurringTransactionDetailsComponent {
 
   constructor() {
     addIcons({
+      arrowBack,
       ellipsisVertical,
       calendarOutline,
       folderOpenOutline,
@@ -127,7 +126,6 @@ export class RecurringTransactionDetailsComponent {
     await actionSheet.present();
   }
 
-  protected readonly AppRoutingPath = AppRoutingPath;
   protected readonly ObjectUtils = ObjectUtils;
   protected readonly TransactionUtils = TransactionUtils;
 }
