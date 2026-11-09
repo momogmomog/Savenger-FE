@@ -14,7 +14,6 @@ import {
   IonRow,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { ModalController } from '@ionic/angular/standalone';
 import {
   TransactionFilterModalPayload,
   TransactionFilterModalResult,
@@ -31,6 +30,7 @@ import { Tag } from '../../../api/tag/tag';
 import { Category } from '../../../api/category/category';
 import { OtherUser } from '../../../api/user/user';
 import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-content-base.component';
+import { CheckboxComponent } from '../../../shared/form-controls/checkbox/checkbox.component';
 
 @Component({
   selector: 'app-transaction-filter-modal',
@@ -49,6 +49,7 @@ import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-co
     DatePickerComponent,
     TagMultiselectControlComponent,
     CategoryMultiselectControlComponent,
+    CheckboxComponent,
     // UserMultiselectControlComponent,
   ],
 })
@@ -90,6 +91,7 @@ export class TransactionFilterModalComponent
       categoryIds: new FormArray<FormControl<number>>([]),
       tagIds: new FormArray<FormControl<number>>([]),
       userIds: new FormArray<FormControl<number>>([]),
+      revised: new FormControl<boolean | null>(null),
     });
   }
 
@@ -117,6 +119,7 @@ export class TransactionFilterModalComponent
         categoryIds: raw.categoryIds,
         tagIds: raw.tagIds,
         userIds: raw.userIds,
+        revised: raw.revised,
         amount:
           raw.amountMin != null || raw.amountMax != null
             ? { min: raw.amountMin, max: raw.amountMax }
