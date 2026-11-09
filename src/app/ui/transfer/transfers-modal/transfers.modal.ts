@@ -1,7 +1,7 @@
 import { Component, effect } from '@angular/core';
 import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-content-base.component';
 import { TransfersModalPayload } from './transfers.modal.payload';
-import { TransferService } from '../../../api/transfer/transaction.service';
+import { TransferService } from '../../../api/transfer/transfer.service';
 import { Transfer } from '../../../api/transfer/transfer';
 import {
   TransferQuery,

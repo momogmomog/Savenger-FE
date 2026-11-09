@@ -2,7 +2,7 @@ import { Component, effect, OnInit, signal } from '@angular/core';
 import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-content-base.component';
 import { CreateTransferPayload } from '../../../api/transfer/dto/create-transfer.payload';
 import { TransferFull } from '../../../api/transfer/transfer';
-import { TransferService } from '../../../api/transfer/transaction.service';
+import { TransferService } from '../../../api/transfer/transfer.service';
 import { Formified, FormUtil } from '../../../shared/util/forms.util';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CreateTransferModalPayload } from './create-transfer-modal.payload';
