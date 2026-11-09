@@ -2,8 +2,9 @@ import { TransactionType } from './transaction.type';
 import { Tag } from '../tag/tag';
 import { Category } from '../category/category';
 import { OtherUser } from '../user/user';
+import { TransactionBasicDto } from './dto/transaction-basic.dto';
 
-export interface Transaction {
+export interface Transaction extends TransactionBasicDto {
   id: number;
   type: TransactionType;
   amount: number;

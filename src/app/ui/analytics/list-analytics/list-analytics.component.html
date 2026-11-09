@@ -120,7 +120,7 @@
       <ion-list lines="full">
         @for (item of categoryAnalytics(); track item.category.id) {
           @if (item.expenses.count > 0 || item.incomes.count > 0) {
-            <ion-item>
+            <ion-item [button]="true" [detail]="false" (click)="onCategoryClick(item)">
               <div class="category-item-wrapper">
 
                 @if (item.expenses.count > 0) {
@@ -259,7 +259,7 @@
       <ion-list lines="none">
         @for (item of tagAnalytics(); track item.tag.id) {
           @if(item.expenses.count > 0 || item.incomes.count > 0) {
-            <ion-item>
+            <ion-item [button]="true" [detail]="false" (click)="onTagClick(item)">
               <div style="width: 100%; padding: 8px 0;">
 
                 @if(item.expenses.count > 0) {

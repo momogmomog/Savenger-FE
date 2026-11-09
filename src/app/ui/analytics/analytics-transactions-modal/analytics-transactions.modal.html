@@ -1,0 +1,28 @@
+<ion-content [fullscreen]="true">
+  @for (group of groupedTransactions(); track group.dateLabel) {
+    <div class="ion-padding-start ion-padding-bottom ion-margin-top">
+      <ion-text color="medium">
+        <small class="transaction-group-date-header">
+          {{ group.dateObj | date: 'mediumDate' }}
+        </small>
+      </ion-text>
+    </div>
+
+    <ion-card class="transaction-group-card">
+      <ion-list lines="none" class="ion-no-padding">
+        @for (item of group.items; track item.id) {
+          <app-transaction-card
+            (onClick)="onTransactionClick($event)"
+            [transaction]="item"
+            [categoryName]="getCategoryName(item)"
+          >
+          </app-transaction-card>
+        }
+      </ion-list>
+    </ion-card>
+  } @empty {
+    <div class="empty-list-placeholder ion-margin-top">
+      <p>No transactions found</p>
+    </div>
+  }
+</ion-content>

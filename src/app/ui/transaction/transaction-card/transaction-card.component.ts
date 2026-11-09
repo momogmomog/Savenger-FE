@@ -2,7 +2,10 @@ import { Component, input, output } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { IonIcon, IonItem, IonLabel, IonText } from '@ionic/angular/standalone';
 import { Transaction } from '../../../api/transaction/transaction';
+import { TransactionBasicDto } from '../../../api/transaction/dto/transaction-basic.dto';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
+
+export type TransactionCardItem = TransactionBasicDto & Partial<Transaction>;
 
 @Component({
   selector: 'app-transaction-card',
@@ -49,12 +52,14 @@ import { TransactionUtils } from '../../../shared/util/transaction-utils';
           }
         </p>
 
-        @if (transaction().tags && transaction().tags.length > 0) {
-          <div class="transaction-card-tags">
-            @for (tag of transaction().tags; track tag.id) {
-              <span class="transaction-tag-pill">{{ tag.tagName }}</span>
-            }
-          </div>
+        @if (transaction().tags; as tags) {
+          @if (tags.length > 0) {
+            <div class="transaction-card-tags">
+              @for (tag of tags; track tag.id) {
+                <span class="transaction-tag-pill">{{ tag.tagName }}</span>
+              }
+            </div>
+          }
         }
       </ion-label>
 
@@ -78,10 +83,12 @@ import { TransactionUtils } from '../../../shared/util/transaction-utils';
     `,
   ],
 })
-export class TransactionCardComponent {
+export class TransactionCardComponent<
+  T extends TransactionCardItem = TransactionCardItem,
+> {
   protected readonly TransactionUtils = TransactionUtils;
 
-  transaction = input.required<Transaction>();
+  transaction = input.required<T>();
   categoryName = input<string | undefined>(undefined);
-  onClick = output<Transaction>();
+  onClick = output<T>();
 }

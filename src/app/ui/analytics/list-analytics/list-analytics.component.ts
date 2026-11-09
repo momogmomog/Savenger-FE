@@ -33,6 +33,7 @@ import { ChartConfiguration, ChartData } from 'chart.js';
 
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
 import { AnalyticsService } from '../../../api/analytics/analytics.service';
+import { AnalyticDto } from '../../../api/analytics/dto/analytic.dto';
 import { CategoryAnalytic } from '../../../api/analytics/dto/category-analytic';
 import { TagAnalytic } from '../../../api/analytics/dto/tag-analytic';
 import {
@@ -50,6 +51,10 @@ import { TransactionFilterModalResult } from '../../transaction/transaction-filt
 import { TransactionFilterState } from '../../transaction/transaction-filter-modal/transaction-filter.state';
 import { TransactionType } from '../../../api/transaction/transaction.type';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
+import {
+  AnalyticsTransactionsModal,
+  AnalyticsTransactionsModalPayload,
+} from '../analytics-transactions-modal/analytics-transactions.modal';
 
 enum ChartMode {
   EXPENSE = 'EXPENSE',
@@ -329,5 +334,50 @@ export class ListAnalyticsComponent implements OnInit {
 
   getPercentage(current: number, max: number): number {
     return TransactionUtils.getUtilizationPercentage(current, max);
+  }
+
+  async onCategoryClick(item: CategoryAnalytic): Promise<void> {
+    await this.openAnalyticsTransactionsModal(
+      item,
+      item.category.categoryName,
+      item.category.categoryName,
+    );
+  }
+
+  async onTagClick(item: TagAnalytic): Promise<void> {
+    await this.openAnalyticsTransactionsModal(item, `#${item.tag.tagName}`);
+  }
+
+  private async openAnalyticsTransactionsModal(
+    analytic: AnalyticDto,
+    title: string,
+    categoryName?: string,
+  ): Promise<void> {
+    const transactions = [
+      ...(analytic.expenses?.transactions || []),
+      ...(analytic.incomes?.transactions || []),
+    ];
+
+    const resp = await this.modalService.openAndWait(
+      AnalyticsTransactionsModal,
+      new AnalyticsTransactionsModalPayload(
+        transactions,
+        this.budget(),
+        categoryName,
+      ),
+      {
+        shellType: ShellType.HEADER,
+        title,
+      },
+    );
+
+    resp.ifConfirmed(async (reload) => {
+      if (reload) {
+        await Promise.all([
+          this.budgetSliderService.refreshStatistic(this.budget().id),
+          this.fetchAnalytics(),
+        ]);
+      }
+    });
   }
 }
