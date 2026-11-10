@@ -186,7 +186,7 @@
         <div class="preview-summary-row">
           <div class="preview-box">
             <span class="preview-label">Total Buffer</span>
-            <strong class="preview-value text-danger">
+            <strong class="preview-value text-expense">
               -{{ form.controls.amount.value | currency }}
             </strong>
           </div>
@@ -200,7 +200,7 @@
           <div class="preview-divider"></div>
           <div class="preview-box ion-text-end">
             <span class="preview-label">Est. Payments</span>
-            <strong class="preview-value text-primary">
+            <strong class="preview-value text-compensate">
               ~{{ (form.controls.amount.value / form.controls.recurringTransaction.controls.amount.value) | currency:'':'':'1.0-1' }}x
             </strong>
           </div>

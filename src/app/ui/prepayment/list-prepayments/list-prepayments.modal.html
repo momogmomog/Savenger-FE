@@ -31,40 +31,6 @@
   </div>
 
   @if (prepaymentsList().length > 0) {
-    <ion-card class="summary-card">
-      <ion-card-content>
-        <div class="summary-section">
-          <div class="summary-box">
-            <span class="summary-label">Total Prepaid</span>
-            <ion-text color="danger">
-              <strong class="summary-value">-{{ summaryStats().totalAmount | currency }}</strong>
-            </ion-text>
-            <span class="summary-sub">{{ totalCount() }} prepayments</span>
-          </div>
-
-          <div class="summary-divider"></div>
-
-          <div class="summary-box">
-            <span class="summary-label">Amortized</span>
-            <ion-text color="success">
-              <strong class="summary-value">{{ summaryStats().amortizedSum | currency }}</strong>
-            </ion-text>
-            <span class="summary-sub">Billed so far</span>
-          </div>
-
-          <div class="summary-divider"></div>
-
-          <div class="summary-box ion-text-end">
-            <span class="summary-label">Remaining</span>
-            <ion-text color="primary">
-              <strong class="summary-value">{{ summaryStats().remainingSum | currency }}</strong>
-            </ion-text>
-            <span class="summary-sub">Buffer left</span>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
     <div class="list-details-header ion-padding-horizontal ion-padding-top">
       <ion-text color="medium">
         <small class="list-details-title">Prepayments</small>

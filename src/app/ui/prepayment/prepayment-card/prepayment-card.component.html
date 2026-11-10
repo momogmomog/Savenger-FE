@@ -31,11 +31,11 @@
       </div>
 
       <div class="amount-display ion-text-end">
-        <ion-text [color]="prepayment().completed ? 'success' : 'danger'">
-          <h3 class="remaining-amount">
-            {{ prepayment().completed ? 'Paid Off' : ('-' + (prepayment().remainingAmount | currency)) }}
-          </h3>
-        </ion-text>
+        <h3
+          class="remaining-amount"
+          [ngClass]="prepayment().completed ? 'text-income' : 'text-expense'">
+          {{ prepayment().completed ? 'Paid Off' : ('-' + (prepayment().remainingAmount | currency)) }}
+        </h3>
         <span class="total-amount-sub">
           of {{ prepayment().amount | currency }}
         </span>

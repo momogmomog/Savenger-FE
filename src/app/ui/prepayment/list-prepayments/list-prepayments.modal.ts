@@ -1,10 +1,9 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { Component, effect, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   InfiniteScrollCustomEvent,
   IonButton,
   IonCard,
-  IonCardContent,
   IonContent,
   IonFab,
   IonFabButton,
@@ -67,7 +66,6 @@ export type PrepaymentTabStatus = 'ACTIVE' | 'COMPLETED' | 'ALL';
   standalone: true,
   imports: [
     CommonModule,
-    CurrencyPipe,
     IonContent,
     IonRefresher,
     IonRefresherContent,
@@ -77,7 +75,6 @@ export type PrepaymentTabStatus = 'ACTIVE' | 'COMPLETED' | 'ALL';
     IonButton,
     IonIcon,
     IonCard,
-    IonCardContent,
     IonList,
     IonText,
     IonInfiniteScroll,
@@ -104,21 +101,6 @@ export class ListPrepaymentsModal extends ModalContentBaseComponent<
   totalCount = signal<number>(0);
 
   query: PrepaymentQuery = new PrepaymentQueryImpl(null);
-
-  summaryStats = computed(() => {
-    const items = this.prepaymentsList();
-    let totalAmount = 0;
-    let remainingSum = 0;
-    for (const item of items) {
-      totalAmount += item.amount || 0;
-      remainingSum += item.remainingAmount || 0;
-    }
-    return {
-      totalAmount,
-      remainingSum,
-      amortizedSum: Math.max(0, totalAmount - remainingSum),
-    };
-  });
 
   constructor() {
     super();

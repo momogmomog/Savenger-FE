@@ -38,12 +38,18 @@
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
-    background: rgba(var(--ion-color-primary-rgb), 0.14);
-    color: var(--ion-color-primary);
+    background: rgba(
+      var(--color-compensate-rgb, var(--ion-color-primary-rgb)),
+      0.1
+    );
+    color: var(--color-compensate, var(--ion-color-primary));
 
     &.completed {
-      background: rgba(var(--ion-color-success-rgb), 0.14);
-      color: var(--ion-color-success);
+      background: rgba(
+        var(--color-income-rgb, var(--ion-color-success-rgb)),
+        0.1
+      );
+      color: var(--color-income, var(--ion-color-success));
     }
   }
 

@@ -12,7 +12,6 @@ import {
   IonLabel,
   IonNote,
   IonProgressBar,
-  IonText,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -35,7 +34,6 @@ import { TransactionUtils } from '../../../shared/util/transaction-utils';
     IonItem,
     IonLabel,
     IonIcon,
-    IonText,
     IonBadge,
     IonProgressBar,
     IonNote,

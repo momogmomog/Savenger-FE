@@ -19,7 +19,6 @@
   }
 }
 
-ion-card.summary-card,
 ion-card.prepayments-list-card {
   border-radius: var(--card-border-radius-lg, 24px);
   background: var(--ion-card-background);
@@ -36,41 +35,5 @@ ion-card.prepayments-list-card {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 0.75rem;
-  }
-}
-
-.summary-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .summary-box {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .summary-label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ion-color-medium);
-    font-weight: 600;
-  }
-
-  .summary-value {
-    font-size: 1.05rem;
-    font-weight: 700;
-  }
-
-  .summary-sub {
-    font-size: 0.72rem;
-    color: var(--ion-color-medium);
-  }
-
-  .summary-divider {
-    width: 1px;
-    height: 36px;
-    background: var(--ion-color-step-150);
   }
 }

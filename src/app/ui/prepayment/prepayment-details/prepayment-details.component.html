@@ -76,9 +76,7 @@
       <div class="summary-section">
         <div class="summary-box">
           <span class="summary-label">Total Prepaid</span>
-          <ion-text color="danger">
-            <strong class="summary-value">-{{ prepayment().amount | currency }}</strong>
-          </ion-text>
+          <strong class="summary-value text-expense">-{{ prepayment().amount | currency }}</strong>
           <span class="summary-sub">Initial advance</span>
         </div>
 
@@ -86,9 +84,7 @@
 
         <div class="summary-box">
           <span class="summary-label">Amortized</span>
-          <ion-text color="success">
-            <strong class="summary-value">{{ paidAmount() | currency }}</strong>
-          </ion-text>
+          <strong class="summary-value text-income">{{ paidAmount() | currency }}</strong>
           <span class="summary-sub">Billed so far</span>
         </div>
 
@@ -96,9 +92,11 @@
 
         <div class="summary-box ion-text-end">
           <span class="summary-label">Remaining</span>
-          <ion-text [color]="prepayment().completed ? 'success' : 'primary'">
-            <strong class="summary-value">{{ prepayment().remainingAmount | currency }}</strong>
-          </ion-text>
+          <strong
+            class="summary-value"
+            [ngClass]="prepayment().completed ? 'text-income' : 'text-compensate'">
+            {{ prepayment().remainingAmount | currency }}
+          </strong>
           <span class="summary-sub">Unbilled buffer</span>
         </div>
       </div>

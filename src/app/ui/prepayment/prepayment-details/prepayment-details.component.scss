@@ -21,8 +21,8 @@ ion-card.schedule-card {
   .hero-amount {
     font-size: 2.4rem;
     font-weight: 800;
-    color: var(--ion-color-primary);
-    &.completed { color: var(--ion-color-success); }
+    color: var(--color-compensate, var(--ion-color-primary));
+    &.completed { color: var(--color-income, var(--ion-color-success)); }
   }
 }
 

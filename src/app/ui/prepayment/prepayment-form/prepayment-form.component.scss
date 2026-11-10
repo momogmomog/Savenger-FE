@@ -21,7 +21,6 @@ ion-card.summary-preview-card {
   margin: 0 0 12px 0;
   border-radius: var(--card-border-radius-lg, 24px);
   background: var(--ion-card-background);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .segment-wrapper {
@@ -44,13 +43,13 @@ ion-input.recurrence-picker {
   &.ng-invalid {
     ion-input,
     ion-textarea {
-      border-bottom: 1px var(--color-control-invalid, #f8bd4b) solid;
+      border-bottom: 1px var(--color-control-invalid) solid;
     }
 
     &.ng-dirty {
       ion-input,
       ion-textarea {
-        border-bottom: 1px var(--color-control-invalid-dirty, darkred) solid;
+        border-bottom: 1px var(--color-control-invalid-dirty) solid;
       }
     }
   }
