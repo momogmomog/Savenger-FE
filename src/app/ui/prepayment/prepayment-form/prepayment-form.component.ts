@@ -1,12 +1,15 @@
 import {
   Component,
   computed,
+  DestroyRef,
   effect,
+  inject,
   input,
   OnInit,
   output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray,
   FormControl,
@@ -15,6 +18,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { merge } from 'rxjs';
 import {
   IonButton,
   IonCard,
@@ -57,6 +61,8 @@ import { CheckboxComponent } from '../../../shared/form-controls/checkbox/checkb
 import { CategorySelectControlComponent } from '../../category/category-select-control/category-select-control.component';
 import { TagMultiselectControlComponent } from '../../tag/tag-multiselect-control/tag-multiselect-control.component';
 import { RecurringTransactionSelectControlComponent } from '../../recurring-transaction/recurring-transaction-select-control/recurring-transaction-select-control.component';
+import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
+import { Budget } from '../../../api/budget/budget';
 
 export enum PrepaymentScheduleMode {
   CREATE_NEW = 'CREATE_NEW',
@@ -92,6 +98,8 @@ export enum PrepaymentScheduleMode {
 })
 export class PrepaymentFormComponent implements OnInit {
   readonly PrepaymentScheduleMode = PrepaymentScheduleMode;
+  private destroyRef = inject(DestroyRef);
+  private budgetSliderService = inject(BudgetSliderService);
 
   form: DeepFormified<CreatePrepaymentPayload>;
 
@@ -107,6 +115,9 @@ export class PrepaymentFormComponent implements OnInit {
   );
   initTags = signal<boolean>(false);
   selectedRecurrenceText = signal<string | null>(null);
+
+  private customRecurrenceSelected = false;
+  private customInstallmentAmountTyped = false;
 
   recurringTransactionErrors = computed(() =>
     (this.errors() || [])
@@ -203,21 +214,127 @@ export class PrepaymentFormComponent implements OnInit {
       this.setScheduleMode(PrepaymentScheduleMode.LINK_EXISTING);
     } else {
       this.setScheduleMode(PrepaymentScheduleMode.CREATE_NEW);
+      this.syncDefaultRecurrenceFromBudget();
+      this.recalculateInstallmentAmount();
     }
 
+    this.setupNewSchedulePrepopulationListeners();
+
     this.initTags.set(true);
+  }
+
+  private getTargetBudget(): Budget | undefined {
+    const bId = this.budgetId();
+    const current = this.budgetSliderService.currentBudget();
+    if (current.id === bId) {
+      return current;
+    }
+    return this.budgetSliderService.fetchedBudgets().find((b) => b.id === bId);
+  }
+
+  private setupNewSchedulePrepopulationListeners(): void {
+    const rTxGroup = this.form.controls.recurringTransaction;
+
+    rTxGroup.controls.startFrom.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (!this.customRecurrenceSelected) {
+          this.syncDefaultRecurrenceFromBudget();
+        }
+        this.recalculateInstallmentAmount();
+      });
+
+    merge(
+      this.form.controls.amount.valueChanges,
+      this.form.controls.paidUntil.valueChanges,
+      rTxGroup.controls.recurringRule.valueChanges,
+    )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.recalculateInstallmentAmount();
+      });
+
+    rTxGroup.controls.amount.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (rTxGroup.controls.amount.dirty) {
+          this.customInstallmentAmountTyped = true;
+        }
+      });
+  }
+
+  private syncDefaultRecurrenceFromBudget(): void {
+    if (this.scheduleMode() !== PrepaymentScheduleMode.CREATE_NEW) {
+      return;
+    }
+
+    const budget = this.getTargetBudget();
+    const budgetRule = budget?.recurringRule;
+    const startFrom =
+      this.form.controls.recurringTransaction.controls.startFrom.value ||
+      new Date();
+
+    if (!budgetRule) {
+      return;
+    }
+
+    const generatedRule = RRuleUtils.buildScheduleRuleFromBudgetRule(
+      budgetRule,
+      new Date(startFrom),
+    );
+    if (generatedRule) {
+      this.form.controls.recurringTransaction.controls.recurringRule.setValue(
+        generatedRule,
+        { emitEvent: false },
+      );
+      this.selectedRecurrenceText.set(
+        RRuleUtils.toHumanReadableText(generatedRule),
+      );
+    }
+  }
+
+  private recalculateInstallmentAmount(): void {
+    if (
+      this.scheduleMode() !== PrepaymentScheduleMode.CREATE_NEW ||
+      this.customInstallmentAmountTyped
+    ) {
+      return;
+    }
+
+    const totalAmount = Number(this.form.controls.amount.value);
+    const paidUntil = this.form.controls.paidUntil.value;
+    const rTxControls = this.form.controls.recurringTransaction.controls;
+    const startFrom = rTxControls.startFrom.value || new Date();
+    const rrule = rTxControls.recurringRule.value;
+
+    const calculated = RRuleUtils.calculateInstallmentAmount(
+      totalAmount,
+      rrule,
+      new Date(startFrom),
+      new Date(paidUntil),
+    );
+
+    if (calculated !== null) {
+      rTxControls.amount.setValue(calculated, { emitEvent: false });
+    }
   }
 
   setScheduleMode(mode: PrepaymentScheduleMode): void {
     this.scheduleMode.set(mode);
     if (mode === PrepaymentScheduleMode.CREATE_NEW) {
-      this.form.controls.recurringTransaction.enable();
-      this.form.controls.recurringTransactionId.disable();
+      this.form.controls.recurringTransaction.enable({ emitEvent: false });
+      this.form.controls.recurringTransactionId.disable({ emitEvent: false });
+      if (
+        !this.form.controls.recurringTransaction.controls.recurringRule.value
+      ) {
+        this.syncDefaultRecurrenceFromBudget();
+      }
+      this.recalculateInstallmentAmount();
     } else {
-      this.form.controls.recurringTransactionId.enable();
-      this.form.controls.recurringTransaction.disable();
+      this.form.controls.recurringTransactionId.enable({ emitEvent: false });
+      this.form.controls.recurringTransaction.disable({ emitEvent: false });
     }
-    this.form.updateValueAndValidity();
+    this.form.updateValueAndValidity({ emitEvent: false });
   }
 
   onSegmentChange(event: CustomEvent): void {
@@ -239,7 +356,9 @@ export class PrepaymentFormComponent implements OnInit {
 
     resp.ifConfirmed((rRule) => {
       if (rRule) {
+        this.customRecurrenceSelected = true;
         this.selectedRecurrenceText.set(rRule.toText());
+        this.recalculateInstallmentAmount();
       }
     });
   }
