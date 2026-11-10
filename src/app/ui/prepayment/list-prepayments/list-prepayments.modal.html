@@ -1,0 +1,111 @@
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="top-controls ion-padding-horizontal ion-padding-top">
+    <ion-segment
+      [value]="selectedTab()"
+      (ionChange)="onTabChange($event)"
+      mode="ios"
+      class="status-segment">
+      <ion-segment-button value="ACTIVE">
+        <ion-label>Active</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="COMPLETED">
+        <ion-label>Completed</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="ALL">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <ion-button
+      fill="clear"
+      size="small"
+      class="filter-btn"
+      [color]="isFiltering() ? 'primary' : 'medium'"
+      (click)="presentFilterModal()">
+      <ion-icon slot="icon-only" [name]="TransactionUtils.getFilterIcon(isFiltering())"></ion-icon>
+    </ion-button>
+  </div>
+
+  @if (prepaymentsList().length > 0) {
+    <ion-card class="summary-card">
+      <ion-card-content>
+        <div class="summary-section">
+          <div class="summary-box">
+            <span class="summary-label">Total Prepaid</span>
+            <ion-text color="danger">
+              <strong class="summary-value">-{{ summaryStats().totalAmount | currency }}</strong>
+            </ion-text>
+            <span class="summary-sub">{{ totalCount() }} prepayments</span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-box">
+            <span class="summary-label">Amortized</span>
+            <ion-text color="success">
+              <strong class="summary-value">{{ summaryStats().amortizedSum | currency }}</strong>
+            </ion-text>
+            <span class="summary-sub">Billed so far</span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-box ion-text-end">
+            <span class="summary-label">Remaining</span>
+            <ion-text color="primary">
+              <strong class="summary-value">{{ summaryStats().remainingSum | currency }}</strong>
+            </ion-text>
+            <span class="summary-sub">Buffer left</span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="list-details-header ion-padding-horizontal ion-padding-top">
+      <ion-text color="medium">
+        <small class="list-details-title">Prepayments</small>
+      </ion-text>
+      <ion-text color="medium">
+        <small>{{ totalCount() }} total</small>
+      </ion-text>
+    </div>
+
+    <ion-card class="prepayments-list-card">
+      <ion-list lines="full" class="ion-no-padding">
+        @for (item of prepaymentsList(); track item.id) {
+          <app-prepayment-card
+            [prepayment]="item"
+            (onClick)="onPrepaymentClick($event)">
+          </app-prepayment-card>
+        }
+      </ion-list>
+    </ion-card>
+  } @else {
+    <div class="empty-list-placeholder ion-margin-top">
+      <ion-icon name="layers-outline" class="empty-list-icon"></ion-icon>
+      <p>No prepayments found.</p>
+      <ion-button
+        fill="outline"
+        shape="round"
+        size="small"
+        (click)="onCreatePrepayment()">
+        <ion-icon slot="start" name="add"></ion-icon>
+        New Prepayment
+      </ion-button>
+    </div>
+  }
+
+  <ion-infinite-scroll [disabled]="!hasNextPage()" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed" class="ion-margin-bottom">
+    <ion-fab-button (click)="onCreatePrepayment()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

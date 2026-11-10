@@ -1,6 +1,6 @@
 export interface SelectOption {
   key: string;
-  value: string | number | null;
+  value: string | number | boolean | null;
   disabled?: boolean;
 }
 

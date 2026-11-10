@@ -50,16 +50,16 @@ export type Formified<T> = FormGroup<{
  *
  */
 export type DeepFormified<T> = FormGroup<{
-  [K in keyof T]: T[K] extends Array<infer U> // 1. Is it an Array?
+  [K in keyof T]: NonNullable<T[K]> extends Array<infer U> // 1. Is it an Array?
     ? FormArray<
         // If it's an array of objects, wrap them in FormGroup.
         // If it's an array of primitives (strings), wrap in FormControl.
         U extends object ? DeepFormified<U> : FormControl<U>
       >
-    : T[K] extends Date // 2. Is it a Date? (Dates are objects, catch them first!)
+    : NonNullable<T[K]> extends Date // 2. Is it a Date? (Dates are objects, catch them first!)
       ? FormControl<T[K]>
-      : T[K] extends object // 3. Is it a nested Object?
-        ? DeepFormified<T[K]> // Recursion: Go deeper
+      : NonNullable<T[K]> extends object // 3. Is it a nested Object?
+        ? DeepFormified<NonNullable<T[K]>> // Recursion: Go deeper
         : FormControl<T[K]>; // 4. Default: Primitives (string, number, boolean)
 }>;
 

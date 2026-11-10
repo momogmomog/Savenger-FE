@@ -29,9 +29,20 @@
       ></ion-icon>
       {{ transaction().dateCreated | date: 'fullDate' }}
     </div>
-    @if (transaction().revised) {
-      <ion-badge color="warning" class="ion-margin-top">Revised</ion-badge>
-    }
+    <div class="hero-badges ion-margin-top">
+      @if (transaction().revised) {
+        <ion-badge color="warning">Revised</ion-badge>
+      }
+      @if (transaction().prepaymentId) {
+        <ion-badge
+          color="secondary"
+          style="cursor: pointer;"
+          (click)="prepaymentClicked.emit(transaction().prepaymentId)">
+          <ion-icon name="layers-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+          Prepayment
+        </ion-badge>
+      }
+    </div>
   </div>
 
   <ion-card class="ion-margin-horizontal ion-margin-bottom">
@@ -61,6 +72,23 @@
           <p>{{ budget().budgetName }}</p>
         </ion-label>
       </ion-item>
+
+      @if (transaction().prepaymentId) {
+        <ion-item
+          [button]="true"
+          [detail]="true"
+          (click)="prepaymentClicked.emit(transaction().prepaymentId)">
+          <ion-icon
+            slot="start"
+            name="layers-outline"
+            color="secondary"
+          ></ion-icon>
+          <ion-label>
+            <h3>Prepayment</h3>
+            <p>Part of a prepayment plan • Tap to view details</p>
+          </ion-label>
+        </ion-item>
+      }
 
       @if (transaction().user) {
         <ion-item>

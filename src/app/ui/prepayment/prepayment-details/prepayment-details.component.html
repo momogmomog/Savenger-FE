@@ -1,0 +1,248 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="navigateAway.emit()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Prepayment Details</ion-title>
+    <ion-buttons slot="end">
+      @if (!prepayment().completed) {
+        <ion-button (click)="editTriggered.emit()" title="Edit Prepayment">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+      }
+      <ion-button (click)="presentActionSheet()">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="ion-padding-horizontal">
+    <app-field-error [errors]="errors()" fieldName=""></app-field-error>
+    <app-field-error [errors]="errors()" fieldName="rTransactionId"></app-field-error>
+  </div>
+
+  <ion-card class="overview-card">
+    <ion-card-header>
+      <div class="overview-header-top">
+        <div>
+          <ion-card-subtitle>Prepayment Plan</ion-card-subtitle>
+          <ion-card-title>{{ prepayment().name }}</ion-card-title>
+        </div>
+        <ion-badge [color]="prepayment().completed ? 'success' : 'primary'" class="status-badge">
+          <ion-icon
+            [name]="prepayment().completed ? 'checkmark-circle-outline' : 'layers-outline'"
+            style="vertical-align: middle; margin-right: 4px;">
+          </ion-icon>
+          {{ prepayment().completed ? 'Completed' : 'Active' }}
+        </ion-badge>
+      </div>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="hero-balance-section">
+        <span class="hero-caption">Remaining Buffer</span>
+        <div
+          class="hero-amount"
+          [class.completed]="prepayment().completed">
+          {{ prepayment().remainingAmount | currency }}
+        </div>
+        <div class="hero-dates">
+          <span>
+            <ion-icon name="calendar-outline"></ion-icon>
+            Paid Until: <strong>{{ prepayment().paidUntil | date: 'mediumDate' }}</strong>
+          </span>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <ion-progress-bar
+          [value]="paidPercentage()"
+          [color]="prepayment().completed ? 'success' : 'primary'">
+        </ion-progress-bar>
+        <div class="progress-labels">
+          <ion-note class="text-tiny">
+            {{ paidPercentage() | percent }} amortized
+          </ion-note>
+          <ion-note class="text-tiny">
+            Created {{ prepayment().createDate | date: 'mediumDate' }}
+          </ion-note>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-box">
+          <span class="summary-label">Total Prepaid</span>
+          <ion-text color="danger">
+            <strong class="summary-value">-{{ prepayment().amount | currency }}</strong>
+          </ion-text>
+          <span class="summary-sub">Initial advance</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-box">
+          <span class="summary-label">Amortized</span>
+          <ion-text color="success">
+            <strong class="summary-value">{{ paidAmount() | currency }}</strong>
+          </ion-text>
+          <span class="summary-sub">Billed so far</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-box ion-text-end">
+          <span class="summary-label">Remaining</span>
+          <ion-text [color]="prepayment().completed ? 'success' : 'primary'">
+            <strong class="summary-value">{{ prepayment().remainingAmount | currency }}</strong>
+          </ion-text>
+          <span class="summary-sub">Unbilled buffer</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="action-buttons-row ion-padding-horizontal ion-margin-bottom">
+    @if (canPay()) {
+      <ion-button
+        expand="block"
+        shape="round"
+        color="primary"
+        class="action-btn"
+        (click)="payTriggered.emit()">
+        <ion-icon slot="start" name="play-outline"></ion-icon>
+        Pay Installment ({{ nextInstallmentAmount() | currency }})
+      </ion-button>
+    }
+
+    @if (!prepayment().completed) {
+      <ion-button
+        expand="block"
+        shape="round"
+        fill="outline"
+        color="secondary"
+        class="action-btn"
+        (click)="editTriggered.emit()">
+        <ion-icon slot="start" name="create-outline"></ion-icon>
+        Edit Prepayment
+      </ion-button>
+    }
+  </div>
+
+  <div class="section-header ion-padding-horizontal ion-padding-top">
+    <ion-text color="medium">
+      <small class="section-title">Associated Recurring Schedule</small>
+    </ion-text>
+    @if (recurringTransaction(); as rTx) {
+      <ion-button
+        fill="clear"
+        size="small"
+        color="primary"
+        (click)="recurringTransactionClicked.emit(rTx)">
+        <span>Open Details</span>
+        <ion-icon slot="end" name="open-outline"></ion-icon>
+      </ion-button>
+    }
+  </div>
+
+  @if (recurringTransaction(); as rTx) {
+    <ion-card class="schedule-card">
+      <app-recurring-transaction-card
+        [transaction]="rTx"
+        [categoryName]="categoryName()"
+        (onClick)="recurringTransactionClicked.emit($event)">
+      </app-recurring-transaction-card>
+
+      <div class="schedule-divider"></div>
+
+      <ion-list lines="none" class="schedule-details-list">
+        @if (categoryName()) {
+          <ion-item>
+            <ion-icon slot="start" name="folder-open-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Category</h3>
+              <p>{{ categoryName() }}</p>
+            </ion-label>
+          </ion-item>
+        }
+
+        <ion-item>
+          <ion-icon slot="start" name="repeat-outline" color="secondary"></ion-icon>
+          <ion-label>
+            <h3>Recurrence Rule</h3>
+            <p class="recurrence-text">{{ RRuleUtils.toHumanReadableText(rTx.recurringRule) }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="calendar-outline" color="tertiary"></ion-icon>
+          <ion-label>
+            <h3>Next Scheduled Date</h3>
+            <p>{{ rTx.nextDate | date: 'fullDate' }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="sync-outline" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Occurrences</h3>
+            <p>{{ rTx.occurrences }} execution(s)</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="flag-outline" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Started From</h3>
+            <p>{{ rTx.startFrom | date: 'mediumDate' }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="calculator-outline" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Included in Balance</h3>
+            <p>{{ ObjectUtils.boolToYesNo(rTx.includeInBalance) }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      @if (rTx.tags && rTx.tags.length > 0) {
+        <div class="ion-padding-horizontal ion-padding-bottom">
+          <ion-label color="medium" class="transaction-tags-section-label">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            Tags
+          </ion-label>
+          <div class="transaction-tags-chip-list">
+            @for (tag of rTx.tags; track tag.id) {
+              <ion-chip>
+                <ion-label>{{ tag.tagName }}</ion-label>
+              </ion-chip>
+            }
+          </div>
+        </div>
+      }
+
+      @if (rTx.comment) {
+        <div class="ion-padding-horizontal ion-padding-bottom">
+          <div class="transaction-note-header">
+            <ion-icon name="chatbox-outline" color="medium"></ion-icon>
+            <span>Schedule Note</span>
+          </div>
+          <ion-text color="dark">
+            <p class="transaction-note-text ion-no-margin">{{ rTx.comment }}</p>
+          </ion-text>
+        </div>
+      }
+    </ion-card>
+  } @else {
+    <ion-card class="schedule-card">
+      <ion-card-content class="ion-text-center text-medium">
+        No associated recurring schedule found.
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>

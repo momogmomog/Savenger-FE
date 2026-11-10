@@ -1,0 +1,75 @@
+ion-card.overview-card,
+ion-card.schedule-card {
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+  margin: 10px 16px 16px;
+}
+
+.overview-header-top,
+.progress-labels,
+.summary-section,
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hero-balance-section {
+  text-align: center;
+  margin: 6px 0 14px;
+
+  .hero-amount {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--ion-color-primary);
+    &.completed { color: var(--ion-color-success); }
+  }
+}
+
+.progress-section ion-progress-bar {
+  height: 7px;
+  border-radius: 4px;
+}
+
+.summary-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ion-color-step-150);
+
+  .summary-box { display: flex; flex-direction: column; }
+  .summary-label, .summary-sub, .hero-caption, .section-title {
+    font-size: 0.72rem;
+    color: var(--ion-color-medium);
+  }
+  .summary-label, .hero-caption, .section-title {
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .summary-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--ion-color-step-150);
+  }
+}
+
+.schedule-divider {
+  border-top: 1px solid var(--ion-color-step-150);
+  margin: 0 16px;
+}
+
+.transaction-tags-section-label,
+.transaction-note-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  font-weight: 600;
+}
+
+.transaction-tags-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}

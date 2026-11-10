@@ -1,0 +1,21 @@
+.section-header {
+  padding: 0 4px 6px 4px;
+
+  .section-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+  }
+}
+
+ion-card.filter-card {
+  margin: 0 0 12px 0;
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+}
+
+.filter-actions-toolbar {
+  --background: transparent;
+  margin-top: 8px;
+}

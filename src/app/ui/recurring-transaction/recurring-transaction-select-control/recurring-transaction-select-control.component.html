@@ -1,0 +1,11 @@
+<app-select-search
+  class="ctrl"
+  [label]="label()"
+  placeholder="Pick recurring schedule"
+  (onTouch)="onTouch.emit()"
+  [payload]="payload()"
+  (loadMore)="onLoadMode()"
+  [customValueOverride]="valueOverride()"
+  (selectionChange)="selectionChange.emit($event)"
+  [(searchTerm)]="searchTerm"
+  [(disabled)]="disabled"></app-select-search>

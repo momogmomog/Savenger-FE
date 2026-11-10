@@ -1,0 +1,222 @@
+<form #prepaymentForm [formGroup]="form" (ngSubmit)="onFormSubmit()" class="prepayment-form">
+  <app-field-error [errors]="errors()" fieldName=""></app-field-error>
+  <app-field-error [errors]="errors()" fieldName="id"></app-field-error>
+  <app-field-error [errors]="errors()" fieldName="budgetId"></app-field-error>
+  <app-field-error [errors]="errors()" fieldName="recurringTransaction.budgetId"></app-field-error>
+
+  <div class="section-header">
+    <ion-text color="medium">
+      <small class="section-title">Prepayment Details</small>
+    </ion-text>
+  </div>
+
+  <ion-card class="form-card">
+    <ion-card-content>
+      <div class="field-group">
+        <app-input
+          placeholder="Prepayment Name (e.g. Annual Internet, Car Insurance)"
+          formControlName="name"
+          [errors]="errors()">
+        </app-input>
+      </div>
+
+      <div class="field-group ion-margin-top">
+        <app-input
+          type="number"
+          placeholder="Total Prepaid Amount"
+          formControlName="amount"
+          [errors]="errors()">
+        </app-input>
+      </div>
+
+      <div class="field-group ion-margin-top">
+        <app-date-picker
+          [errors]="errors()"
+          label="Paid Until"
+          formControlName="paidUntil">
+        </app-date-picker>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="section-header ion-margin-top">
+    <ion-text color="medium">
+      <small class="section-title">Repayment Schedule</small>
+    </ion-text>
+  </div>
+
+  <div class="segment-wrapper">
+    <ion-segment
+      [value]="scheduleMode()"
+      (ionChange)="onSegmentChange($event)"
+      mode="ios"
+      class="schedule-mode-segment">
+      <ion-segment-button [value]="PrepaymentScheduleMode.CREATE_NEW">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        <ion-label>New Schedule</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="PrepaymentScheduleMode.LINK_EXISTING">
+        <ion-icon name="link-outline"></ion-icon>
+        <ion-label>Existing Schedule</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  @if (scheduleMode() === PrepaymentScheduleMode.LINK_EXISTING) {
+    <ion-card class="form-card">
+      <ion-card-content>
+        <p class="helper-text">
+          Select an existing recurring expense transaction to bill against this prepayment buffer.
+        </p>
+        <div class="field-group ion-margin-top">
+          <app-recurring-transaction-select-control
+            label="Recurring Expense Schedule"
+            formControlName="recurringTransactionId"
+            [budgetId]="budgetId()">
+          </app-recurring-transaction-select-control>
+          <app-field-error [errors]="errors()" fieldName="recurringTransactionId"></app-field-error>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  @if (scheduleMode() === PrepaymentScheduleMode.CREATE_NEW) {
+    <ion-card class="form-card" formGroupName="recurringTransaction">
+      <ion-card-content>
+        <p class="helper-text">
+          Configure the recurring installment expense that will gradually amortize the prepaid amount.
+        </p>
+
+        <div class="field-group ion-margin-top">
+          <app-input
+            type="number"
+            placeholder="Installment Amount (per billing)"
+            formControlName="amount"
+            [errors]="recurringTransactionErrors()">
+          </app-input>
+        </div>
+
+        <div class="field-group ion-margin-top">
+          <app-category-select-control
+            label="Expense Category"
+            formControlName="categoryId"
+            [budgetId]="budgetId()">
+          </app-category-select-control>
+          <app-field-error
+            [errors]="recurringTransactionErrors()"
+            fieldName="categoryId">
+          </app-field-error>
+        </div>
+
+        <div
+          class="field-group ion-margin-top recurrence-picker-container"
+          [class.ng-invalid]="form.controls.recurringTransaction.controls.recurringRule.invalid"
+          [class.ng-dirty]="form.controls.recurringTransaction.controls.recurringRule.touched">
+          <ion-input
+            label="Billing Recurrence"
+            label-placement="floating"
+            [readonly]="true"
+            [value]="selectedRecurrenceText()"
+            (click)="selectRecurrence()"
+            class="recurrence-picker"
+            [class.status-required]="form.controls.recurringTransaction.controls.recurringRule.invalid && !form.controls.recurringTransaction.controls.recurringRule.touched">
+            <ion-icon slot="start" class="ion-margin-end" name="calendar-clear-outline" aria-hidden="true"></ion-icon>
+            <ion-icon slot="end" name="chevron-down-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+          <app-field-error
+            [errors]="recurringTransactionErrors()"
+            fieldName="recurringRule">
+          </app-field-error>
+        </div>
+
+        <div class="field-group ion-margin-top">
+          <app-date-picker
+            [errors]="recurringTransactionErrors()"
+            label="Start Billing From"
+            formControlName="startFrom">
+          </app-date-picker>
+        </div>
+
+        <div class="field-group ion-margin-top checkbox-row">
+          <app-checkbox
+            label="Auto Execute Installments"
+            formControlName="autoExecute">
+          </app-checkbox>
+          <app-field-error
+            [errors]="recurringTransactionErrors()"
+            fieldName="autoExecute">
+          </app-field-error>
+        </div>
+
+        <div class="field-group ion-margin-top checkbox-row">
+          <app-checkbox
+            label="Include Pending Installments in Balance"
+            formControlName="includeInBalance">
+          </app-checkbox>
+          <app-field-error
+            [errors]="recurringTransactionErrors()"
+            fieldName="includeInBalance">
+          </app-field-error>
+        </div>
+
+        <div class="field-group ion-margin-top">
+          <app-tag-multiselect-control
+            [budgetId]="budgetId()"
+            [form]="form.controls.recurringTransaction"
+            [shouldInitTags]="initTags()"
+            [existingTags]="associatedRecurringTransaction()?.tags">
+          </app-tag-multiselect-control>
+        </div>
+
+        <div class="field-group ion-margin-top">
+          <app-input
+            type="textarea"
+            placeholder="Installment Note / Comment (optional)"
+            formControlName="comment"
+            [errors]="recurringTransactionErrors()">
+          </app-input>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  @if (form.controls.amount.value > 0 && scheduleMode() === PrepaymentScheduleMode.CREATE_NEW && form.controls.recurringTransaction.controls.amount.value > 0) {
+    <ion-card class="summary-preview-card">
+      <ion-card-content>
+        <div class="preview-summary-row">
+          <div class="preview-box">
+            <span class="preview-label">Total Buffer</span>
+            <strong class="preview-value text-danger">
+              -{{ form.controls.amount.value | currency }}
+            </strong>
+          </div>
+          <div class="preview-divider"></div>
+          <div class="preview-box">
+            <span class="preview-label">Installment</span>
+            <strong class="preview-value">
+              {{ form.controls.recurringTransaction.controls.amount.value | currency }}
+            </strong>
+          </div>
+          <div class="preview-divider"></div>
+          <div class="preview-box ion-text-end">
+            <span class="preview-label">Est. Payments</span>
+            <strong class="preview-value text-primary">
+              ~{{ (form.controls.amount.value / form.controls.recurringTransaction.controls.amount.value) | currency:'':'':'1.0-1' }}x
+            </strong>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <div class="submit-actions ion-margin-top ion-padding-bottom">
+    <ion-button
+      expand="block"
+      shape="round"
+      [form]="prepaymentForm"
+      type="submit"
+      [disabled]="!form.valid">
+      {{ prepayment() ? 'Update Prepayment' : 'Create Prepayment' }}
+    </ion-button>
+  </div>
+</form>

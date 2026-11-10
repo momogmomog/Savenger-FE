@@ -1,0 +1,92 @@
+.prepayment-form {
+  display: block;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px 6px 4px;
+
+  .section-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+  }
+}
+
+ion-card.form-card,
+ion-card.summary-preview-card {
+  margin: 0 0 12px 0;
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.segment-wrapper {
+  margin-bottom: 12px;
+}
+
+.helper-text {
+  margin: 0 0 8px 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ion-color-medium);
+}
+
+ion-input.recurrence-picker {
+  --padding-start: 0;
+  cursor: pointer;
+}
+
+.recurrence-picker-container {
+  &.ng-invalid {
+    ion-input,
+    ion-textarea {
+      border-bottom: 1px var(--color-control-invalid, #f8bd4b) solid;
+    }
+
+    &.ng-dirty {
+      ion-input,
+      ion-textarea {
+        border-bottom: 1px var(--color-control-invalid-dirty, darkred) solid;
+      }
+    }
+  }
+}
+
+.preview-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .preview-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .preview-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+    font-weight: 600;
+  }
+
+  .preview-value {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .preview-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--ion-color-step-150);
+  }
+}
+
+.submit-actions {
+  margin-top: 16px;
+}
