@@ -14,6 +14,7 @@ export interface Transaction extends TransactionBasicDto {
   recurringTransactionId: number;
   prepaymentId: number;
   userId: number;
+  debtId?: number;
   categoryId: number;
   budgetId: number;
   tags: Tag[];

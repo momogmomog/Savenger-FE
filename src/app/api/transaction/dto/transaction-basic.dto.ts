@@ -6,4 +6,7 @@ export interface TransactionBasicDto {
   type: TransactionType;
   dateCreated: string;
   revised: boolean;
+  recurringTransactionId?: number;
+  prepaymentId?: number;
+  debtId?: number;
 }

@@ -16,5 +16,6 @@ export interface RecurringTransaction {
   occurrences: number;
   startFrom: string;
   includeInBalance: boolean;
+  debtId?: number;
   tags: Tag[];
 }
