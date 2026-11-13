@@ -1,1 +1,37 @@
 @use '../../../../theme/transaction-details.scss';
+
+ion-card.recurring-overview-card {
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+  margin: 10px 16px 16px;
+}
+
+.recurring-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.recurring-section-divider,
+.recurring-subsection {
+  border-top: 1px solid var(--ion-color-step-150);
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.recurring-attributes-list {
+  background: transparent;
+  padding: 0;
+
+  ion-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --background: transparent;
+  }
+
+  .raw-rrule-code {
+    font-size: 0.72rem;
+    font-family: monospace;
+  }
+}

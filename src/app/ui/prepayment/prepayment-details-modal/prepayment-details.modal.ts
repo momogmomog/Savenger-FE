@@ -39,10 +39,12 @@ export class PrepaymentDetailsModalPayload {
         [recurringTransaction]="recurringTransaction()"
         [categoryName]="getCategoryName()"
         [errors]="errors()"
+        [transactionsReloadTrigger]="transactionsReloadTrigger()"
         (navigateAway)="dismiss()"
         (editTriggered)="onEdit()"
         (payTriggered)="onPay()"
         (recurringTransactionClicked)="onOpenRecurringTransaction($event)"
+        (transactionsUpdated)="onTransactionsUpdated()"
       ></app-prepayment-details>
     }
   `,
@@ -58,6 +60,7 @@ export class PrepaymentDetailsModal
   prepayment = model<Prepayment>();
   recurringTransaction = signal<RecurringTransaction | null>(null);
   errors = signal<FieldError[]>([]);
+  transactionsReloadTrigger = signal<number>(0);
 
   constructor(
     private prepaymentService: PrepaymentService,
@@ -135,6 +138,7 @@ export class PrepaymentDetailsModal
         this.setDismissalData(updated);
         this.prepayment.set(updated);
         await this.loadAssociatedRecurringTransaction(updated);
+        this.transactionsReloadTrigger.update((v) => v + 1);
       }
     });
   }
@@ -172,6 +176,7 @@ export class PrepaymentDetailsModal
       this.prepayment.set(refreshedPrepResp.response);
       this.setDismissalData(refreshedPrepResp.response);
     }
+    this.transactionsReloadTrigger.update((v) => v + 1);
   }
 
   async onOpenRecurringTransaction(rTx: RecurringTransaction): Promise<void> {
@@ -183,6 +188,14 @@ export class PrepaymentDetailsModal
 
     if (!ObjectUtils.isNil(resp.result)) {
       await this.loadData();
+      this.setDismissalData(this.prepayment()!);
+      this.transactionsReloadTrigger.update((v) => v + 1);
+    }
+  }
+
+  async onTransactionsUpdated(): Promise<void> {
+    await this.loadData();
+    if (this.prepayment()) {
       this.setDismissalData(this.prepayment()!);
     }
   }

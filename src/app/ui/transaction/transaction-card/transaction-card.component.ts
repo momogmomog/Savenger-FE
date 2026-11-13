@@ -71,6 +71,9 @@ export type TransactionCardItem = TransactionBasicDto & Partial<Transaction>;
           {{ TransactionUtils.getSign(transaction().type)
           }}{{ transaction().amount | currency }}
         </ion-text>
+        @if (transaction().revised) {
+          <span class="recurring-auto-badge">REVISED</span>
+        }
       </div>
     </ion-item>
   `,

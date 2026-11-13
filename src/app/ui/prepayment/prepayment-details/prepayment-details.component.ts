@@ -15,13 +15,9 @@ import {
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
-  IonChip,
   IonContent,
   IonHeader,
   IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
   IonNote,
   IonProgressBar,
   IonText,
@@ -31,32 +27,21 @@ import {
 import { addIcons } from 'ionicons';
 import {
   arrowBack,
-  calculatorOutline,
   calendarOutline,
-  cardOutline,
-  chatboxOutline,
   checkmarkCircleOutline,
   createOutline,
   ellipsisVertical,
-  flagOutline,
-  flashOutline,
-  folderOpenOutline,
   layersOutline,
   openOutline,
   playOutline,
-  pricetagOutline,
   repeatOutline,
-  syncOutline,
-  timeOutline,
 } from 'ionicons/icons';
 import { Prepayment } from '../../../api/prepayment/prepayment';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { FieldError } from '../../../shared/field-error/field-error';
-import { RRuleUtils } from '../../../shared/util/rrule-utils';
-import { ObjectUtils } from '../../../shared/util/object-utils';
-import { TransactionUtils } from '../../../shared/util/transaction-utils';
 import { ErrorMessageComponent } from '../../../shared/field-error/error-message/error-message.component';
-import { RecurringTransactionCardComponent } from '../../recurring-transaction/recurring-transaction-card/recurring-transaction-card.component';
+import { RecurringTransactionDetailsComponent } from '../../recurring-transaction/recurring-transaction-details/recurring-transaction-details.component';
+import { ExecutedTransactionsComponent } from '../../transaction/executed-transactions/executed-transactions.component';
 
 @Component({
   selector: 'app-prepayment-details',
@@ -81,32 +66,28 @@ import { RecurringTransactionCardComponent } from '../../recurring-transaction/r
     IonBadge,
     IonProgressBar,
     IonNote,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonChip,
     IonText,
     ErrorMessageComponent,
-    RecurringTransactionCardComponent,
+    RecurringTransactionDetailsComponent,
+    ExecutedTransactionsComponent,
   ],
   templateUrl: './prepayment-details.component.html',
   styleUrls: ['./prepayment-details.component.scss'],
 })
 export class PrepaymentDetailsComponent {
-  protected readonly RRuleUtils = RRuleUtils;
-  protected readonly ObjectUtils = ObjectUtils;
-  protected readonly TransactionUtils = TransactionUtils;
   private actionSheetCtrl = inject(ActionSheetController);
 
   prepayment = input.required<Prepayment>();
   recurringTransaction = input<RecurringTransaction | null>(null);
   categoryName = input<string | undefined>(undefined);
   errors = input<FieldError[]>([]);
+  transactionsReloadTrigger = input<unknown>(null);
 
   navigateAway = output<void>();
   editTriggered = output<void>();
   payTriggered = output<void>();
   recurringTransactionClicked = output<RecurringTransaction>();
+  transactionsUpdated = output<void>();
 
   paidAmount = computed(() => {
     const p = this.prepayment();
@@ -145,16 +126,7 @@ export class PrepaymentDetailsComponent {
       layersOutline,
       checkmarkCircleOutline,
       playOutline,
-      cardOutline,
-      folderOpenOutline,
       repeatOutline,
-      flagOutline,
-      syncOutline,
-      calculatorOutline,
-      pricetagOutline,
-      chatboxOutline,
-      flashOutline,
-      timeOutline,
       openOutline,
     });
   }

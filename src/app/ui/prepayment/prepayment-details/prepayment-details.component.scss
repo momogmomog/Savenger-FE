@@ -51,25 +51,3 @@ ion-card.schedule-card {
     background: var(--ion-color-step-150);
   }
 }
-
-.schedule-divider {
-  border-top: 1px solid var(--ion-color-step-150);
-  margin: 0 16px;
-}
-
-.transaction-tags-section-label,
-.transaction-note-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
-  font-weight: 600;
-}
-
-.transaction-tags-chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}

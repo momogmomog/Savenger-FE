@@ -29,7 +29,7 @@
     <ion-card-header>
       <div class="overview-header-top">
         <div>
-          <ion-card-subtitle>Prepayment Plan</ion-card-subtitle>
+          <ion-card-subtitle>Prepayment Plan • #{{ prepayment().id }}</ion-card-subtitle>
           <ion-card-title>{{ prepayment().name }}</ion-card-title>
         </div>
         <ion-badge [color]="prepayment().completed ? 'success' : 'primary'" class="status-badge">
@@ -147,95 +147,14 @@
   </div>
 
   @if (recurringTransaction(); as rTx) {
-    <ion-card class="schedule-card">
-      <app-recurring-transaction-card
-        [transaction]="rTx"
-        [categoryName]="categoryName()"
-        (onClick)="recurringTransactionClicked.emit($event)">
-      </app-recurring-transaction-card>
-
-      <div class="schedule-divider"></div>
-
-      <ion-list lines="none" class="schedule-details-list">
-        @if (categoryName()) {
-          <ion-item>
-            <ion-icon slot="start" name="folder-open-outline" color="primary"></ion-icon>
-            <ion-label>
-              <h3>Category</h3>
-              <p>{{ categoryName() }}</p>
-            </ion-label>
-          </ion-item>
-        }
-
-        <ion-item>
-          <ion-icon slot="start" name="repeat-outline" color="secondary"></ion-icon>
-          <ion-label>
-            <h3>Recurrence Rule</h3>
-            <p class="recurrence-text">{{ RRuleUtils.toHumanReadableText(rTx.recurringRule) }}</p>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-icon slot="start" name="calendar-outline" color="tertiary"></ion-icon>
-          <ion-label>
-            <h3>Next Scheduled Date</h3>
-            <p>{{ rTx.nextDate | date: 'fullDate' }}</p>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-icon slot="start" name="sync-outline" color="medium"></ion-icon>
-          <ion-label>
-            <h3>Occurrences</h3>
-            <p>{{ rTx.occurrences }} execution(s)</p>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-icon slot="start" name="flag-outline" color="medium"></ion-icon>
-          <ion-label>
-            <h3>Started From</h3>
-            <p>{{ rTx.startFrom | date: 'mediumDate' }}</p>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-icon slot="start" name="calculator-outline" color="medium"></ion-icon>
-          <ion-label>
-            <h3>Included in Balance</h3>
-            <p>{{ ObjectUtils.boolToYesNo(rTx.includeInBalance) }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-
-      @if (rTx.tags && rTx.tags.length > 0) {
-        <div class="ion-padding-horizontal ion-padding-bottom">
-          <ion-label color="medium" class="transaction-tags-section-label">
-            <ion-icon name="pricetag-outline"></ion-icon>
-            Tags
-          </ion-label>
-          <div class="transaction-tags-chip-list">
-            @for (tag of rTx.tags; track tag.id) {
-              <ion-chip>
-                <ion-label>{{ tag.tagName }}</ion-label>
-              </ion-chip>
-            }
-          </div>
-        </div>
-      }
-
-      @if (rTx.comment) {
-        <div class="ion-padding-horizontal ion-padding-bottom">
-          <div class="transaction-note-header">
-            <ion-icon name="chatbox-outline" color="medium"></ion-icon>
-            <span>Schedule Note</span>
-          </div>
-          <ion-text color="dark">
-            <p class="transaction-note-text ion-no-margin">{{ rTx.comment }}</p>
-          </ion-text>
-        </div>
-      }
-    </ion-card>
+    <app-recurring-transaction-details
+      [transaction]="rTx"
+      [categoryName]="categoryName()"
+      [embedded]="true"
+      [showTransactions]="false"
+      [showExecuteButton]="false"
+      [showPrepaymentLink]="false">
+    </app-recurring-transaction-details>
   } @else {
     <ion-card class="schedule-card">
       <ion-card-content class="ion-text-center text-medium">
@@ -243,4 +162,12 @@
       </ion-card-content>
     </ion-card>
   }
+
+  <app-executed-transactions
+    [budgetId]="prepayment().budgetId"
+    [prepaymentId]="prepayment().id"
+    [reloadTrigger]="transactionsReloadTrigger()"
+    sectionTitle="Executed Prepayment Transactions"
+    (transactionsUpdated)="transactionsUpdated.emit()">
+  </app-executed-transactions>
 </ion-content>

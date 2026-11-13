@@ -1,135 +1,263 @@
-<ion-header [translucent]="true" class="ion-no-border">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="navigateAway.emit()">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Upcoming Details</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="presentActionSheet()">
-        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+@if (!embedded()) {
+  <ion-header [translucent]="true" class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button (click)="navigateAway.emit()">
+          <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>Upcoming Details</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="editTriggered.emit()" title="Edit Recurring Transaction">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button (click)="presentActionSheet()">
+          <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="transaction-details-hero ion-padding-vertical">
-    <div
-      class="hero-amount"
-      [ngClass]="transaction().type"
-    >
-      {{ TransactionUtils.getSign(transaction().type) }}{{ transaction().amount | currency }}
-    </div>
+  <ion-content [fullscreen]="true">
+    <ng-container *ngTemplateOutlet="detailsBody"></ng-container>
+  </ion-content>
+} @else {
+  <ng-container *ngTemplateOutlet="detailsBody"></ng-container>
+}
 
-    <div class="hero-date ion-text-muted">
-      <ion-icon name="calendar-outline" style="vertical-align: text-bottom;"></ion-icon>
-      Next: {{ transaction().nextDate | date: 'fullDate' }}
-    </div>
+<ng-template #detailsBody>
+  <ion-card class="recurring-overview-card">
+    <ion-card-header>
+      <div class="recurring-header-top">
+        <div>
+          <ion-card-subtitle>
+            {{ transaction().type }} Schedule • #{{ transaction().id }}
+          </ion-card-subtitle>
+          <ion-card-title class="transaction-recurrence-value">
+            {{ humanReadableRule() || 'Recurring Transaction' }}
+          </ion-card-title>
+        </div>
 
-    <div class="hero-badges ion-margin-top">
-      @if (transaction().autoExecute) {
-        <ion-badge color="tertiary">
-          <ion-icon name="flash-outline" style="vertical-align: middle; margin-right: 2px;"></ion-icon>
-          Auto Execute
+        <ion-badge [color]="transaction().completed ? 'success' : 'primary'">
+          <ion-icon
+            [name]="transaction().completed ? 'checkmark-circle-outline' : 'repeat-outline'"
+            style="vertical-align: middle; margin-right: 4px;">
+          </ion-icon>
+          {{ transaction().completed ? 'Completed' : 'Active' }}
         </ion-badge>
+      </div>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="transaction-details-hero">
+        <div
+          class="hero-amount"
+          [ngClass]="transaction().type">
+          {{ TransactionUtils.getSign(transaction().type) }}{{ transaction().amount | currency }}
+        </div>
+
+        <div class="hero-date ion-text-muted">
+          <ion-icon name="calendar-outline" style="vertical-align: text-bottom;"></ion-icon>
+          Next: <strong>{{ transaction().nextDate | date: 'fullDate' }}</strong>
+        </div>
+
+        <div class="hero-badges ion-margin-top">
+          <ion-badge [color]="transaction().autoExecute ? 'tertiary' : 'medium'">
+            <ion-icon name="flash-outline" style="vertical-align: middle; margin-right: 2px;"></ion-icon>
+            {{ transaction().autoExecute ? 'Auto Execute' : 'Manual Execute' }}
+          </ion-badge>
+
+          <ion-badge [color]="transaction().includeInBalance ? 'secondary' : 'medium'">
+            <ion-icon name="calculator-outline" style="vertical-align: middle; margin-right: 2px;"></ion-icon>
+            {{ transaction().includeInBalance ? 'In Balance' : 'Excluded from Balance' }}
+          </ion-badge>
+
+          @if (transaction().prepaymentId && showPrepaymentLink()) {
+            <ion-badge
+              color="primary"
+              style="cursor: pointer;"
+              (click)="prepaymentClicked.emit(transaction().prepaymentId)">
+              <ion-icon name="layers-outline" style="vertical-align: middle; margin-right: 2px;"></ion-icon>
+              Prepayment #{{ transaction().prepaymentId }}
+            </ion-badge>
+          }
+        </div>
+      </div>
+
+      @if (showExecuteButton()) {
+        <div class="ion-margin-top">
+          <ion-button
+            expand="block"
+            shape="round"
+            color="primary"
+            [disabled]="transaction().completed"
+            (click)="executeTriggered.emit()">
+            <ion-icon slot="start" name="play-outline"></ion-icon>
+            Execute Now
+          </ion-button>
+        </div>
       }
 
-      @if (transaction().completed) {
-        <ion-badge color="success">
-          <ion-icon name="checkmark-circle-outline" style="vertical-align: middle; margin-right: 2px;"></ion-icon>
-          Completed
-        </ion-badge>
-      }
-    </div>
-  </div>
+      <div class="recurring-section-divider"></div>
 
-  <div class="ion-padding-horizontal ion-margin-bottom">
-    <ion-button
-      expand="block"
-      shape="round"
-      color="primary"
-      [disabled]="transaction().completed"
-      (click)="executeTriggered.emit()">
-      <ion-icon slot="start" name="play-outline"></ion-icon>
-      Execute Now
-    </ion-button>
-  </div>
+      <ion-list lines="none" class="recurring-attributes-list">
+        @if (resolvedCategoryName()) {
+          <ion-item>
+            <ion-icon slot="start" name="folder-open-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Category</h3>
+              <p>{{ resolvedCategoryName() }}</p>
+            </ion-label>
+          </ion-item>
+        }
 
-  <ion-card class="ion-margin-horizontal ion-margin-bottom">
-    <ion-list lines="none">
-      @if (categoryName()) {
         <ion-item>
-          <ion-icon slot="start" name="folder-open-outline" color="primary"></ion-icon>
+          <ion-icon slot="start" name="wallet-outline" color="tertiary"></ion-icon>
           <ion-label>
-            <h3>Category</h3>
-            <p>{{ categoryName() }}</p>
+            <h3>Budget</h3>
+            <p>{{ resolvedBudgetName() }}</p>
           </ion-label>
         </ion-item>
+
+        <ion-item>
+          <ion-icon
+            slot="start"
+            [name]="TransactionUtils.getIcon(transaction().type)"
+            [color]="TransactionUtils.getColor(transaction().type)">
+          </ion-icon>
+          <ion-label>
+            <h3>Transaction Type</h3>
+            <p>{{ transaction().type }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="repeat-outline" color="secondary"></ion-icon>
+          <ion-label>
+            <h3>Recurrence Rule</h3>
+            <p class="transaction-recurrence-value">{{ humanReadableRule() }}</p>
+            <p class="raw-rrule-code">{{ transaction().recurringRule }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+          <ion-label>
+            <h3>Next Scheduled Date</h3>
+            <p>{{ transaction().nextDate | date: 'fullDate' }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="flag-outline" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Started From</h3>
+            <p>{{ transaction().startFrom | date: 'mediumDate' }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="sync-outline" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Occurrences</h3>
+            <p>{{ transaction().occurrences }} execution(s)</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="flash-outline" color="tertiary"></ion-icon>
+          <ion-label>
+            <h3>Auto Execute</h3>
+            <p>{{ ObjectUtils.boolToYesNo(transaction().autoExecute) }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon slot="start" name="calculator-outline" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Included in Balance</h3>
+            <p>{{ ObjectUtils.boolToYesNo(transaction().includeInBalance) }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-icon
+            slot="start"
+            name="checkmark-circle-outline"
+            [color]="transaction().completed ? 'success' : 'primary'">
+          </ion-icon>
+          <ion-label>
+            <h3>Status</h3>
+            <p>{{ transaction().completed ? 'Completed' : 'Active' }}</p>
+          </ion-label>
+        </ion-item>
+
+        @if (transaction().prepaymentId) {
+          <ion-item
+            [button]="showPrepaymentLink()"
+            [detail]="showPrepaymentLink()"
+            (click)="showPrepaymentLink() && prepaymentClicked.emit(transaction().prepaymentId)">
+            <ion-icon slot="start" name="layers-outline" color="secondary"></ion-icon>
+            <ion-label>
+              <h3>Prepayment</h3>
+              <p>
+                Prepayment #{{ transaction().prepaymentId }}
+                @if (showPrepaymentLink()) {
+                  • Tap to view details
+                }
+              </p>
+            </ion-label>
+          </ion-item>
+        }
+
+        @if (transaction().debtId) {
+          <ion-item>
+            <ion-icon slot="start" name="swap-horizontal-outline" color="warning"></ion-icon>
+            <ion-label>
+              <h3>Linked Debt</h3>
+              <p>Debt #{{ transaction().debtId }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+
+      @if (transaction().tags && transaction().tags.length > 0) {
+        <div class="recurring-subsection">
+          <ion-label color="medium" class="transaction-tags-section-label">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            Tags
+          </ion-label>
+          <div class="transaction-tags-chip-list">
+            @for (tag of transaction().tags; track tag.id) {
+              <ion-chip>
+                <ion-label>{{ tag.tagName }}</ion-label>
+              </ion-chip>
+            }
+          </div>
+        </div>
       }
 
-      <ion-item>
-        <ion-icon slot="start" name="repeat-outline" color="secondary"></ion-icon>
-        <ion-label>
-          <h3>Recurs</h3>
-          <p class="transaction-recurrence-value">{{ RRuleUtils.toHumanReadableText(transaction().recurringRule) }}</p>
-        </ion-label>
-      </ion-item>
-
-      <ion-item>
-        <ion-icon slot="start" name="flag-outline" color="medium"></ion-icon>
-        <ion-label>
-          <h3>Started</h3>
-          <p>{{ transaction().startFrom | date: 'mediumDate' }}</p>
-        </ion-label>
-      </ion-item>
-
-      <ion-item>
-        <ion-icon slot="start" name="sync-outline" color="medium"></ion-icon>
-        <ion-label>
-          <h3>Occurrences</h3>
-          <p>{{ transaction().occurrences }} execution(s)</p>
-        </ion-label>
-      </ion-item>
-
-      <ion-item>
-        <ion-icon slot="start" name="calculator-outline" color="medium"></ion-icon>
-        <ion-label>
-          <h3>Included in Balance</h3>
-          <p>{{ ObjectUtils.boolToYesNo(transaction().includeInBalance) }}</p>
-        </ion-label>
-      </ion-item>
-    </ion-list>
+      @if (transaction().comment) {
+        <div class="recurring-subsection">
+          <div class="transaction-note-header">
+            <ion-icon name="chatbox-outline" color="medium"></ion-icon>
+            <span>Note</span>
+          </div>
+          <ion-text color="dark">
+            <p class="transaction-note-text ion-no-margin">{{ transaction().comment }}</p>
+          </ion-text>
+        </div>
+      }
+    </ion-card-content>
   </ion-card>
 
-  @if (transaction().tags && transaction().tags.length > 0) {
-    <div class="ion-padding-horizontal ion-margin-top">
-      <ion-label color="medium" class="transaction-tags-section-label">
-        <ion-icon name="pricetag-outline"></ion-icon>
-        Tags
-      </ion-label>
-      <div class="transaction-tags-chip-list">
-        @for (tag of transaction().tags; track tag.id) {
-          <ion-chip>
-            <ion-label>{{ tag.tagName }}</ion-label>
-          </ion-chip>
-        }
-      </div>
-    </div>
+  @if (showTransactions()) {
+    <app-executed-transactions
+      [budgetId]="transaction().budgetId"
+      [recurringTransactionId]="transaction().id"
+      [reloadTrigger]="transactionsReloadTrigger()"
+      sectionTitle="Executed Schedule Transactions"
+      (transactionsUpdated)="transactionsUpdated.emit()">
+    </app-executed-transactions>
   }
-
-  @if (transaction().comment) {
-    <ion-card class="ion-margin">
-      <ion-card-content>
-        <div class="transaction-note-header">
-          <ion-icon name="chatbox-outline" color="medium"></ion-icon>
-          <span>Note</span>
-        </div>
-        <ion-text color="dark">
-          <p class="transaction-note-text">{{ transaction().comment }}</p>
-        </ion-text>
-      </ion-card-content>
-    </ion-card>
-  }
-</ion-content>
+</ng-template>
