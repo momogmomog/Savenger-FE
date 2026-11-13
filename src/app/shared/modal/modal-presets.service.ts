@@ -10,6 +10,15 @@ import {
   ListRecurringTransactionsModal,
   ListRecurringTransactionsModalPayload,
 } from '../../ui/recurring-transaction/list-recurring-transactions/list-recurring-transactions.modal';
+import { Prepayment } from '../../api/prepayment/prepayment';
+import {
+  PrepaymentDetailsModal,
+  PrepaymentDetailsModalPayload,
+} from '../../ui/prepayment/prepayment-details-modal/prepayment-details.modal';
+import {
+  ListPrepaymentsModal,
+  ListPrepaymentsModalPayload,
+} from '../../ui/prepayment/list-prepayments/list-prepayments.modal';
 
 @Injectable({ providedIn: 'root' })
 export class ModalPresetsService {
@@ -39,6 +48,34 @@ export class ModalPresetsService {
       {
         shellType: ShellType.HEADER,
         title: 'Upcoming Transactions',
+      },
+    );
+  }
+
+  public async openPrepaymentDetails(
+    prepaymentId: number,
+    initialPrepayment?: Prepayment,
+  ): Promise<Prepayment | null> {
+    const resp = await this.modalService.openAndWait(
+      PrepaymentDetailsModal,
+      new PrepaymentDetailsModalPayload(prepaymentId, initialPrepayment),
+      {
+        shellType: ShellType.BLANK,
+      },
+    );
+
+    return resp.result || null;
+  }
+
+  public async openListPrepayments(
+    budgetId: number,
+  ): Promise<ModalResponse<boolean>> {
+    return await this.modalService.openAndWait(
+      ListPrepaymentsModal,
+      new ListPrepaymentsModalPayload(budgetId),
+      {
+        shellType: ShellType.HEADER,
+        title: 'Prepayments',
       },
     );
   }

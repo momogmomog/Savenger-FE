@@ -27,8 +27,10 @@ import {
   calendarOutline,
   ellipsisHorizontalOutline,
   ellipsisVertical,
+  layersOutline,
   repeatOutline,
   swapHorizontalOutline,
+  timeOutline,
 } from 'ionicons/icons';
 
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
@@ -57,6 +59,8 @@ import { TransactionFilterModalComponent } from '../transaction-filter-modal/tra
 import { TransactionFilterModalResult } from '../transaction-filter-modal/transaction-filter-modal.payload';
 import { TransactionFilterState } from '../transaction-filter-modal/transaction-filter.state';
 import { PaginatedListState } from '../../../shared/util/paginated-list.state';
+import { CreatePrepaymentModal } from '../../prepayment/create-prepayment-modal/create-prepayment.modal';
+import { CreatePrepaymentModalPayload } from '../../prepayment/create-prepayment-modal/create-prepayment.modal.payload';
 
 @Component({
   selector: 'app-list-transactions',
@@ -114,6 +118,8 @@ export class ListTransactionsComponent implements OnInit {
       swapHorizontalOutline,
       calendarOutline,
       repeatOutline,
+      layersOutline,
+      timeOutline,
     });
 
     effect(() => {
@@ -219,10 +225,44 @@ export class ListTransactionsComponent implements OnInit {
           },
         },
         {
-          text: 'Pre-payment',
+          text: 'Prepayments',
+          icon: 'layers-outline',
+          handler: async (): Promise<void> => {
+            const resp = await this.modalPresetsService.openListPrepayments(
+              this.budget().id,
+            );
+
+            resp.ifConfirmed(async (refresh) => {
+              if (refresh) {
+                await this.transactionsChanged();
+                this.recurringTransactionUpdateTrigger.update(
+                  (value) => (value || 0) + 1,
+                );
+              }
+            });
+          },
+        },
+        {
+          text: 'Create Prepayment',
           icon: 'calendar-outline',
-          handler: (): void => {
-            alert('prepayments!!');
+          handler: async (): Promise<void> => {
+            const resp = await this.modalService.openAndWait(
+              CreatePrepaymentModal,
+              new CreatePrepaymentModalPayload(this.budget().id),
+              {
+                shellType: ShellType.HEADER,
+                title: 'Create Prepayment',
+              },
+            );
+
+            resp.ifConfirmed(async (data): Promise<void> => {
+              if (data?.id) {
+                await this.transactionsChanged();
+                this.recurringTransactionUpdateTrigger.update(
+                  (c) => (c || 0) + 1,
+                );
+              }
+            });
           },
         },
         {

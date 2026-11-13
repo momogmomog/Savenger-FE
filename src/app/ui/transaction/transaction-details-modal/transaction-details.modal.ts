@@ -10,6 +10,8 @@ import { ModalService } from '../../../shared/modal/modal.service';
 import { EditTransactionModal } from '../edit-transaction-modal/edit-transaction.modal';
 import { EditTransactionModalPayload } from '../edit-transaction-modal/edit-transaction.modal.payload';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
+import { ObjectUtils } from '../../../shared/util/object-utils';
 
 export class TransactionDetailsModalPayload {
   constructor(
@@ -30,14 +32,11 @@ export class TransactionDetailsModalPayload {
         (navigateAway)="dismiss()"
         (editTriggered)="onEdit()"
         (deleteTriggered)="onDelete()"
+        (prepaymentClicked)="onOpenPrepayment($event)"
       ></app-transaction-details>
     }
   `,
-  imports: [
-    TransactionDetailsComponent,
-    LoaderComponent,
-    TransactionDetailsComponent,
-  ],
+  imports: [TransactionDetailsComponent, LoaderComponent],
 })
 export class TransactionDetailsModal
   extends ModalContentBaseComponent<TransactionDetailsModalPayload, boolean>
@@ -48,6 +47,7 @@ export class TransactionDetailsModal
   constructor(
     private transactionService: TransactionService,
     private modalService: ModalService,
+    private modalPresetsService: ModalPresetsService,
   ) {
     super();
   }
@@ -101,5 +101,15 @@ export class TransactionDetailsModal
     }
 
     void this.dismiss(true);
+  }
+
+  async onOpenPrepayment(prepaymentId: number): Promise<void> {
+    const updatedPrepayment =
+      await this.modalPresetsService.openPrepaymentDetails(prepaymentId);
+
+    if (!ObjectUtils.isNil(updatedPrepayment)) {
+      this.setDismissalData(true);
+      await this.loadTransaction();
+    }
   }
 }

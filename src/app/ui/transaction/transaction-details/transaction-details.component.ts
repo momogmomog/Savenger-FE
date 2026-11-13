@@ -27,6 +27,7 @@ import {
   createOutline,
   ellipsisVertical,
   folderOpenOutline,
+  layersOutline,
   personOutline,
   pricetagOutline,
   trashOutline,
@@ -72,6 +73,7 @@ export class TransactionDetailsComponent {
   navigateAway = output<void>();
   editTriggered = output<void>();
   deleteTriggered = output<void>();
+  prepaymentClicked = output<number>();
 
   constructor() {
     addIcons({
@@ -85,6 +87,7 @@ export class TransactionDetailsComponent {
       chatboxOutline,
       createOutline,
       trashOutline,
+      layersOutline,
     });
   }
 

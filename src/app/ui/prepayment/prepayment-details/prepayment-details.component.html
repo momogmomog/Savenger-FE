@@ -1,0 +1,173 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="navigateAway.emit()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Prepayment Details</ion-title>
+    <ion-buttons slot="end">
+      @if (!prepayment().completed) {
+        <ion-button (click)="editTriggered.emit()" title="Edit Prepayment">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+      }
+      <ion-button (click)="presentActionSheet()">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="ion-padding-horizontal">
+    <app-field-error [errors]="errors()" fieldName=""></app-field-error>
+    <app-field-error [errors]="errors()" fieldName="rTransactionId"></app-field-error>
+  </div>
+
+  <ion-card class="overview-card">
+    <ion-card-header>
+      <div class="overview-header-top">
+        <div>
+          <ion-card-subtitle>Prepayment Plan • #{{ prepayment().id }}</ion-card-subtitle>
+          <ion-card-title>{{ prepayment().name }}</ion-card-title>
+        </div>
+        <ion-badge [color]="prepayment().completed ? 'success' : 'primary'" class="status-badge">
+          <ion-icon
+            [name]="prepayment().completed ? 'checkmark-circle-outline' : 'layers-outline'"
+            style="vertical-align: middle; margin-right: 4px;">
+          </ion-icon>
+          {{ prepayment().completed ? 'Completed' : 'Active' }}
+        </ion-badge>
+      </div>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="hero-balance-section">
+        <span class="hero-caption">Remaining Buffer</span>
+        <div
+          class="hero-amount"
+          [class.completed]="prepayment().completed">
+          {{ prepayment().remainingAmount | currency }}
+        </div>
+        <div class="hero-dates">
+          <span>
+            <ion-icon name="calendar-outline"></ion-icon>
+            Paid Until: <strong>{{ prepayment().paidUntil | date: 'mediumDate' }}</strong>
+          </span>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <ion-progress-bar
+          [value]="paidPercentage()"
+          [color]="prepayment().completed ? 'success' : 'primary'">
+        </ion-progress-bar>
+        <div class="progress-labels">
+          <ion-note class="text-tiny">
+            {{ paidPercentage() | percent }} amortized
+          </ion-note>
+          <ion-note class="text-tiny">
+            Created {{ prepayment().createDate | date: 'mediumDate' }}
+          </ion-note>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-box">
+          <span class="summary-label">Total Prepaid</span>
+          <strong class="summary-value text-expense">-{{ prepayment().amount | currency }}</strong>
+          <span class="summary-sub">Initial advance</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-box">
+          <span class="summary-label">Amortized</span>
+          <strong class="summary-value text-income">{{ paidAmount() | currency }}</strong>
+          <span class="summary-sub">Billed so far</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-box ion-text-end">
+          <span class="summary-label">Remaining</span>
+          <strong
+            class="summary-value"
+            [ngClass]="prepayment().completed ? 'text-income' : 'text-compensate'">
+            {{ prepayment().remainingAmount | currency }}
+          </strong>
+          <span class="summary-sub">Unbilled buffer</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="action-buttons-row ion-padding-horizontal ion-margin-bottom">
+    @if (canPay()) {
+      <ion-button
+        expand="block"
+        shape="round"
+        color="primary"
+        class="action-btn"
+        (click)="payTriggered.emit()">
+        <ion-icon slot="start" name="play-outline"></ion-icon>
+        Pay Installment ({{ nextInstallmentAmount() | currency }})
+      </ion-button>
+    }
+
+    @if (!prepayment().completed) {
+      <ion-button
+        expand="block"
+        shape="round"
+        fill="outline"
+        color="secondary"
+        class="action-btn"
+        (click)="editTriggered.emit()">
+        <ion-icon slot="start" name="create-outline"></ion-icon>
+        Edit Prepayment
+      </ion-button>
+    }
+  </div>
+
+  <div class="section-header ion-padding-horizontal ion-padding-top">
+    <ion-text color="medium">
+      <small class="section-title">Associated Recurring Schedule</small>
+    </ion-text>
+    @if (recurringTransaction(); as rTx) {
+      <ion-button
+        fill="clear"
+        size="small"
+        color="primary"
+        (click)="recurringTransactionClicked.emit(rTx)">
+        <span>Open Details</span>
+        <ion-icon slot="end" name="open-outline"></ion-icon>
+      </ion-button>
+    }
+  </div>
+
+  @if (recurringTransaction(); as rTx) {
+    <app-recurring-transaction-details
+      [transaction]="rTx"
+      [categoryName]="categoryName()"
+      [embedded]="true"
+      [showTransactions]="false"
+      [showExecuteButton]="false"
+      [showPrepaymentLink]="false">
+    </app-recurring-transaction-details>
+  } @else {
+    <ion-card class="schedule-card">
+      <ion-card-content class="ion-text-center text-medium">
+        No associated recurring schedule found.
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <app-executed-transactions
+    [budgetId]="prepayment().budgetId"
+    [prepaymentId]="prepayment().id"
+    [reloadTrigger]="transactionsReloadTrigger()"
+    sectionTitle="Executed Prepayment Transactions"
+    (transactionsUpdated)="transactionsUpdated.emit()">
+  </app-executed-transactions>
+</ion-content>

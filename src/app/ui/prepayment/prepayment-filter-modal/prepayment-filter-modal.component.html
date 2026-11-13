@@ -1,0 +1,111 @@
+<ion-content>
+  <form [formGroup]="form">
+    <div class="section-header">
+      <ion-text color="medium">
+        <small class="section-title">General</small>
+      </ion-text>
+    </div>
+
+    <ion-card class="filter-card">
+      <ion-card-content>
+        <app-select
+          formControlName="completed"
+          [options]="statusOptions"
+          placeholder="Status">
+        </app-select>
+
+        <div class="ion-margin-top">
+          <app-input
+            type="text"
+            placeholder="Exact Prepayment Name"
+            formControlName="name">
+          </app-input>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="section-header ion-margin-top">
+      <ion-text color="medium">
+        <small class="section-title">Total Amount Range</small>
+      </ion-text>
+    </div>
+
+    <ion-card class="filter-card">
+      <ion-card-content>
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col>
+              <app-input
+                type="number"
+                placeholder="Min Amount"
+                formControlName="amountMin">
+              </app-input>
+            </ion-col>
+            <ion-col>
+              <app-input
+                type="number"
+                placeholder="Max Amount"
+                formControlName="amountMax">
+              </app-input>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="section-header ion-margin-top">
+      <ion-text color="medium">
+        <small class="section-title">Remaining Buffer Range</small>
+      </ion-text>
+    </div>
+
+    <ion-card class="filter-card">
+      <ion-card-content>
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col>
+              <app-input
+                type="number"
+                placeholder="Min Remaining"
+                formControlName="remainingMin">
+              </app-input>
+            </ion-col>
+            <ion-col>
+              <app-input
+                type="number"
+                placeholder="Max Remaining"
+                formControlName="remainingMax">
+              </app-input>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="section-header ion-margin-top">
+      <ion-text color="medium">
+        <small class="section-title">Paid Until Date</small>
+      </ion-text>
+    </div>
+
+    <ion-card class="filter-card">
+      <ion-card-content>
+        <app-date-picker label="From Date" formControlName="paidUntilMin"></app-date-picker>
+        <div class="ion-margin-top">
+          <app-date-picker label="To Date" formControlName="paidUntilMax"></app-date-picker>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </form>
+
+  <ion-toolbar class="filter-actions-toolbar">
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="clearFilters()">Reset</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button color="primary" fill="solid" shape="round" (click)="applyFilters()">
+        Apply Filters
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-content>

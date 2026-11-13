@@ -1,0 +1,76 @@
+<div class="executed-transactions-section">
+  <div class="executed-header ion-padding-horizontal ion-padding-top">
+    <div class="executed-title-group">
+      <ion-text color="medium">
+        <small class="executed-section-title">{{ sectionTitle() }}</small>
+      </ion-text>
+      <ion-badge color="medium" class="count-badge">{{ totalCount() }}</ion-badge>
+    </div>
+  </div>
+
+  <div class="revised-filter-bar ion-padding-horizontal">
+    <ion-segment
+      [value]="revisedFilter()"
+      (ionChange)="onRevisedSegmentChange($event)"
+      mode="ios">
+      <ion-segment-button [value]="ExecutedTransactionsRevisedFilter.ALL">
+        All
+      </ion-segment-button>
+      <ion-segment-button [value]="ExecutedTransactionsRevisedFilter.UNREVISED">
+        Unrevised
+      </ion-segment-button>
+      <ion-segment-button [value]="ExecutedTransactionsRevisedFilter.REVISED">
+        Revised
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <ion-card class="executed-transactions-card">
+    @if (transactionsList().length > 0) {
+      <ion-list lines="full">
+        @for (transaction of transactionsList(); track transaction.id) {
+          <app-transaction-card
+            [transaction]="transaction"
+            [categoryName]="budgetSliderService.getCategoryName(transaction.categoryId)"
+            (onClick)="onTransactionClick($event)">
+          </app-transaction-card>
+        }
+      </ion-list>
+
+      @if (hasNextPage()) {
+        <div class="load-more-container">
+          <ion-button
+            fill="clear"
+            size="small"
+            expand="block"
+            [disabled]="isLoading()"
+            (click)="loadMorePage()">
+            @if (isLoading()) {
+              <ion-spinner name="dots"></ion-spinner>
+            } @else {
+              <span>Load More</span>
+              <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
+            }
+          </ion-button>
+        </div>
+      }
+    } @else if (isLoading()) {
+      <ion-card-content class="ion-text-center">
+        <ion-spinner name="crescent"></ion-spinner>
+      </ion-card-content>
+    } @else {
+      <ion-card-content class="empty-executed-state ion-text-center">
+        <ion-icon name="receipt-outline" class="empty-icon"></ion-icon>
+        <p class="ion-no-margin text-medium">
+          @if (revisedFilter() === ExecutedTransactionsRevisedFilter.REVISED) {
+            No revised transactions found.
+          } @else if (revisedFilter() === ExecutedTransactionsRevisedFilter.UNREVISED) {
+            No unrevised transactions found.
+          } @else {
+            No executed transactions yet.
+          }
+        </p>
+      </ion-card-content>
+    }
+  </ion-card>
+</div>

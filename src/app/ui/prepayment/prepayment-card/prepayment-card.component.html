@@ -1,0 +1,60 @@
+<ion-item
+  [button]="true"
+  [detail]="false"
+  lines="full"
+  class="prepayment-card-item"
+  (click)="onClick.emit(prepayment())">
+  <div class="prepayment-item-wrapper">
+    <div class="item-header">
+      <div class="left-info">
+        <div
+          class="prepayment-icon"
+          [class.completed]="prepayment().completed">
+          <ion-icon
+            [name]="prepayment().completed ? 'checkmark-circle-outline' : 'layers-outline'">
+          </ion-icon>
+        </div>
+        <ion-label>
+          <div class="title-row">
+            <h2 class="prepayment-title">{{ prepayment().name }}</h2>
+            <ion-badge
+              [color]="prepayment().completed ? 'success' : 'primary'"
+              class="status-badge">
+              {{ prepayment().completed ? 'Completed' : 'Active' }}
+            </ion-badge>
+          </div>
+          <p class="prepayment-meta">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>Paid until {{ prepayment().paidUntil | date: 'mediumDate' }}</span>
+          </p>
+        </ion-label>
+      </div>
+
+      <div class="amount-display ion-text-end">
+        <h3
+          class="remaining-amount"
+          [ngClass]="prepayment().completed ? 'text-income' : 'text-expense'">
+          {{ prepayment().completed ? 'Paid Off' : ('-' + (prepayment().remainingAmount | currency)) }}
+        </h3>
+        <span class="total-amount-sub">
+          of {{ prepayment().amount | currency }}
+        </span>
+      </div>
+    </div>
+
+    <div class="prepayment-progress">
+      <ion-progress-bar
+        [value]="paidPercentage()"
+        [color]="prepayment().completed ? 'success' : 'primary'">
+      </ion-progress-bar>
+      <div class="progress-labels">
+        <ion-note class="text-tiny">
+          {{ paidPercentage() | percent }} amortized ({{ paidAmount() | currency }} paid)
+        </ion-note>
+        <ion-note class="text-tiny">
+          Remaining: {{ prepayment().remainingAmount | currency }}
+        </ion-note>
+      </div>
+    </div>
+  </div>
+</ion-item>

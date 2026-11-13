@@ -1,0 +1,70 @@
+.executed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.executed-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.executed-section-title {
+  font-size: 0.72rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.count-badge {
+  font-size: 0.7rem;
+  border-radius: 10px;
+  padding: 2px 7px;
+}
+
+.revised-filter-bar {
+  margin-bottom: 6px;
+
+  ion-segment {
+    background: var(--ion-card-background);
+    border-radius: 12px;
+    padding: 3px;
+  }
+
+  ion-segment-button {
+    --border-radius: 9px;
+    min-height: 28px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+}
+
+ion-card.executed-transactions-card {
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+  margin: 6px 16px 20px;
+
+  ion-list {
+    padding: 4px 0;
+    background: transparent;
+  }
+}
+
+.load-more-container {
+  border-top: 1px solid var(--ion-color-step-150);
+  padding: 2px 8px;
+}
+
+.empty-executed-state {
+  padding: 24px 16px;
+  color: var(--ion-color-medium);
+
+  .empty-icon {
+    font-size: 2rem;
+    opacity: 0.5;
+    margin-bottom: 6px;
+  }
+}

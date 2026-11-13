@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.top-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .status-segment {
+    flex: 1;
+  }
+
+  .filter-btn {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    height: 36px;
+  }
+}
+
+ion-card.prepayments-list-card {
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+  margin: 12px 16px;
+}
+
+.list-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .list-details-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+  }
+}

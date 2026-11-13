@@ -1,0 +1,17 @@
+:host {
+  &.ng-invalid {
+    .ctrl {
+      border-bottom: 1px var(--color-control-invalid) solid;
+    }
+
+    &.ng-dirty {
+      .ctrl {
+        border-bottom: 1px var(--color-control-invalid-dirty) solid;
+      }
+    }
+  }
+}
+
+.ctrl {
+  width: 100%;
+}

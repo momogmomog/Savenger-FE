@@ -49,6 +49,13 @@
     </div>
 
     <div class="ion-margin-top">
+      <app-checkbox
+        label="Auto Execute"
+        formControlName="autoExecute"></app-checkbox>
+      <app-field-error [errors]="errors()" fieldName="autoExecute"></app-field-error>
+    </div>
+
+    <div class="ion-margin-top">
       <app-input
         type="textarea"
         placeholder="Comment"
