@@ -33,14 +33,30 @@
       @if (transaction().revised) {
         <ion-badge color="warning">Revised</ion-badge>
       }
-      @if (transaction().prepaymentId) {
-        <ion-badge
-          color="secondary"
-          style="cursor: pointer;"
-          (click)="prepaymentClicked.emit(transaction().prepaymentId)">
-          <ion-icon name="layers-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-          Prepayment
-        </ion-badge>
+      @if (isRecurring()) {
+        <span
+          class="transaction-indicator-pill recurring clickable"
+          (click)="recurringTransactionClicked.emit(transaction().recurringTransactionId!)">
+          <ion-icon name="repeat-outline"></ion-icon>
+          <span>Recurring</span>
+        </span>
+      }
+      @if (isPrepayment()) {
+        <span
+          class="transaction-indicator-pill prepayment clickable"
+          (click)="prepaymentClicked.emit(transaction().prepaymentId!)">
+          <ion-icon name="layers-outline"></ion-icon>
+          <span>Prepayment</span>
+        </span>
+      }
+      @if (isDebt()) {
+        <span
+          class="transaction-indicator-pill debt clickable"
+          [ngClass]="transaction().type"
+          (click)="debtClicked.emit(transaction().debtId!)">
+          <ion-icon name="swap-horizontal-outline"></ion-icon>
+          <span>{{ debtLabel() }}</span>
+        </span>
       }
     </div>
   </div>
@@ -73,11 +89,28 @@
         </ion-label>
       </ion-item>
 
-      @if (transaction().prepaymentId) {
+      @if (isRecurring()) {
         <ion-item
           [button]="true"
           [detail]="true"
-          (click)="prepaymentClicked.emit(transaction().prepaymentId)">
+          (click)="recurringTransactionClicked.emit(transaction().recurringTransactionId!)">
+          <ion-icon
+            slot="start"
+            name="repeat-outline"
+            color="tertiary"
+          ></ion-icon>
+          <ion-label>
+            <h3>Recurring Transaction</h3>
+            <p>Part of a recurring schedule • Tap to view details</p>
+          </ion-label>
+        </ion-item>
+      }
+
+      @if (isPrepayment()) {
+        <ion-item
+          [button]="true"
+          [detail]="true"
+          (click)="prepaymentClicked.emit(transaction().prepaymentId!)">
           <ion-icon
             slot="start"
             name="layers-outline"
@@ -86,6 +119,23 @@
           <ion-label>
             <h3>Prepayment</h3>
             <p>Part of a prepayment plan • Tap to view details</p>
+          </ion-label>
+        </ion-item>
+      }
+
+      @if (isDebt()) {
+        <ion-item
+          [button]="true"
+          [detail]="true"
+          (click)="debtClicked.emit(transaction().debtId!)">
+          <ion-icon
+            slot="start"
+            name="swap-horizontal-outline"
+            [color]="TransactionUtils.getColor(transaction().type)"
+          ></ion-icon>
+          <ion-label>
+            <h3>{{ debtLabel() }}</h3>
+            <p>Linked to debt #{{ transaction().debtId }} • Tap to view details</p>
           </ion-label>
         </ion-item>
       }

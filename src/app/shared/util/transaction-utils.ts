@@ -216,6 +216,16 @@ export class TransactionUtils {
     return active ? 'Active' : 'Archived';
   }
 
+  public static getDebtLabel(type: TransactionType): string {
+    if (type === TransactionType.EXPENSE) {
+      return 'Debt Payment';
+    }
+    if (type === TransactionType.INCOME) {
+      return 'Debt Received';
+    }
+    return 'Debt';
+  }
+
   public static getUserAvatarUrl(
     username: string,
     randomBackground = false,

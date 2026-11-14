@@ -19,26 +19,17 @@
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  background: rgba(
-    var(--color-compensate-rgb, var(--ion-color-primary-rgb)),
-    0.1
-  );
-  color: var(--color-compensate, var(--ion-color-primary));
+  background: rgba(var(--color-compensate-rgb), 0.1);
+  color: var(--color-compensate);
 
   &.EXPENSE {
-    background: rgba(
-      var(--color-expense-rgb, var(--ion-color-danger-rgb)),
-      0.1
-    );
-    color: var(--color-expense, var(--ion-color-danger));
+    background: rgba(var(--color-expense-rgb), 0.1);
+    color: var(--color-expense);
   }
 
   &.INCOME {
-    background: rgba(
-      var(--color-income-rgb, var(--ion-color-success-rgb)),
-      0.1
-    );
-    color: var(--color-income, var(--ion-color-success));
+    background: rgba(var(--color-income-rgb), 0.1);
+    color: var(--color-income);
   }
 }
 

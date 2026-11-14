@@ -49,3 +49,57 @@ ion-progress-bar {
     margin-bottom: 12px;
   }
 }
+
+.transaction-indicator-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+
+  ion-icon {
+    font-size: 0.78rem;
+  }
+
+  &.clickable {
+    cursor: pointer;
+  }
+
+  &.recurring {
+    background: rgba(var(--ion-color-tertiary-rgb), 0.14);
+    color: var(--ion-color-tertiary);
+  }
+
+  &.prepayment {
+    background: rgba(var(--ion-color-secondary-rgb), 0.14);
+    color: var(--ion-color-secondary);
+  }
+
+  &.debt {
+    background: rgba(var(--ion-color-warning-rgb), 0.16);
+    color: var(--ion-color-warning-shade);
+
+    &.EXPENSE {
+      background: rgba(var(--color-expense-rgb), 0.12);
+      color: var(--color-expense);
+    }
+
+    &.INCOME {
+      background: rgba(var(--color-income-rgb), 0.12);
+      color: var(--color-income);
+    }
+  }
+
+  .hero-badges & {
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+
+    ion-icon {
+      font-size: 0.88rem;
+    }
+  }
+}

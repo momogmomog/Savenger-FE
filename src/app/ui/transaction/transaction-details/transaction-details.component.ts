@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import {
   ActionSheetController,
@@ -30,12 +30,15 @@ import {
   layersOutline,
   personOutline,
   pricetagOutline,
+  repeatOutline,
+  swapHorizontalOutline,
   trashOutline,
   walletOutline,
 } from 'ionicons/icons';
 import { TransactionDetailed } from '../../../api/transaction/transaction';
 import { Budget } from '../../../api/budget/budget';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
+import { ObjectUtils } from '../../../shared/util/object-utils';
 
 @Component({
   selector: 'app-transaction-details',
@@ -74,6 +77,22 @@ export class TransactionDetailsComponent {
   editTriggered = output<void>();
   deleteTriggered = output<void>();
   prepaymentClicked = output<number>();
+  recurringTransactionClicked = output<number>();
+  debtClicked = output<number>();
+
+  isRecurring = computed(
+    () => !ObjectUtils.isNil(this.transaction().recurringTransactionId),
+  );
+
+  isPrepayment = computed(
+    () => !ObjectUtils.isNil(this.transaction().prepaymentId),
+  );
+
+  isDebt = computed(() => !ObjectUtils.isNil(this.transaction().debtId));
+
+  debtLabel = computed(() =>
+    TransactionUtils.getDebtLabel(this.transaction().type),
+  );
 
   constructor() {
     addIcons({
@@ -88,6 +107,8 @@ export class TransactionDetailsComponent {
       createOutline,
       trashOutline,
       layersOutline,
+      repeatOutline,
+      swapHorizontalOutline,
     });
   }
 

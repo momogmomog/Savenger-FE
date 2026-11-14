@@ -39,6 +39,25 @@ export class ModalPresetsService {
     return resp.result || null;
   }
 
+  public async openRecurringTransactionDetailsById(
+    recurringTransactionId: number,
+    categoryName?: string,
+  ): Promise<RecurringTransaction | null> {
+    const resp = await this.modalService.openAndWait(
+      RecurringTransactionDetailsModal,
+      new RecurringTransactionDetailsModalPayload(
+        undefined,
+        categoryName,
+        recurringTransactionId,
+      ),
+      {
+        shellType: ShellType.BLANK,
+      },
+    );
+
+    return resp.result || null;
+  }
+
   public async openListRecurringTransactions(
     budgetId: number,
   ): Promise<ModalResponse<boolean>> {

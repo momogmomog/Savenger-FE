@@ -1,9 +1,16 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { IonIcon, IonItem, IonLabel, IonText } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  layersOutline,
+  repeatOutline,
+  swapHorizontalOutline,
+} from 'ionicons/icons';
 import { Transaction } from '../../../api/transaction/transaction';
 import { TransactionBasicDto } from '../../../api/transaction/dto/transaction-basic.dto';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
+import { ObjectUtils } from '../../../shared/util/object-utils';
 
 export type TransactionCardItem = TransactionBasicDto & Partial<Transaction>;
 
@@ -38,7 +45,7 @@ export type TransactionCardItem = TransactionBasicDto & Partial<Transaction>;
 
       <ion-label>
         <h3 class="transaction-category-title">
-          {{ categoryName() || transaction().type }}
+          {{ displayTitle() }}
         </h3>
 
         <p class="transaction-card-meta">
@@ -52,14 +59,38 @@ export type TransactionCardItem = TransactionBasicDto & Partial<Transaction>;
           }
         </p>
 
-        @if (transaction().tags; as tags) {
-          @if (tags.length > 0) {
-            <div class="transaction-card-tags">
+        @if (hasBadgesOrTags()) {
+          <div class="transaction-card-tags">
+            @if (isRecurring()) {
+              <span class="transaction-indicator-pill recurring">
+                <ion-icon name="repeat-outline"></ion-icon>
+                <span>Recurring</span>
+              </span>
+            }
+
+            @if (isPrepayment()) {
+              <span class="transaction-indicator-pill prepayment">
+                <ion-icon name="layers-outline"></ion-icon>
+                <span>Prepayment</span>
+              </span>
+            }
+
+            @if (isDebt()) {
+              <span
+                class="transaction-indicator-pill debt"
+                [ngClass]="transaction().type"
+              >
+                <ion-icon name="swap-horizontal-outline"></ion-icon>
+                <span>{{ debtLabel() }}</span>
+              </span>
+            }
+
+            @if (transaction().tags; as tags) {
               @for (tag of tags; track tag.id) {
                 <span class="transaction-tag-pill">{{ tag.tagName }}</span>
               }
-            </div>
-          }
+            }
+          </div>
         }
       </ion-label>
 
@@ -94,4 +125,47 @@ export class TransactionCardComponent<
   transaction = input.required<T>();
   categoryName = input<string | undefined>(undefined);
   onClick = output<T>();
+
+  isRecurring = computed(
+    () => !ObjectUtils.isNil(this.transaction().recurringTransactionId),
+  );
+
+  isPrepayment = computed(
+    () => !ObjectUtils.isNil(this.transaction().prepaymentId),
+  );
+
+  isDebt = computed(() => !ObjectUtils.isNil(this.transaction().debtId));
+
+  debtLabel = computed(() =>
+    TransactionUtils.getDebtLabel(this.transaction().type),
+  );
+
+  displayTitle = computed(() => {
+    const catName = this.categoryName();
+    if (catName) {
+      return catName;
+    }
+    if (this.isDebt()) {
+      return this.debtLabel();
+    }
+    return this.transaction().type;
+  });
+
+  hasBadgesOrTags = computed(() => {
+    const tags = this.transaction().tags;
+    return (
+      this.isRecurring() ||
+      this.isPrepayment() ||
+      this.isDebt() ||
+      (tags !== undefined && tags.length > 0)
+    );
+  });
+
+  constructor() {
+    addIcons({
+      repeatOutline,
+      layersOutline,
+      swapHorizontalOutline,
+    });
+  }
 }

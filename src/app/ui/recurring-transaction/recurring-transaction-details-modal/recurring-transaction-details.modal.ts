@@ -4,7 +4,6 @@ import { ModalService } from '../../../shared/modal/modal.service';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { RecurringTransactionDetailsComponent } from '../recurring-transaction-details/recurring-transaction-details.component';
 import { RecurringTransactionService } from '../../../api/transaction/recurring/recurring-transaction.service';
-import { RecurringTransactionQueryImpl } from '../../../api/transaction/recurring/recurring-transaction.query';
 import {
   RecurringTransactionExecutionModal,
   RecurringTransactionExecutionModalPayload,
@@ -17,17 +16,22 @@ import {
   PrepaymentDetailsModal,
   PrepaymentDetailsModalPayload,
 } from '../../prepayment/prepayment-details-modal/prepayment-details.modal';
+import { LoaderComponent } from '../../../shared/loader/loader.component';
+import { ShowLoader } from '../../../shared/loader/show.loader.decorator';
 
 export class RecurringTransactionDetailsModalPayload {
   constructor(
-    public readonly transaction: RecurringTransaction,
-    public readonly categoryName: string | undefined,
+    public readonly transaction: RecurringTransaction | undefined,
+    public readonly categoryName?: string | undefined,
+    public readonly recurringTransactionId?: number,
   ) {}
 }
 
 @Component({
   selector: 'app-recurring-transaction-details-modal',
   template: `
+    <app-loader loaderName="recurringTransactionDetailsLoader"></app-loader>
+
     @if (transaction(); as trx) {
       <app-recurring-transaction-details
         [transaction]="trx"
@@ -42,7 +46,7 @@ export class RecurringTransactionDetailsModalPayload {
       ></app-recurring-transaction-details>
     }
   `,
-  imports: [RecurringTransactionDetailsComponent],
+  imports: [RecurringTransactionDetailsComponent, LoaderComponent],
 })
 export class RecurringTransactionDetailsModal
   extends ModalContentBaseComponent<
@@ -61,8 +65,30 @@ export class RecurringTransactionDetailsModal
     super();
   }
 
-  ngOnInit(): void {
-    this.transaction.set(this.payload().transaction);
+  async ngOnInit(): Promise<void> {
+    if (this.payload().transaction) {
+      this.transaction.set(this.payload().transaction);
+      return;
+    }
+
+    const id = this.payload().recurringTransactionId;
+    if (!ObjectUtils.isNil(id)) {
+      await this.loadRecurringTransaction(id!);
+    }
+  }
+
+  @ShowLoader({ name: 'recurringTransactionDetailsLoader' })
+  private async loadRecurringTransaction(id: number): Promise<void> {
+    const resp = await this.recurringTransactionService.get(id);
+    if (!resp.isSuccess || !resp.response) {
+      await this.modalService.showDangerToast(
+        'Failed to load recurring transaction',
+      );
+      await this.dismiss();
+      return;
+    }
+
+    this.transaction.set(resp.response);
   }
 
   async onEdit(): Promise<void> {
@@ -142,16 +168,9 @@ export class RecurringTransactionDetailsModal
       return;
     }
 
-    const query = new RecurringTransactionQueryImpl(current.budgetId);
-    query.prepaymentId = current.prepaymentId;
-    query.completed = null;
-
-    const resp = await this.recurringTransactionService.search(query);
-    if (resp.isSuccess && resp.response.content.length > 0) {
-      const updated =
-        resp.response.content.find((item) => item.id === current.id) ||
-        resp.response.content[0];
-      this.transactionUpdated(updated);
+    const resp = await this.recurringTransactionService.get(current.id);
+    if (resp.isSuccess && resp.response) {
+      this.transactionUpdated(resp.response);
     }
   }
 

@@ -33,6 +33,8 @@ export class TransactionDetailsModalPayload {
         (editTriggered)="onEdit()"
         (deleteTriggered)="onDelete()"
         (prepaymentClicked)="onOpenPrepayment($event)"
+        (recurringTransactionClicked)="onOpenRecurringTransaction($event)"
+        (debtClicked)="onOpenDebt()"
       ></app-transaction-details>
     }
   `,
@@ -111,5 +113,24 @@ export class TransactionDetailsModal
       this.setDismissalData(true);
       await this.loadTransaction();
     }
+  }
+
+  async onOpenRecurringTransaction(
+    recurringTransactionId: number,
+  ): Promise<void> {
+    const updatedRTransaction =
+      await this.modalPresetsService.openRecurringTransactionDetailsById(
+        recurringTransactionId,
+        this.transaction()?.category?.categoryName,
+      );
+
+    if (!ObjectUtils.isNil(updatedRTransaction)) {
+      this.setDismissalData(true);
+      await this.loadTransaction();
+    }
+  }
+
+  onOpenDebt(): void {
+    alert('TODO');
   }
 }
