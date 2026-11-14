@@ -74,6 +74,7 @@ export class ExecutedTransactionsComponent {
   budgetId = input.required<number>();
   recurringTransactionId = input<number | null>(null);
   prepaymentId = input<number | null>(null);
+  debtId = input<number | null>(null);
   reloadTrigger = input<unknown>(null);
   sectionTitle = input<string>('Executed Transactions');
 
@@ -101,11 +102,12 @@ export class ExecutedTransactionsComponent {
       const bId = this.budgetId();
       const rTxId = this.recurringTransactionId();
       const prepId = this.prepaymentId();
+      const dId = this.debtId();
       const revFilter = this.revisedFilter();
       this.reloadTrigger();
 
-      if (bId >= 0 && (rTxId !== null || prepId !== null)) {
-        this.syncQuery(bId, rTxId, prepId, revFilter);
+      if (bId >= 0 && (rTxId !== null || prepId !== null || dId !== null)) {
+        this.syncQuery(bId, rTxId, prepId, dId, revFilter);
         void this.reloadTransactions();
       }
     });
@@ -115,11 +117,13 @@ export class ExecutedTransactionsComponent {
     budgetId: number,
     recurringTransactionId: number | null,
     prepaymentId: number | null,
+    debtId: number | null,
     revFilter: ExecutedTransactionsRevisedFilter,
   ): void {
     this.query.budgetId = budgetId;
     this.query.recurringTransactionId = recurringTransactionId;
     this.query.prepaymentId = prepaymentId;
+    this.query.debtId = debtId;
 
     if (revFilter === ExecutedTransactionsRevisedFilter.UNREVISED) {
       this.query.revised = false;

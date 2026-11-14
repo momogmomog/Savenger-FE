@@ -1,3 +1,5 @@
+import { Budget } from '../budget/budget';
+
 export interface Debt {
   id: number;
   receiverBudgetId: number;
@@ -5,4 +7,6 @@ export interface Debt {
   amount: number;
   createDate: string;
   updateDate: string;
+  receiverBudget: Budget;
+  lenderBudget: Budget;
 }

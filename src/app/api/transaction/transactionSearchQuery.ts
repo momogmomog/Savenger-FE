@@ -12,6 +12,7 @@ export interface TransactionQuery {
   revised: boolean | null;
   recurringTransactionId: number | null;
   prepaymentId: number | null;
+  debtId: number | null;
   categoryIds: number[];
   userIds: number[];
   noDebtTransactions: boolean | null;
@@ -27,6 +28,7 @@ export class TransactionQueryImpl implements TransactionQuery {
   revised: boolean | null = null;
   recurringTransactionId: number | null = null;
   prepaymentId: number | null = null;
+  debtId: number | null = null;
   categoryIds: number[] = [];
   noDebtTransactions: boolean | null = null;
   tagIds: number[] = [];

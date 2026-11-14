@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+.action-buttons-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

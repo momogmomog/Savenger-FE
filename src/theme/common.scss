@@ -103,3 +103,174 @@ ion-progress-bar {
     }
   }
 }
+
+/*
+ * Shared Overview / Details Card & Section Styles
+ * Used by: PrepaymentDetailsComponent, DebtDetailsComponent, BudgetDetailsPage
+ */
+ion-card.overview-card,
+ion-card.schedule-card,
+ion-card.section-list-card {
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+  margin: 10px 16px 16px;
+}
+
+.overview-header-top,
+.progress-labels,
+.summary-section,
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hero-balance-section {
+  text-align: center;
+  margin: 6px 0 14px;
+
+  .hero-amount {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--color-compensate, var(--ion-color-primary));
+
+    &.completed,
+    &.income {
+      color: var(--color-income, var(--ion-color-success));
+    }
+
+    &.expense {
+      color: var(--color-expense, var(--ion-color-danger));
+    }
+
+    &.neutral {
+      color: var(--ion-text-color, var(--ion-color-dark));
+    }
+  }
+
+  .hero-dates {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    margin-top: 4px;
+
+    ion-icon {
+      vertical-align: text-bottom;
+    }
+  }
+}
+
+.progress-section ion-progress-bar {
+  height: 7px;
+  border-radius: 4px;
+}
+
+.hero-caption,
+.section-title {
+  font-size: 0.72rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.summary-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ion-color-step-150);
+
+  .summary-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .summary-label,
+  .summary-sub {
+    font-size: 0.72rem;
+    color: var(--ion-color-medium);
+  }
+
+  .summary-label {
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .summary-value {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .summary-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--ion-color-step-150);
+  }
+}
+
+.count-badge {
+  font-size: 0.7rem;
+  border-radius: 10px;
+  padding: 2px 7px;
+}
+
+.load-more-container {
+  border-top: 1px solid var(--ion-color-step-150);
+  padding: 2px 8px;
+}
+
+.perspective-segment,
+.budget-sections-segment {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  padding: 3px;
+
+  ion-segment-button {
+    --border-radius: 9px;
+    min-height: 28px;
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+}
+
+.debt-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 7px;
+  border-radius: 6px;
+
+  &.borrowed {
+    background: rgba(var(--color-expense-rgb), 0.12);
+    color: var(--color-expense);
+  }
+
+  &.lent {
+    background: rgba(var(--color-income-rgb), 0.12);
+    color: var(--color-income);
+  }
+
+  &.settled {
+    background: rgba(var(--ion-color-medium-rgb), 0.15);
+    color: var(--ion-color-medium);
+  }
+}
+
+.debt-modal-banner {
+  background: var(--ion-color-step-50, var(--ion-color-light));
+  border-radius: var(--card-border-radius-md, 16px);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}

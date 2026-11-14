@@ -12,6 +12,10 @@ import { EditTransactionModalPayload } from '../edit-transaction-modal/edit-tran
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 import { ObjectUtils } from '../../../shared/util/object-utils';
+import {
+  DebtDetailsModal,
+  DebtDetailsModalPayload,
+} from '../../debt/debt-details-modal/debt-details.modal';
 
 export class TransactionDetailsModalPayload {
   constructor(
@@ -34,7 +38,7 @@ export class TransactionDetailsModalPayload {
         (deleteTriggered)="onDelete()"
         (prepaymentClicked)="onOpenPrepayment($event)"
         (recurringTransactionClicked)="onOpenRecurringTransaction($event)"
-        (debtClicked)="onOpenDebt()"
+        (debtClicked)="onOpenDebt($event)"
       ></app-transaction-details>
     }
   `,
@@ -130,7 +134,16 @@ export class TransactionDetailsModal
     }
   }
 
-  onOpenDebt(): void {
-    alert('TODO');
+  async onOpenDebt(debtId: number): Promise<void> {
+    const resp = await this.modalService.openAndWait(
+      DebtDetailsModal,
+      new DebtDetailsModalPayload(debtId, this.payload().budget.id),
+      { shellType: ShellType.BLANK },
+    );
+
+    if (!ObjectUtils.isNil(resp.result)) {
+      this.setDismissalData(true);
+      await this.loadTransaction();
+    }
   }
 }
