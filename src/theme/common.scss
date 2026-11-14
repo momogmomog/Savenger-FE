@@ -17,6 +17,34 @@
   color: var(--color-compensate, var(--ion-color-primary));
 }
 
+.text-recurring {
+  color: var(--color-recurring, var(--ion-color-tertiary));
+}
+
+.text-prepayment {
+  color: var(--color-prepayment, var(--ion-color-secondary));
+}
+
+.text-debt {
+  color: var(--color-debt, var(--ion-color-warning));
+
+  &.EXPENSE,
+  &.expense,
+  &.borrowed {
+    color: var(--color-debt-expense, var(--color-expense));
+  }
+
+  &.INCOME,
+  &.income,
+  &.lent {
+    color: var(--color-debt-income, var(--color-income));
+  }
+
+  &.settled {
+    color: var(--ion-color-medium);
+  }
+}
+
 .text-medium {
   color: var(--ion-color-medium);
 }
@@ -50,7 +78,8 @@ ion-progress-bar {
   }
 }
 
-.indicator-pill {
+.indicator-pill,
+.transaction-indicator-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -76,7 +105,8 @@ ion-progress-bar {
     border-radius: 6px;
   }
 
-  &.lg {
+  &.lg,
+  .hero-badges & {
     font-size: 0.78rem;
     padding: 4px 10px;
     border-radius: 6px;
@@ -86,36 +116,57 @@ ion-progress-bar {
     }
   }
 
-  &.tertiary {
-    background: rgba(var(--ion-color-tertiary-rgb), 0.14);
-    color: var(--ion-color-tertiary);
+  &.recurring {
+    background: rgba(var(--color-recurring-rgb), 0.14);
+    color: var(--color-recurring);
   }
 
-  &.secondary {
-    background: rgba(var(--ion-color-secondary-rgb), 0.14);
-    color: var(--ion-color-secondary);
+  &.prepayment {
+    background: rgba(var(--color-prepayment-rgb), 0.14);
+    color: var(--color-prepayment);
   }
 
-  &.warning {
-    background: rgba(var(--ion-color-warning-rgb), 0.16);
-    color: var(--ion-color-warning-shade);
-  }
+  &.debt {
+    background: rgba(var(--color-debt-rgb), 0.16);
+    color: var(--color-debt);
 
-  &.medium {
-    background: rgba(var(--ion-color-medium-rgb), 0.15);
-    color: var(--ion-color-medium);
+    &.EXPENSE,
+    &.expense,
+    &.borrowed {
+      background: rgba(var(--color-debt-expense-rgb), 0.12);
+      color: var(--color-debt-expense);
+    }
+
+    &.INCOME,
+    &.income,
+    &.lent {
+      background: rgba(var(--color-debt-income-rgb), 0.12);
+      color: var(--color-debt-income);
+    }
+
+    &.settled {
+      background: rgba(var(--ion-color-medium-rgb), 0.15);
+      color: var(--ion-color-medium);
+    }
   }
 
   &.expense,
-  &.EXPENSE {
+  &.EXPENSE,
+  &.borrowed {
     background: rgba(var(--color-expense-rgb), 0.12);
     color: var(--color-expense);
   }
 
   &.income,
-  &.INCOME {
+  &.INCOME,
+  &.lent {
     background: rgba(var(--color-income-rgb), 0.12);
     color: var(--color-income);
+  }
+
+  &.settled {
+    background: rgba(var(--ion-color-medium-rgb), 0.15);
+    color: var(--ion-color-medium);
   }
 }
 
@@ -159,6 +210,7 @@ ion-card.section-list-card {
     font-weight: 800;
     color: var(--color-compensate, var(--ion-color-primary));
 
+    &.completed,
     &.income {
       color: var(--color-income, var(--ion-color-success));
     }

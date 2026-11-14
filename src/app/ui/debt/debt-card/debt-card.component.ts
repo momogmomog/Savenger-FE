@@ -28,6 +28,13 @@ export class DebtCardComponent {
 
   isSettled = computed(() => (this.debt().amount || 0) <= 0);
 
+  roleClass = computed(() => {
+    if (this.isSettled()) {
+      return 'settled';
+    }
+    return this.isBorrower() ? 'borrowed' : 'lent';
+  });
+
   counterpartBudgetName = computed(() => {
     const d = this.debt();
     if (this.isBorrower()) {

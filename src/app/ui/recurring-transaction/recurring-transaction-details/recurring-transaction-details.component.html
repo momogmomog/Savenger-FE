@@ -73,13 +73,12 @@
           </ion-badge>
 
           @if (transaction().prepaymentId && showPrepaymentLink()) {
-            <ion-badge
-              color="primary"
-              style="cursor: pointer;"
+            <span
+              class="transaction-indicator-pill prepayment clickable"
               (click)="prepaymentClicked.emit(transaction().prepaymentId)">
-              <ion-icon name="layers-outline" style="vertical-align: middle; margin-right: 2px;"></ion-icon>
-              Prepayment #{{ transaction().prepaymentId }}
-            </ion-badge>
+              <ion-icon name="layers-outline"></ion-icon>
+              <span>Prepayment #{{ transaction().prepaymentId }}</span>
+            </span>
           }
         </div>
       </div>
@@ -132,7 +131,7 @@
         </ion-item>
 
         <ion-item>
-          <ion-icon slot="start" name="repeat-outline" color="secondary"></ion-icon>
+          <ion-icon slot="start" name="repeat-outline" class="text-recurring"></ion-icon>
           <ion-label>
             <h3>Recurrence Rule</h3>
             <p class="transaction-recurrence-value">{{ humanReadableRule() }}</p>
@@ -197,7 +196,7 @@
             [button]="showPrepaymentLink()"
             [detail]="showPrepaymentLink()"
             (click)="showPrepaymentLink() && prepaymentClicked.emit(transaction().prepaymentId)">
-            <ion-icon slot="start" name="layers-outline" color="secondary"></ion-icon>
+            <ion-icon slot="start" name="layers-outline" class="text-prepayment"></ion-icon>
             <ion-label>
               <h3>Prepayment</h3>
               <p>
@@ -212,7 +211,7 @@
 
         @if (transaction().debtId) {
           <ion-item>
-            <ion-icon slot="start" name="swap-horizontal-outline" color="warning"></ion-icon>
+            <ion-icon slot="start" name="swap-horizontal-outline" class="text-debt" [ngClass]="transaction().type"></ion-icon>
             <ion-label>
               <h3>Linked Debt</h3>
               <p>Debt #{{ transaction().debtId }}</p>

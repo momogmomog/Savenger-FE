@@ -47,7 +47,7 @@
         <span class="hero-caption">Remaining Buffer</span>
         <div
           class="hero-amount"
-          [class.income]="prepayment().completed">
+          [class.completed]="prepayment().completed">
           {{ prepayment().remainingAmount | currency }}
         </div>
         <div class="hero-dates">
