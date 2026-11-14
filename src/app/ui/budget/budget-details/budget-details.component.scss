@@ -4,9 +4,7 @@
   display: block;
 }
 
-.header-badges,
-.section-title-group,
-.debt-item-title-row {
+.header-badges {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -51,19 +49,9 @@
   }
 }
 
-.debt-summary-content {
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--ion-color-step-150);
-}
-
-.debt-relations-list,
 ion-card.section-list-card ion-list {
   padding: 4px 0;
   background: transparent;
-}
-
-.empty-debt-state {
-  padding: 16px;
 }
 
 .participant-avatar {

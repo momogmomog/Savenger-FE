@@ -10,3 +10,14 @@
   color: var(--ion-color-medium);
   font-weight: 600;
 }
+
+.debt-modal-banner {
+  background: var(--ion-color-step-50, var(--ion-color-light));
+  border-radius: var(--card-border-radius-md, 16px);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}

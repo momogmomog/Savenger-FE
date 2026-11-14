@@ -62,14 +62,14 @@ export type TransactionCardItem = TransactionBasicDto & Partial<Transaction>;
         @if (hasBadgesOrTags()) {
           <div class="transaction-card-tags">
             @if (isRecurring()) {
-              <span class="transaction-indicator-pill recurring">
+              <span class="indicator-pill tertiary">
                 <ion-icon name="repeat-outline"></ion-icon>
                 <span>Recurring</span>
               </span>
             }
 
             @if (isPrepayment()) {
-              <span class="transaction-indicator-pill prepayment">
+              <span class="indicator-pill secondary">
                 <ion-icon name="layers-outline"></ion-icon>
                 <span>Prepayment</span>
               </span>
@@ -77,7 +77,7 @@ export type TransactionCardItem = TransactionBasicDto & Partial<Transaction>;
 
             @if (isDebt()) {
               <span
-                class="transaction-indicator-pill debt"
+                class="indicator-pill warning"
                 [ngClass]="transaction().type"
               >
                 <ion-icon name="swap-horizontal-outline"></ion-icon>

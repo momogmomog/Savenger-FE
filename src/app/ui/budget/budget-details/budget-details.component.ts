@@ -34,7 +34,6 @@ import {
   IonProgressBar,
   IonSegment,
   IonSegmentButton,
-  IonSpinner,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -43,11 +42,7 @@ import {
   addCircleOutline,
   alertCircleOutline,
   arrowBack,
-  arrowDownCircleOutline,
-  arrowUpCircleOutline,
   calendarOutline,
-  checkmarkCircleOutline,
-  chevronDownOutline,
   createOutline,
   ellipsisVertical,
   folderOpenOutline,
@@ -72,18 +67,11 @@ import { Tag } from '../../../api/tag/tag';
 import { CreateTagModal } from '../../tag/create-tag.modal';
 import { TransactionType } from '../../../api/transaction/transaction.type';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
-import { Debt } from '../../../api/debt/debt';
-import { DebtService } from '../../../api/debt/debt.service';
-import { DebtQuery, DebtQueryImpl } from '../../../api/debt/debt.query';
-import { PaginatedListState } from '../../../shared/util/paginated-list.state';
 import {
   CreateDebtModal,
   CreateDebtModalPayload,
 } from '../../debt/create-debt-modal/create-debt.modal';
-import {
-  DebtDetailsModal,
-  DebtDetailsModalPayload,
-} from '../../debt/debt-details-modal/debt-details.modal';
+import { ListDebtsComponent } from '../../debt/list-debts/list-debts.component';
 import { ObjectUtils } from '../../../shared/util/object-utils';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
 
@@ -122,7 +110,7 @@ export enum BudgetDetailsSectionTab {
     IonAvatar,
     IonSegment,
     IonSegmentButton,
-    IonSpinner,
+    ListDebtsComponent,
   ],
   templateUrl: './budget-details.component.html',
   styleUrls: ['./budget-details.component.scss'],
@@ -132,7 +120,6 @@ export class BudgetDetailsPage implements OnInit {
   private modalService = inject(ModalService);
   private categoryService = inject(CategoryService);
   private tagService = inject(TagService);
-  private debtService = inject(DebtService);
 
   protected readonly TransactionType = TransactionType;
   protected readonly TransactionUtils = TransactionUtils;
@@ -145,13 +132,7 @@ export class BudgetDetailsPage implements OnInit {
   selectedTab = signal<BudgetDetailsSectionTab>(
     BudgetDetailsSectionTab.CATEGORIES,
   );
-  isLoadingDebts = signal<boolean>(false);
-  totalDebtsCount = signal<number>(0);
-
-  debtPagination = new PaginatedListState<Debt>();
-  debts = this.debtPagination.items;
-  hasNextDebtPage = this.debtPagination.hasNextPage;
-  private debtQuery: DebtQuery = new DebtQueryImpl();
+  debtUpdateTrigger = signal<number | null>(null);
 
   navigateAway = output<void>();
   editTriggered = output<void>();
@@ -200,19 +181,11 @@ export class BudgetDetailsPage implements OnInit {
       addCircleOutline,
       calendarOutline,
       alertCircleOutline,
-      arrowDownCircleOutline,
-      arrowUpCircleOutline,
-      checkmarkCircleOutline,
-      chevronDownOutline,
     });
   }
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([
-      this.loadCategories(),
-      this.loadTags(),
-      this.loadDebts(),
-    ]);
+    await Promise.all([this.loadCategories(), this.loadTags()]);
   }
 
   private async loadCategories(): Promise<void> {
@@ -223,56 +196,6 @@ export class BudgetDetailsPage implements OnInit {
 
   private async loadTags(): Promise<void> {
     this.tags.set(await this.tagService.fetchAllTags(this.stats().budget.id));
-  }
-
-  protected async loadDebts(): Promise<void> {
-    this.debtQuery.budgetIds = [this.stats().budget.id];
-    this.isLoadingDebts.set(true);
-    try {
-      await this.debtPagination.reload(this.debtQuery, () =>
-        this.fetchDebtsPage(),
-      );
-    } finally {
-      this.isLoadingDebts.set(false);
-    }
-  }
-
-  private async fetchDebtsPage(): Promise<void> {
-    const resp = await this.debtService.search(this.debtQuery);
-    if (resp.isSuccess && resp.response) {
-      this.totalDebtsCount.set(resp.response.page?.totalElements ?? 0);
-      this.debtPagination.appendPage(resp.response, this.debtQuery);
-    }
-  }
-
-  protected async loadMoreDebts(): Promise<void> {
-    if (!this.hasNextDebtPage() || this.isLoadingDebts()) {
-      return;
-    }
-    this.isLoadingDebts.set(true);
-    try {
-      this.debtQuery.page.pageNumber += 1;
-      await this.fetchDebtsPage();
-    } finally {
-      this.isLoadingDebts.set(false);
-    }
-  }
-
-  protected isBorrower(debt: Debt): boolean {
-    return debt.receiverBudgetId === this.stats().budget.id;
-  }
-
-  protected isSettled(debt: Debt): boolean {
-    return (debt.amount || 0) <= 0;
-  }
-
-  protected getCounterpartBudgetName(debt: Debt): string {
-    if (this.isBorrower(debt)) {
-      return debt.lenderBudget?.budgetName || `Budget #${debt.lenderBudgetId}`;
-    }
-    return (
-      debt.receiverBudget?.budgetName || `Budget #${debt.receiverBudgetId}`
-    );
   }
 
   protected async openBorrowFundsModal(): Promise<void> {
@@ -290,25 +213,12 @@ export class BudgetDetailsPage implements OnInit {
       },
     );
 
-    resp.ifConfirmed(async (createdDebt) => {
+    resp.ifConfirmed((createdDebt) => {
       if (!ObjectUtils.isNil(createdDebt?.id)) {
-        await this.loadDebts();
+        this.debtUpdateTrigger.update((v) => (v || 0) + 1);
         this.refreshRequested.emit();
       }
     });
-  }
-
-  protected async openDebtDetails(debt: Debt): Promise<void> {
-    const resp = await this.modalService.openAndWait(
-      DebtDetailsModal,
-      new DebtDetailsModalPayload(debt.id, this.stats().budget.id, debt),
-      { shellType: ShellType.BLANK },
-    );
-
-    if (!ObjectUtils.isNil(resp.result)) {
-      await this.loadDebts();
-      this.refreshRequested.emit();
-    }
   }
 
   protected async openManageParticipantsModal(): Promise<void> {

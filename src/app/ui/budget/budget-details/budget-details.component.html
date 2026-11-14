@@ -136,113 +136,14 @@
   </div>
 
   <!-- Debts & Lending Section -->
-  <div class="section-header ion-padding-horizontal ion-padding-top">
-    <div class="section-title-group">
-      <span class="section-title">Debts & Lending</span>
-      <ion-badge color="medium" class="count-badge">{{ totalDebtsCount() }}</ion-badge>
-    </div>
-    <ion-button
-      fill="clear"
-      size="small"
-      color="primary"
-      (click)="openBorrowFundsModal()">
-      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-      Borrow Funds
-    </ion-button>
-  </div>
-
-  <ion-card class="section-list-card">
-    <ion-card-content class="debt-summary-content">
-      <div class="summary-section" style="margin-top: 0; padding-top: 0; border-top: none;">
-        <div class="summary-box">
-          <span class="summary-label">Owed to Others</span>
-          <strong class="summary-value text-expense">
-            {{ stats().debtReceivedAmount | currency }}
-          </strong>
-          <span class="summary-sub">Debt Received (Borrowed)</span>
-        </div>
-
-        <div class="summary-divider"></div>
-
-        <div class="summary-box ion-text-end">
-          <span class="summary-label">Owed to This Budget</span>
-          <strong class="summary-value text-income">
-            {{ stats().debtLendedAmount | currency }}
-          </strong>
-          <span class="summary-sub">Debt Lent</span>
-        </div>
-      </div>
-    </ion-card-content>
-
-    @if (debts().length > 0) {
-      <ion-list lines="full" class="debt-relations-list">
-        @for (debt of debts(); track debt.id) {
-          <ion-item
-            [button]="true"
-            [detail]="true"
-            (click)="openDebtDetails(debt)">
-            <ion-icon
-              slot="start"
-              [name]="isSettled(debt) ? 'checkmark-circle-outline' : (isBorrower(debt) ? 'arrow-down-circle-outline' : 'arrow-up-circle-outline')"
-              [color]="isSettled(debt) ? 'medium' : (isBorrower(debt) ? 'danger' : 'success')">
-            </ion-icon>
-
-            <ion-label>
-              <div class="debt-item-title-row">
-                <h3>{{ getCounterpartBudgetName(debt) }}</h3>
-                <span
-                  class="debt-role-badge"
-                  [ngClass]="isSettled(debt) ? 'settled' : (isBorrower(debt) ? 'borrowed' : 'lent')">
-                  {{ isBorrower(debt) ? 'Borrowed' : 'Lent' }}
-                </span>
-              </div>
-              <p>
-                @if (isSettled(debt)) {
-                  Settled •
-                }
-                {{ (debt.updateDate || debt.createDate) | date: 'mediumDate' }}
-              </p>
-            </ion-label>
-
-            <div slot="end" class="ion-text-end">
-              <strong
-                [ngClass]="isSettled(debt) ? 'text-medium' : (isBorrower(debt) ? 'text-expense' : 'text-income')">
-                {{ debt.amount | currency }}
-              </strong>
-            </div>
-          </ion-item>
-        }
-      </ion-list>
-
-      @if (hasNextDebtPage()) {
-        <div class="load-more-container">
-          <ion-button
-            fill="clear"
-            size="small"
-            expand="block"
-            [disabled]="isLoadingDebts()"
-            (click)="loadMoreDebts()">
-            @if (isLoadingDebts()) {
-              <ion-spinner name="dots"></ion-spinner>
-            } @else {
-              <span>Load More</span>
-              <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
-            }
-          </ion-button>
-        </div>
-      }
-    } @else if (isLoadingDebts()) {
-      <ion-card-content class="ion-text-center">
-        <ion-spinner name="crescent"></ion-spinner>
-      </ion-card-content>
-    } @else {
-      <ion-card-content class="empty-debt-state ion-text-center">
-        <p class="ion-no-margin text-medium">
-          No debt relations with other budgets yet.
-        </p>
-      </ion-card-content>
-    }
-  </ion-card>
+  <app-list-debts
+    [budgetId]="stats().budget.id"
+    [debtReceivedAmount]="stats().debtReceivedAmount"
+    [debtLendedAmount]="stats().debtLendedAmount"
+    [externalUpdateTrigger]="debtUpdateTrigger()"
+    (borrowTriggered)="openBorrowFundsModal()"
+    (updateTriggered)="refreshRequested.emit()">
+  </app-list-debts>
 
   <!-- Categories, Tags, & Participants Segment -->
   <div class="ion-padding-horizontal ion-padding-top">
@@ -250,7 +151,7 @@
       [value]="selectedTab()"
       (ionChange)="onTabChange($event)"
       mode="ios"
-      class="budget-sections-segment">
+      class="compact-segment">
       <ion-segment-button [value]="BudgetDetailsSectionTab.CATEGORIES">
         <ion-label>Categories ({{ categories().length }})</ion-label>
       </ion-segment-button>

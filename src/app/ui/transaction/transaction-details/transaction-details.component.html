@@ -35,7 +35,7 @@
       }
       @if (isRecurring()) {
         <span
-          class="transaction-indicator-pill recurring clickable"
+          class="indicator-pill lg tertiary clickable"
           (click)="recurringTransactionClicked.emit(transaction().recurringTransactionId!)">
           <ion-icon name="repeat-outline"></ion-icon>
           <span>Recurring</span>
@@ -43,7 +43,7 @@
       }
       @if (isPrepayment()) {
         <span
-          class="transaction-indicator-pill prepayment clickable"
+          class="indicator-pill lg secondary clickable"
           (click)="prepaymentClicked.emit(transaction().prepaymentId!)">
           <ion-icon name="layers-outline"></ion-icon>
           <span>Prepayment</span>
@@ -51,7 +51,7 @@
       }
       @if (isDebt()) {
         <span
-          class="transaction-indicator-pill debt clickable"
+          class="indicator-pill lg warning clickable"
           [ngClass]="transaction().type"
           (click)="debtClicked.emit(transaction().debtId!)">
           <ion-icon name="swap-horizontal-outline"></ion-icon>

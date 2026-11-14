@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.debt-summary-content {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ion-color-step-150);
+}
+
+.debt-relations-list {
+  padding: 4px 0;
+  background: transparent;
+}
+
+.empty-debt-state {
+  padding: 16px;
+}

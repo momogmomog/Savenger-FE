@@ -47,7 +47,7 @@
         <span class="hero-caption">Remaining Buffer</span>
         <div
           class="hero-amount"
-          [class.completed]="prepayment().completed">
+          [class.income]="prepayment().completed">
           {{ prepayment().remainingAmount | currency }}
         </div>
         <div class="hero-dates">
@@ -156,7 +156,7 @@
       [showPrepaymentLink]="false">
     </app-recurring-transaction-details>
   } @else {
-    <ion-card class="schedule-card">
+    <ion-card class="section-list-card">
       <ion-card-content class="ion-text-center text-medium">
         No associated recurring schedule found.
       </ion-card-content>
