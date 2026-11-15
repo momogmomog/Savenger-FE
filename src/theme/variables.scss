@@ -14,6 +14,21 @@
   --color-transfer: var(--ion-color-secondary);
   --color-transfer-rgb: var(--ion-color-secondary-rgb);
 
+  --color-recurring: var(--ion-color-tertiary);
+  --color-recurring-rgb: var(--ion-color-tertiary-rgb);
+
+  --color-prepayment: var(--ion-color-secondary);
+  --color-prepayment-rgb: var(--ion-color-secondary-rgb);
+
+  --color-debt: var(--ion-color-warning);
+  --color-debt-rgb: var(--ion-color-warning-rgb);
+
+  --color-debt-expense: var(--color-expense);
+  --color-debt-expense-rgb: var(--color-expense-rgb);
+
+  --color-debt-income: var(--color-income);
+  --color-debt-income-rgb: var(--color-income-rgb);
+
   --color-action-expense: var(--ion-color-primary);
   --color-action-income: var(--ion-color-success);
   --color-action-transfer: var(--ion-color-secondary);

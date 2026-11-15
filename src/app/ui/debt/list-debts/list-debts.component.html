@@ -1,0 +1,80 @@
+<div class="section-header ion-padding-horizontal ion-padding-top">
+  <div class="section-title-group">
+    <span class="section-title">Debts & Lending</span>
+    <ion-badge color="medium" class="count-badge">{{ totalCount() }}</ion-badge>
+  </div>
+  <ion-button
+    fill="clear"
+    size="small"
+    color="primary"
+    (click)="borrowTriggered.emit()">
+    <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+    Borrow Funds
+  </ion-button>
+</div>
+
+<ion-card class="section-list-card">
+  @if (hasSummaryAmounts()) {
+    <ion-card-content class="debt-summary-content">
+      <div class="summary-section" style="margin-top: 0; padding-top: 0; border-top: none;">
+        <div class="summary-box">
+          <span class="summary-label">Owed to Others</span>
+          <strong class="summary-value text-expense">
+            {{ (debtReceivedAmount() ?? 0) | currency }}
+          </strong>
+          <span class="summary-sub">Debt Received (Borrowed)</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-box ion-text-end">
+          <span class="summary-label">Owed to This Budget</span>
+          <strong class="summary-value text-income">
+            {{ (debtLendedAmount() ?? 0) | currency }}
+          </strong>
+          <span class="summary-sub">Debt Lent</span>
+        </div>
+      </div>
+    </ion-card-content>
+  }
+
+  @if (debtsList().length > 0) {
+    <ion-list lines="full" class="debt-relations-list">
+      @for (debt of debtsList(); track debt.id) {
+        <app-debt-card
+          [debt]="debt"
+          [perspectiveBudgetId]="budgetId()"
+          (onClick)="onDebtClick($event)">
+        </app-debt-card>
+      }
+    </ion-list>
+
+    @if (hasNextPage()) {
+      <div class="load-more-container">
+        <ion-button
+          fill="clear"
+          size="small"
+          expand="block"
+          [disabled]="isLoading()"
+          (click)="loadMore()">
+          @if (isLoading()) {
+            <ion-spinner name="dots"></ion-spinner>
+          } @else {
+            <span>Load More</span>
+            <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
+          }
+        </ion-button>
+      </div>
+    }
+  } @else if (isLoading()) {
+    <ion-card-content class="ion-text-center">
+      <ion-spinner name="crescent"></ion-spinner>
+    </ion-card-content>
+  } @else {
+    <ion-card-content class="empty-debt-state ion-text-center">
+      <p class="ion-no-margin text-medium">
+        No debt relations with other budgets yet.
+      </p>
+    </ion-card-content>
+  }
+</ion-card>

@@ -1,20 +1,45 @@
+.recurring-transaction-form {
+  display: block;
+}
+
+.section-header {
+  padding: 0 4px 6px 4px;
+}
+
+ion-card.form-card {
+  margin: 0 0 12px 0;
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+}
+
+.helper-text {
+  margin: 0 0 8px 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ion-color-medium);
+}
+
 ion-input.recurrence-picker {
   --padding-start: 0;
   cursor: pointer;
-
-
 }
 
 .recurrence-picker-container {
-  &.ng-invalid  {
-    ion-input, ion-textarea {
-      border-bottom: 1px var(--color-control-invalid, #f8bd4b) solid;
+  &.ng-invalid {
+    ion-input,
+    ion-textarea {
+      border-bottom: 1px var(--color-control-invalid) solid;
     }
 
     &.ng-dirty {
-      ion-input, ion-textarea  {
-        border-bottom: 1px var(--color-control-invalid-dirty, darkred) solid;
+      ion-input,
+      ion-textarea {
+        border-bottom: 1px var(--color-control-invalid-dirty) solid;
       }
     }
   }
+}
+
+.submit-actions {
+  margin-top: 16px;
 }

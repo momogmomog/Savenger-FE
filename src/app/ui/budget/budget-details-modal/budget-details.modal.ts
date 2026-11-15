@@ -1,5 +1,4 @@
 import { Component, model, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { ModalContentBaseComponent } from '../../../shared/modal/modals/modal-content-base.component';
 import {
@@ -15,6 +14,7 @@ import { ShowLoader } from '../../../shared/loader/show.loader.decorator';
 import { ModalService } from '../../../shared/modal/modal.service';
 import { EditBudgetModal } from '../edit-budget-modal/edit-budget.modal';
 import { EditBudgetPayload } from '../edit-budget-modal/edit-budget.payload';
+import { BudgetSliderService } from '../budget-slider/budget-slider.service';
 
 @Component({
   selector: 'app-create-budget-modal',
@@ -23,7 +23,8 @@ import { EditBudgetPayload } from '../edit-budget-modal/edit-budget.payload';
     @if (statistics(); as stats) {
       <app-budget-details
         (editTriggered)="openEditBudgetModal()"
-        (budgetUpdated)="setDismissalData(true)"
+        (budgetUpdated)="onBudgetUpdated()"
+        (refreshRequested)="onRefreshRequested()"
         (navigateAway)="dismiss()"
         [stats]="stats"
       ></app-budget-details>
@@ -38,9 +39,9 @@ export class BudgetDetailsModal
   statistics = model<BudgetStatistics>();
 
   constructor(
-    private modalCtrl: ModalController,
     private modalService: ModalService,
     private budgetService: BudgetService,
+    private budgetSliderService: BudgetSliderService,
   ) {
     super();
   }
@@ -51,8 +52,6 @@ export class BudgetDetailsModal
 
   @ShowLoader({ name: 'budgetDetailsLoader' })
   private async loadStatistic(): Promise<void> {
-    this.statistics.set(undefined);
-
     const resp = await this.budgetService.getStatistics(
       this.payload().budgetId,
     );
@@ -72,6 +71,24 @@ export class BudgetDetailsModal
     });
   }
 
+  protected onBudgetUpdated(): void {
+    this.setDismissalData(true);
+    void this.refreshSliderIfNeeded();
+  }
+
+  protected async onRefreshRequested(): Promise<void> {
+    this.setDismissalData(true);
+    await this.loadStatistic();
+    await this.refreshSliderIfNeeded();
+  }
+
+  private async refreshSliderIfNeeded(): Promise<void> {
+    const currentSliderBudgetId = this.budgetSliderService.currentBudget().id;
+    if (currentSliderBudgetId > 0) {
+      await this.budgetSliderService.refreshStatistic(currentSliderBudgetId);
+    }
+  }
+
   protected async openEditBudgetModal(): Promise<void> {
     const modal = await this.modalService.open(
       EditBudgetModal,
@@ -81,8 +98,7 @@ export class BudgetDetailsModal
 
     const { data } = await modal.onDidDismiss<boolean>();
     if (data) {
-      void this.loadStatistic();
-      this.setDismissalData(true);
+      await this.onRefreshRequested();
     }
   }
 }

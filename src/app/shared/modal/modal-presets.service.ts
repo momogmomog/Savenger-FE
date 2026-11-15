@@ -1,24 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ModalResponse, ModalService } from './modal.service';
 import { RecurringTransaction } from '../../api/transaction/recurring/recurring-transaction';
-import {
-  RecurringTransactionDetailsModal,
-  RecurringTransactionDetailsModalPayload,
-} from '../../ui/recurring-transaction/recurring-transaction-details-modal/recurring-transaction-details.modal';
 import { ShellType } from './shells/modal-shell.types';
-import {
-  ListRecurringTransactionsModal,
-  ListRecurringTransactionsModalPayload,
-} from '../../ui/recurring-transaction/list-recurring-transactions/list-recurring-transactions.modal';
 import { Prepayment } from '../../api/prepayment/prepayment';
-import {
-  PrepaymentDetailsModal,
-  PrepaymentDetailsModalPayload,
-} from '../../ui/prepayment/prepayment-details-modal/prepayment-details.modal';
-import {
-  ListPrepaymentsModal,
-  ListPrepaymentsModalPayload,
-} from '../../ui/prepayment/list-prepayments/list-prepayments.modal';
+import { Debt } from '../../api/debt/debt';
+import { Budget } from '../../api/budget/budget';
 
 @Injectable({ providedIn: 'root' })
 export class ModalPresetsService {
@@ -28,6 +14,13 @@ export class ModalPresetsService {
     transaction: RecurringTransaction,
     categoryName?: string,
   ): Promise<RecurringTransaction | null> {
+    const {
+      RecurringTransactionDetailsModal,
+      RecurringTransactionDetailsModalPayload,
+    } = await import(
+      '../../ui/recurring-transaction/recurring-transaction-details-modal/recurring-transaction-details.modal'
+    );
+
     const resp = await this.modalService.openAndWait(
       RecurringTransactionDetailsModal,
       new RecurringTransactionDetailsModalPayload(transaction, categoryName),
@@ -43,6 +36,13 @@ export class ModalPresetsService {
     recurringTransactionId: number,
     categoryName?: string,
   ): Promise<RecurringTransaction | null> {
+    const {
+      RecurringTransactionDetailsModal,
+      RecurringTransactionDetailsModalPayload,
+    } = await import(
+      '../../ui/recurring-transaction/recurring-transaction-details-modal/recurring-transaction-details.modal'
+    );
+
     const resp = await this.modalService.openAndWait(
       RecurringTransactionDetailsModal,
       new RecurringTransactionDetailsModalPayload(
@@ -61,6 +61,13 @@ export class ModalPresetsService {
   public async openListRecurringTransactions(
     budgetId: number,
   ): Promise<ModalResponse<boolean>> {
+    const {
+      ListRecurringTransactionsModal,
+      ListRecurringTransactionsModalPayload,
+    } = await import(
+      '../../ui/recurring-transaction/list-recurring-transactions/list-recurring-transactions.modal'
+    );
+
     return await this.modalService.openAndWait(
       ListRecurringTransactionsModal,
       new ListRecurringTransactionsModalPayload(budgetId),
@@ -75,6 +82,11 @@ export class ModalPresetsService {
     prepaymentId: number,
     initialPrepayment?: Prepayment,
   ): Promise<Prepayment | null> {
+    const { PrepaymentDetailsModal, PrepaymentDetailsModalPayload } =
+      await import(
+        '../../ui/prepayment/prepayment-details-modal/prepayment-details.modal'
+      );
+
     const resp = await this.modalService.openAndWait(
       PrepaymentDetailsModal,
       new PrepaymentDetailsModalPayload(prepaymentId, initialPrepayment),
@@ -89,6 +101,10 @@ export class ModalPresetsService {
   public async openListPrepayments(
     budgetId: number,
   ): Promise<ModalResponse<boolean>> {
+    const { ListPrepaymentsModal, ListPrepaymentsModalPayload } = await import(
+      '../../ui/prepayment/list-prepayments/list-prepayments.modal'
+    );
+
     return await this.modalService.openAndWait(
       ListPrepaymentsModal,
       new ListPrepaymentsModalPayload(budgetId),
@@ -96,6 +112,41 @@ export class ModalPresetsService {
         shellType: ShellType.HEADER,
         title: 'Prepayments',
       },
+    );
+  }
+
+  public async openDebtDetails(
+    debtId: number,
+    perspectiveBudgetId?: number,
+    initialDebt?: Debt,
+  ): Promise<Debt | null> {
+    const { DebtDetailsModal, DebtDetailsModalPayload } = await import(
+      '../../ui/debt/debt-details-modal/debt-details.modal'
+    );
+
+    const resp = await this.modalService.openAndWait(
+      DebtDetailsModal,
+      new DebtDetailsModalPayload(debtId, perspectiveBudgetId, initialDebt),
+      {
+        shellType: ShellType.BLANK,
+      },
+    );
+
+    return resp.result || null;
+  }
+
+  public async openTransactionDetails(
+    transactionId: number,
+    budget: Budget,
+  ): Promise<ModalResponse<boolean>> {
+    const { TransactionDetailsModal, TransactionDetailsModalPayload } =
+      await import(
+        '../../ui/transaction/transaction-details-modal/transaction-details.modal'
+      );
+
+    return await this.modalService.openAndWait(
+      TransactionDetailsModal,
+      new TransactionDetailsModalPayload(transactionId, budget),
     );
   }
 }

@@ -5,12 +5,16 @@ import {
   model,
   OnInit,
   output,
+  signal,
 } from '@angular/core';
-import { CommonModule, CurrencyPipe, PercentPipe } from '@angular/common';
+import {
+  CommonModule,
+  CurrencyPipe,
+  DatePipe,
+  PercentPipe,
+} from '@angular/common';
 import {
   ActionSheetController,
-  IonAccordion,
-  IonAccordionGroup,
   IonAvatar,
   IonBadge,
   IonButton,
@@ -19,22 +23,27 @@ import {
   IonCardContent,
   IonCardHeader,
   IonCardSubtitle,
-  IonCol,
+  IonCardTitle,
   IonContent,
-  IonGrid,
   IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
   IonList,
+  IonNote,
   IonProgressBar,
-  IonRow,
+  IonSegment,
+  IonSegmentButton,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
+  addCircleOutline,
+  alertCircleOutline,
   arrowBack,
+  calendarOutline,
+  createOutline,
   ellipsisVertical,
   folderOpenOutline,
   pencilOutline,
@@ -42,6 +51,7 @@ import {
   personAddOutline,
   pricetagsOutline,
   stopCircleOutline,
+  swapHorizontalOutline,
   trashOutline,
   walletOutline,
 } from 'ionicons/icons';
@@ -57,6 +67,19 @@ import { Tag } from '../../../api/tag/tag';
 import { CreateTagModal } from '../../tag/create-tag.modal';
 import { TransactionType } from '../../../api/transaction/transaction.type';
 import { TransactionUtils } from '../../../shared/util/transaction-utils';
+import {
+  CreateDebtModal,
+  CreateDebtModalPayload,
+} from '../../debt/create-debt-modal/create-debt.modal';
+import { ListDebtsComponent } from '../../debt/list-debts/list-debts.component';
+import { ObjectUtils } from '../../../shared/util/object-utils';
+import { RRuleUtils } from '../../../shared/util/rrule-utils';
+
+export enum BudgetDetailsSectionTab {
+  CATEGORIES = 'CATEGORIES',
+  TAGS = 'TAGS',
+  PARTICIPANTS = 'PARTICIPANTS',
+}
 
 @Component({
   selector: 'app-budget-details',
@@ -64,6 +87,7 @@ import { TransactionUtils } from '../../../shared/util/transaction-utils';
   imports: [
     CommonModule,
     CurrencyPipe,
+    DatePipe,
     PercentPipe,
     IonContent,
     IonHeader,
@@ -76,17 +100,17 @@ import { TransactionUtils } from '../../../shared/util/transaction-utils';
     IonCardContent,
     IonCardHeader,
     IonCardSubtitle,
-    IonGrid,
-    IonRow,
-    IonCol,
+    IonCardTitle,
     IonProgressBar,
+    IonNote,
     IonLabel,
     IonItem,
     IonList,
     IonBadge,
-    IonAccordionGroup,
-    IonAccordion,
     IonAvatar,
+    IonSegment,
+    IonSegmentButton,
+    ListDebtsComponent,
   ],
   templateUrl: './budget-details.component.html',
   styleUrls: ['./budget-details.component.scss'],
@@ -99,13 +123,21 @@ export class BudgetDetailsPage implements OnInit {
 
   protected readonly TransactionType = TransactionType;
   protected readonly TransactionUtils = TransactionUtils;
+  protected readonly BudgetDetailsSectionTab = BudgetDetailsSectionTab;
+
   stats = model.required<BudgetStatistics>();
   protected categories = model<Category[]>([]);
   protected tags = model<Tag[]>([]);
 
+  selectedTab = signal<BudgetDetailsSectionTab>(
+    BudgetDetailsSectionTab.CATEGORIES,
+  );
+  debtUpdateTrigger = signal<number | null>(null);
+
   navigateAway = output<void>();
   editTriggered = output<void>();
   budgetUpdated = output<void>();
+  refreshRequested = output<void>();
 
   usagePercentage = computed(() => {
     return TransactionUtils.getUtilizationPercentage(
@@ -125,6 +157,13 @@ export class BudgetDetailsPage implements OnInit {
     return this.stats().balance - this.stats().realBalance;
   });
 
+  humanReadableRule = computed(() => {
+    return (
+      RRuleUtils.toHumanReadableText(this.stats().budget.recurringRule) ||
+      this.stats().budget.recurringRule
+    );
+  });
+
   constructor() {
     addIcons({
       arrowBack,
@@ -132,17 +171,21 @@ export class BudgetDetailsPage implements OnInit {
       walletOutline,
       peopleOutline,
       pencilOutline,
+      createOutline,
       stopCircleOutline,
       trashOutline,
       personAddOutline,
       folderOpenOutline,
       pricetagsOutline,
+      swapHorizontalOutline,
+      addCircleOutline,
+      calendarOutline,
+      alertCircleOutline,
     });
   }
 
   async ngOnInit(): Promise<void> {
-    await this.loadCategories();
-    await this.loadTags();
+    await Promise.all([this.loadCategories(), this.loadTags()]);
   }
 
   private async loadCategories(): Promise<void> {
@@ -155,10 +198,104 @@ export class BudgetDetailsPage implements OnInit {
     this.tags.set(await this.tagService.fetchAllTags(this.stats().budget.id));
   }
 
+  protected async openBorrowFundsModal(): Promise<void> {
+    const resp = await this.modalService.openAndWait(
+      CreateDebtModal,
+      new CreateDebtModalPayload(
+        this.stats().budget,
+        undefined,
+        this.stats().realBalance,
+      ),
+      {
+        shellType: ShellType.HEADER,
+        title: 'Borrow Funds',
+        showCloseButton: true,
+      },
+    );
+
+    resp.ifConfirmed((createdDebt) => {
+      if (!ObjectUtils.isNil(createdDebt?.id)) {
+        this.debtUpdateTrigger.update((v) => (v || 0) + 1);
+        this.refreshRequested.emit();
+      }
+    });
+  }
+
+  protected async openManageParticipantsModal(): Promise<void> {
+    const modal = await this.modalService.open(
+      ManageParticipantsModal,
+      this.stats().budget,
+      {
+        shellType: ShellType.HEADER,
+        title: `Manage Participants`,
+        showCloseButton: true,
+      },
+    );
+
+    const { data } = await modal.onDidDismiss();
+    if (data) {
+      this.stats.set({
+        ...this.stats(),
+        budget: data,
+      });
+      this.budgetUpdated.emit();
+    }
+  }
+
+  protected async openAddCategoryModal(): Promise<void> {
+    const reload = await this.modalService.openAndWait(
+      CreateCategoryModal,
+      this.stats().budget,
+      {
+        shellType: ShellType.HEADER,
+        title: `Add Category`,
+        showCloseButton: true,
+      },
+    );
+
+    reload.ifConfirmed((confirmed) => {
+      if (confirmed) {
+        void this.loadCategories();
+      }
+    });
+  }
+
+  protected async openAddTagModal(): Promise<void> {
+    const reload = await this.modalService.openAndWait(
+      CreateTagModal,
+      this.stats().budget,
+      {
+        shellType: ShellType.HEADER,
+        title: `Add Tag`,
+        showCloseButton: true,
+      },
+    );
+
+    reload.ifConfirmed((confirmed) => {
+      if (confirmed) {
+        void this.loadTags();
+      }
+    });
+  }
+
+  protected onTabChange(event: CustomEvent): void {
+    const val = event.detail.value as BudgetDetailsSectionTab;
+    if (val) {
+      this.selectedTab.set(val);
+    }
+  }
+
   async presentActionSheet(): Promise<void> {
     const actionSheet = await this.actionSheetCtrl.create({
       header: this.stats().budget.budgetName,
       buttons: [
+        {
+          text: 'Borrow Funds',
+          icon: 'swap-horizontal-outline',
+          handler: (): void => {
+            void this.openBorrowFundsModal();
+          },
+        },
         {
           text: 'Edit Budget',
           icon: 'pencil-outline',
@@ -169,67 +306,22 @@ export class BudgetDetailsPage implements OnInit {
         {
           text: 'Manage Participants',
           icon: 'person-add-outline',
-          handler: async (): Promise<void> => {
-            const modal = await this.modalService.open(
-              ManageParticipantsModal,
-              this.stats().budget,
-              {
-                shellType: ShellType.HEADER,
-                title: `Manage Participants`,
-                showCloseButton: true,
-              },
-            );
-
-            const { data } = await modal.onDidDismiss();
-            if (data) {
-              this.stats.set({
-                ...this.stats(),
-                budget: data,
-              });
-              this.budgetUpdated.emit();
-            }
+          handler: (): void => {
+            void this.openManageParticipantsModal();
           },
         },
         {
           text: 'Add Category',
           icon: 'folder-open-outline',
-          handler: async (): Promise<void> => {
-            const reload = await this.modalService.openAndWait(
-              CreateCategoryModal,
-              this.stats().budget,
-              {
-                shellType: ShellType.HEADER,
-                title: `Add Category`,
-                showCloseButton: true,
-              },
-            );
-
-            reload.ifConfirmed((reload) => {
-              if (reload) {
-                void this.loadCategories();
-              }
-            });
+          handler: (): void => {
+            void this.openAddCategoryModal();
           },
         },
         {
           text: 'Add Tag',
           icon: 'pricetags-outline',
-          handler: async (): Promise<void> => {
-            const reload = await this.modalService.openAndWait(
-              CreateTagModal,
-              this.stats().budget,
-              {
-                shellType: ShellType.HEADER,
-                title: `Add Tag`,
-                showCloseButton: true,
-              },
-            );
-
-            reload.ifConfirmed((reload) => {
-              if (reload) {
-                void this.loadTags();
-              }
-            });
+          handler: (): void => {
+            void this.openAddTagModal();
           },
         },
         {

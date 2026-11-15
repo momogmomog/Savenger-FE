@@ -1,0 +1,36 @@
+<ion-item
+  [button]="true"
+  [detail]="true"
+  (click)="onClick.emit(debt())">
+  <ion-icon
+    slot="start"
+    class="text-debt"
+    [ngClass]="roleClass()"
+    [name]="isSettled() ? 'checkmark-circle-outline' : (isBorrower() ? 'arrow-down-circle-outline' : 'arrow-up-circle-outline')">
+  </ion-icon>
+
+  <ion-label>
+    <div class="debt-item-title-row">
+      <h3>{{ counterpartBudgetName() }}</h3>
+      <span
+        class="indicator-pill uppercase debt"
+        [ngClass]="roleClass()">
+        {{ isBorrower() ? 'Borrowed' : 'Lent' }}
+      </span>
+    </div>
+    <p>
+      @if (isSettled()) {
+        Settled •
+      }
+      {{ displayDate() | date: 'mediumDate' }}
+    </p>
+  </ion-label>
+
+  <div slot="end" class="ion-text-end">
+    <strong
+      class="text-debt"
+      [ngClass]="roleClass()">
+      {{ debt().amount | currency }}
+    </strong>
+  </div>
+</ion-item>

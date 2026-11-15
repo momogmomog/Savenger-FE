@@ -1,5 +1,5 @@
 /*
- * Cross-Domain Global Utility & Placeholder Styles
+ * Cross-Domain Global Utility & Layout Styles
  */
 
 .text-success,
@@ -15,6 +15,34 @@
 .text-primary,
 .text-compensate {
   color: var(--color-compensate, var(--ion-color-primary));
+}
+
+.text-recurring {
+  color: var(--color-recurring, var(--ion-color-tertiary));
+}
+
+.text-prepayment {
+  color: var(--color-prepayment, var(--ion-color-secondary));
+}
+
+.text-debt {
+  color: var(--color-debt, var(--ion-color-warning));
+
+  &.EXPENSE,
+  &.expense,
+  &.borrowed {
+    color: var(--color-debt-expense, var(--color-expense));
+  }
+
+  &.INCOME,
+  &.income,
+  &.lent {
+    color: var(--color-debt-income, var(--color-income));
+  }
+
+  &.settled {
+    color: var(--ion-color-medium);
+  }
 }
 
 .text-medium {
@@ -50,6 +78,7 @@ ion-progress-bar {
   }
 }
 
+.indicator-pill,
 .transaction-indicator-pill {
   display: inline-flex;
   align-items: center;
@@ -68,31 +97,15 @@ ion-progress-bar {
     cursor: pointer;
   }
 
-  &.recurring {
-    background: rgba(var(--ion-color-tertiary-rgb), 0.14);
-    color: var(--ion-color-tertiary);
+  &.uppercase {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-radius: 6px;
   }
 
-  &.prepayment {
-    background: rgba(var(--ion-color-secondary-rgb), 0.14);
-    color: var(--ion-color-secondary);
-  }
-
-  &.debt {
-    background: rgba(var(--ion-color-warning-rgb), 0.16);
-    color: var(--ion-color-warning-shade);
-
-    &.EXPENSE {
-      background: rgba(var(--color-expense-rgb), 0.12);
-      color: var(--color-expense);
-    }
-
-    &.INCOME {
-      background: rgba(var(--color-income-rgb), 0.12);
-      color: var(--color-income);
-    }
-  }
-
+  &.lg,
   .hero-badges & {
     font-size: 0.78rem;
     padding: 4px 10px;
@@ -101,5 +114,200 @@ ion-progress-bar {
     ion-icon {
       font-size: 0.88rem;
     }
+  }
+
+  &.recurring {
+    background: rgba(var(--color-recurring-rgb), 0.14);
+    color: var(--color-recurring);
+  }
+
+  &.prepayment {
+    background: rgba(var(--color-prepayment-rgb), 0.14);
+    color: var(--color-prepayment);
+  }
+
+  &.debt {
+    background: rgba(var(--color-debt-rgb), 0.16);
+    color: var(--color-debt);
+
+    &.EXPENSE,
+    &.expense,
+    &.borrowed {
+      background: rgba(var(--color-debt-expense-rgb), 0.12);
+      color: var(--color-debt-expense);
+    }
+
+    &.INCOME,
+    &.income,
+    &.lent {
+      background: rgba(var(--color-debt-income-rgb), 0.12);
+      color: var(--color-debt-income);
+    }
+
+    &.settled {
+      background: rgba(var(--ion-color-medium-rgb), 0.15);
+      color: var(--ion-color-medium);
+    }
+  }
+
+  &.expense,
+  &.EXPENSE,
+  &.borrowed {
+    background: rgba(var(--color-expense-rgb), 0.12);
+    color: var(--color-expense);
+  }
+
+  &.income,
+  &.INCOME,
+  &.lent {
+    background: rgba(var(--color-income-rgb), 0.12);
+    color: var(--color-income);
+  }
+
+  &.settled {
+    background: rgba(var(--ion-color-medium-rgb), 0.15);
+    color: var(--ion-color-medium);
+  }
+}
+
+/*
+ * Generic Overview / Details Card & Section Layout Styles
+ */
+ion-card.overview-card,
+ion-card.section-list-card {
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+  margin: 10px 16px 16px;
+}
+
+.overview-header-top,
+.progress-labels,
+.summary-section,
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-buttons-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hero-balance-section {
+  text-align: center;
+  margin: 6px 0 14px;
+
+  .hero-amount {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--color-compensate, var(--ion-color-primary));
+
+    &.completed,
+    &.income {
+      color: var(--color-income, var(--ion-color-success));
+    }
+
+    &.expense {
+      color: var(--color-expense, var(--ion-color-danger));
+    }
+
+    &.neutral {
+      color: var(--ion-text-color, var(--ion-color-dark));
+    }
+  }
+
+  .hero-dates {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    margin-top: 4px;
+
+    ion-icon {
+      vertical-align: text-bottom;
+    }
+  }
+}
+
+.progress-section ion-progress-bar {
+  height: 7px;
+  border-radius: 4px;
+}
+
+.hero-caption,
+.section-title {
+  font-size: 0.72rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.summary-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ion-color-step-150);
+
+  .summary-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .summary-label,
+  .summary-sub {
+    font-size: 0.72rem;
+    color: var(--ion-color-medium);
+  }
+
+  .summary-label {
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .summary-value {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .summary-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--ion-color-step-150);
+  }
+}
+
+.count-badge {
+  font-size: 0.7rem;
+  border-radius: 10px;
+  padding: 2px 7px;
+}
+
+.load-more-container {
+  border-top: 1px solid var(--ion-color-step-150);
+  padding: 2px 8px;
+}
+
+.compact-segment {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  padding: 3px;
+
+  ion-segment-button {
+    --border-radius: 9px;
+    min-height: 28px;
+    font-size: 0.76rem;
+    font-weight: 600;
   }
 }

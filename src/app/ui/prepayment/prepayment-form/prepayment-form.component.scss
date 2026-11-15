@@ -3,17 +3,7 @@
 }
 
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 0 4px 6px 4px;
-
-  .section-title {
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-size: 0.75rem;
-  }
 }
 
 ion-card.form-card,
@@ -32,27 +22,6 @@ ion-card.summary-preview-card {
   font-size: 0.82rem;
   line-height: 1.4;
   color: var(--ion-color-medium);
-}
-
-ion-input.recurrence-picker {
-  --padding-start: 0;
-  cursor: pointer;
-}
-
-.recurrence-picker-container {
-  &.ng-invalid {
-    ion-input,
-    ion-textarea {
-      border-bottom: 1px var(--color-control-invalid) solid;
-    }
-
-    &.ng-dirty {
-      ion-input,
-      ion-textarea {
-        border-bottom: 1px var(--color-control-invalid-dirty) solid;
-      }
-    }
-  }
 }
 
 .preview-summary-row {

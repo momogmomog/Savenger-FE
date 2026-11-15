@@ -34,7 +34,7 @@ export class TransactionDetailsModalPayload {
         (deleteTriggered)="onDelete()"
         (prepaymentClicked)="onOpenPrepayment($event)"
         (recurringTransactionClicked)="onOpenRecurringTransaction($event)"
-        (debtClicked)="onOpenDebt()"
+        (debtClicked)="onOpenDebt($event)"
       ></app-transaction-details>
     }
   `,
@@ -130,7 +130,15 @@ export class TransactionDetailsModal
     }
   }
 
-  onOpenDebt(): void {
-    alert('TODO');
+  async onOpenDebt(debtId: number): Promise<void> {
+    const updatedDebt = await this.modalPresetsService.openDebtDetails(
+      debtId,
+      this.payload().budget.id,
+    );
+
+    if (!ObjectUtils.isNil(updatedDebt)) {
+      this.setDismissalData(true);
+      await this.loadTransaction();
+    }
   }
 }

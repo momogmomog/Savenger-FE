@@ -97,7 +97,7 @@
           <ion-icon
             slot="start"
             name="repeat-outline"
-            color="tertiary"
+            class="text-recurring"
           ></ion-icon>
           <ion-label>
             <h3>Recurring Transaction</h3>
@@ -114,7 +114,7 @@
           <ion-icon
             slot="start"
             name="layers-outline"
-            color="secondary"
+            class="text-prepayment"
           ></ion-icon>
           <ion-label>
             <h3>Prepayment</h3>
@@ -131,7 +131,8 @@
           <ion-icon
             slot="start"
             name="swap-horizontal-outline"
-            [color]="TransactionUtils.getColor(transaction().type)"
+            class="text-debt"
+            [ngClass]="transaction().type"
           ></ion-icon>
           <ion-label>
             <h3>{{ debtLabel() }}</h3>

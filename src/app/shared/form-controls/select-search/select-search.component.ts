@@ -114,6 +114,17 @@ export class SelectSearchComponent
       }
       this.writeValue(val);
     });
+
+    effect(() => {
+      const loadedItems = this.items();
+      const current = this.selectedItem();
+      if (current && current.objRef === null && loadedItems.length > 0) {
+        const found = loadedItems.find((i) => i.value === current.value);
+        if (found) {
+          this.selectedItem.set(found);
+        }
+      }
+    });
   }
 
   openModal(): void {

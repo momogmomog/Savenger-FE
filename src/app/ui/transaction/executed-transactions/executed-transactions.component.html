@@ -1,8 +1,8 @@
 <div class="executed-transactions-section">
-  <div class="executed-header ion-padding-horizontal ion-padding-top">
-    <div class="executed-title-group">
+  <div class="section-header ion-padding-horizontal ion-padding-top" style="margin-bottom: 8px;">
+    <div class="section-title-group">
       <ion-text color="medium">
-        <small class="executed-section-title">{{ sectionTitle() }}</small>
+        <small class="section-title">{{ sectionTitle() }}</small>
       </ion-text>
       <ion-badge color="medium" class="count-badge">{{ totalCount() }}</ion-badge>
     </div>
@@ -12,7 +12,8 @@
     <ion-segment
       [value]="revisedFilter()"
       (ionChange)="onRevisedSegmentChange($event)"
-      mode="ios">
+      mode="ios"
+      class="compact-segment">
       <ion-segment-button [value]="ExecutedTransactionsRevisedFilter.ALL">
         All
       </ion-segment-button>

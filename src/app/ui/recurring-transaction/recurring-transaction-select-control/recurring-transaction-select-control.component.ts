@@ -53,15 +53,7 @@ export class RecurringTransactionSelectControlComponent extends PaginatedSelectC
     this.query.budgetId = this.budgetId();
   }
 
-  protected applySearchQuery(query: string | null): void {
-    const trimmed = query?.trim();
-    if (trimmed && !isNaN(Number(trimmed))) {
-      const val = Number(trimmed);
-      this.query.amount = { min: val, max: val };
-    } else {
-      this.query.amount = null;
-    }
-  }
+  protected applySearchQuery(): void {}
 
   protected async fetchPage(): Promise<Page<RecurringTransaction> | null> {
     const resp = await this.recurringTransactionService.search(this.query);

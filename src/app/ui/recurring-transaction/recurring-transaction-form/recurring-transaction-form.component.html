@@ -1,87 +1,150 @@
-<form #recurringTransactionForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
-  <div>
-    <app-field-error
-      [errors]="errors()"
-      fieldName=""></app-field-error>
+<form #recurringTransactionForm [formGroup]="form" (ngSubmit)="onFormSubmit()" class="recurring-transaction-form">
+  @if (!embedded()) {
+    <app-field-error [errors]="errors()" fieldName=""></app-field-error>
+    <app-field-error [errors]="errors()" fieldName="id"></app-field-error>
+    <app-field-error [errors]="errors()" fieldName="budgetId"></app-field-error>
+  }
 
-    <div class="ion-margin-top">
-      <app-select [errors]="errors()" formControlName="type" [options]="transactionTypeOptions"></app-select>
-    </div>
+  <div class="section-header">
+    <ion-text color="medium">
+      <small class="section-title">Transaction Details</small>
+    </ion-text>
+  </div>
 
-    <div class="ion-margin-top">
-      <app-input
-        type="number"
-        placeholder="Amount"
-        formControlName="amount"
-        [errors]="errors()"></app-input>
-    </div>
+  <ion-card class="form-card">
+    <ion-card-content>
+      <div class="field-group">
+        <app-select
+          [errors]="errors()"
+          formControlName="type"
+          [options]="transactionTypeOptions">
+        </app-select>
+      </div>
 
-    <div class="ion-margin-top">
-      <app-date-picker [errors]="errors()"
-                       label="Start From"
-                       formControlName="startFrom"></app-date-picker>
-    </div>
+      <div class="field-group ion-margin-top">
+        <app-input
+          type="number"
+          placeholder="Amount"
+          formControlName="amount"
+          [errors]="errors()">
+        </app-input>
+      </div>
 
-    <div class="ion-margin-top recurrence-picker-container"
-         [class.ng-invalid]="form.controls.recurringRule.invalid"
-         [class.ng-dirty]="form.controls.recurringRule.touched">
-      <ion-input
-        label="Recurrence"
-        label-placement="floating"
-        [readonly]="true"
-        [value]="selectedRecurrenceText()"
-        (click)="selectRecurrence()"
-        class="recurrence-picker"
-        [class.status-required]="form.controls.recurringRule.invalid && !form.controls.recurringRule.touched"
-      >
-        <ion-icon slot="start" class="ion-margin-end" name="calendar-clear-outline" aria-hidden="true"></ion-icon>
-        <ion-icon slot="end" name="chevron-down-outline" aria-hidden="true"></ion-icon>
-      </ion-input>
+      <div class="field-group ion-margin-top">
+        <app-category-select-control
+          formControlName="categoryId"
+          [budgetId]="budgetId()">
+        </app-category-select-control>
+        <app-field-error [errors]="errors()" fieldName="categoryId"></app-field-error>
+      </div>
+    </ion-card-content>
+  </ion-card>
 
-      <app-field-error [errors]="errors()" fieldName="recurringRule"></app-field-error>
-    </div>
+  <div class="section-header ion-margin-top">
+    <ion-text color="medium">
+      <small class="section-title">Schedule & Execution</small>
+    </ion-text>
+  </div>
 
-    <div class="ion-margin-top">
-      <app-checkbox
-        label="Include In Balance"
-        formControlName="includeInBalance"></app-checkbox>
-      <app-field-error [errors]="errors()" fieldName="includeInBalance"></app-field-error>
-    </div>
+  <ion-card class="form-card">
+    <ion-card-content>
+      <div
+        class="field-group recurrence-picker-container"
+        [class.ng-invalid]="form.controls.recurringRule.invalid"
+        [class.ng-dirty]="form.controls.recurringRule.touched">
+        <ion-input
+          label="Recurrence"
+          label-placement="floating"
+          [readonly]="true"
+          [value]="selectedRecurrenceText()"
+          (click)="selectRecurrence()"
+          class="recurrence-picker"
+          [class.status-required]="form.controls.recurringRule.invalid && !form.controls.recurringRule.touched">
+          <ion-icon slot="start" class="ion-margin-end" name="calendar-clear-outline" aria-hidden="true"></ion-icon>
+          <ion-icon slot="end" name="chevron-down-outline" aria-hidden="true"></ion-icon>
+        </ion-input>
+        <app-field-error [errors]="errors()" fieldName="recurringRule"></app-field-error>
+      </div>
 
-    <div class="ion-margin-top">
-      <app-checkbox
-        label="Auto Execute"
-        formControlName="autoExecute"></app-checkbox>
-      <app-field-error [errors]="errors()" fieldName="autoExecute"></app-field-error>
-    </div>
+      <div class="field-group ion-margin-top">
+        <app-date-picker
+          [errors]="errors()"
+          label="Start From"
+          formControlName="startFrom">
+        </app-date-picker>
+      </div>
 
-    <div class="ion-margin-top">
-      <app-input
-        type="textarea"
-        placeholder="Comment"
-        formControlName="comment"
-        [errors]="errors()"></app-input>
-    </div>
+      <div class="field-group ion-margin-top checkbox-row">
+        <app-checkbox
+          label="Auto Execute"
+          formControlName="autoExecute">
+        </app-checkbox>
+        <app-field-error [errors]="errors()" fieldName="autoExecute"></app-field-error>
+      </div>
 
-    <div class="ion-margin-top">
-      <app-category-select-control formControlName="categoryId"
-                                   [budgetId]="budgetId()"></app-category-select-control>
-      <app-field-error [errors]="errors()" fieldName="categoryId"></app-field-error>
-    </div>
+      <div class="field-group ion-margin-top checkbox-row">
+        <app-checkbox
+          label="Include In Balance"
+          formControlName="includeInBalance">
+        </app-checkbox>
+        <app-field-error [errors]="errors()" fieldName="includeInBalance"></app-field-error>
+      </div>
+    </ion-card-content>
+  </ion-card>
 
-    <div class="ion-margin-top">
-      <app-tag-multiselect-control
-        [budgetId]="budgetId()"
-        [form]="form"
-        [shouldInitTags]="initTags()"
-        [existingTags]="recurringTransaction()?.tags"></app-tag-multiselect-control>
-    </div>
+  <div class="section-header ion-margin-top">
+    <ion-text color="medium">
+      <small class="section-title">{{ showDebtSelector() ? 'Debt payment & Metadata' : 'Metadata' }}</small>
+    </ion-text>
+  </div>
 
-    <div class="ion-margin-top ion-text-end">
-      <ion-button [form]="recurringTransactionForm"
-                  type="submit"
-                  [disabled]="!form.valid">Save
+  <ion-card class="form-card">
+    <ion-card-content>
+      @if (showDebtSelector()) {
+        <p class="helper-text">
+          Optionally link this schedule to a debt borrowed by this budget to automatically repay it when executed.
+        </p>
+
+        <div class="field-group ion-margin-top ion-margin-bottom">
+          <app-debt-select-control
+            formControlName="debtId"
+            [receiverBudgetId]="budgetId()"
+            label="Debt to Repay (Optional)">
+          </app-debt-select-control>
+          <app-field-error [errors]="errors()" fieldName="debtId"></app-field-error>
+        </div>
+      }
+
+      <div class="field-group">
+        <app-tag-multiselect-control
+          [budgetId]="budgetId()"
+          [form]="form"
+          [shouldInitTags]="initTags()"
+          [existingTags]="recurringTransaction()?.tags">
+        </app-tag-multiselect-control>
+      </div>
+
+      <div class="field-group ion-margin-top">
+        <app-input
+          type="textarea"
+          placeholder="Comment (optional)"
+          formControlName="comment"
+          [errors]="errors()">
+        </app-input>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  @if (!embedded()) {
+    <div class="submit-actions ion-margin-top ion-padding-bottom">
+      <ion-button
+        expand="block"
+        shape="round"
+        [form]="recurringTransactionForm"
+        type="submit"
+        [disabled]="!form.valid">
+        {{ recurringTransaction() ? 'Update Recurring Transaction' : 'Create Recurring Transaction' }}
       </ion-button>
     </div>
-  </div>
+  }
 </form>

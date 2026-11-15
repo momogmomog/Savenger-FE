@@ -16,7 +16,9 @@ export class Endpoints {
   public static readonly TRANSACTION = '/transactions/:id';
   public static readonly REVISIONS = '/revisions';
   public static readonly DEBTS = '/debts';
-  public static readonly PAY_DEBT = '/debts/:id/pay-debt';
+  public static readonly DEBT = '/debts/:id';
+  public static readonly DEBTS_SEARCH = '/debts/search';
+  public static readonly PAY_DEBT = '/debts/:id/pay';
   public static readonly PREPAYMENTS = '/prepayments';
   public static readonly PREPAYMENT = '/prepayments/:id';
   public static readonly PREPAYMENTS_SEARCH = '/prepayments/search';

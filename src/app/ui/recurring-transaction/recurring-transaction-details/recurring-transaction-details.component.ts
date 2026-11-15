@@ -100,7 +100,12 @@ export class RecurringTransactionDetailsComponent {
   deleteTriggered = output<void>();
   executeTriggered = output<void>();
   prepaymentClicked = output<number>();
+  debtClicked = output<number>();
   transactionsUpdated = output<void>();
+
+  debtLabel = computed(() =>
+    TransactionUtils.getDebtLabel(this.transaction().type),
+  );
 
   resolvedCategoryName = computed(() => {
     const provided = this.categoryName();

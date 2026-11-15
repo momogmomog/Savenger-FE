@@ -30,11 +30,7 @@ import {
 import { PaginatedListState } from '../../../shared/util/paginated-list.state';
 import { TransactionCardComponent } from '../transaction-card/transaction-card.component';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
-import { ModalService } from '../../../shared/modal/modal.service';
-import {
-  TransactionDetailsModal,
-  TransactionDetailsModalPayload,
-} from '../transaction-details-modal/transaction-details.modal';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 import { Budget } from '../../../api/budget/budget';
 
 export enum ExecutedTransactionsRevisedFilter {
@@ -69,11 +65,12 @@ export class ExecutedTransactionsComponent {
 
   private transactionService = inject(TransactionService);
   protected budgetSliderService = inject(BudgetSliderService);
-  private modalService = inject(ModalService);
+  private modalPresetsService = inject(ModalPresetsService);
 
   budgetId = input.required<number>();
   recurringTransactionId = input<number | null>(null);
   prepaymentId = input<number | null>(null);
+  debtId = input<number | null>(null);
   reloadTrigger = input<unknown>(null);
   sectionTitle = input<string>('Executed Transactions');
 
@@ -101,11 +98,12 @@ export class ExecutedTransactionsComponent {
       const bId = this.budgetId();
       const rTxId = this.recurringTransactionId();
       const prepId = this.prepaymentId();
+      const dId = this.debtId();
       const revFilter = this.revisedFilter();
       this.reloadTrigger();
 
-      if (bId >= 0 && (rTxId !== null || prepId !== null)) {
-        this.syncQuery(bId, rTxId, prepId, revFilter);
+      if (bId >= 0 && (rTxId !== null || prepId !== null || dId !== null)) {
+        this.syncQuery(bId, rTxId, prepId, dId, revFilter);
         void this.reloadTransactions();
       }
     });
@@ -115,11 +113,13 @@ export class ExecutedTransactionsComponent {
     budgetId: number,
     recurringTransactionId: number | null,
     prepaymentId: number | null,
+    debtId: number | null,
     revFilter: ExecutedTransactionsRevisedFilter,
   ): void {
     this.query.budgetId = budgetId;
     this.query.recurringTransactionId = recurringTransactionId;
     this.query.prepaymentId = prepaymentId;
+    this.query.debtId = debtId;
 
     if (revFilter === ExecutedTransactionsRevisedFilter.UNREVISED) {
       this.query.revised = false;
@@ -180,9 +180,9 @@ export class ExecutedTransactionsComponent {
   }
 
   async onTransactionClick(transaction: Transaction): Promise<void> {
-    const resp = await this.modalService.openAndWait(
-      TransactionDetailsModal,
-      new TransactionDetailsModalPayload(transaction.id, this.resolveBudget()),
+    const resp = await this.modalPresetsService.openTransactionDetails(
+      transaction.id,
+      this.resolveBudget(),
     );
 
     resp.ifConfirmed(async (reload) => {

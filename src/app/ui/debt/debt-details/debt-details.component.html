@@ -1,0 +1,146 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="navigateAway.emit()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Debt Details</ion-title>
+    @if (canPerformBorrowerActions()) {
+      <ion-buttons slot="end">
+        <ion-button (click)="presentActionSheet()">
+          <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card class="overview-card">
+    <ion-card-header>
+      <div class="overview-header-top">
+        <div>
+          <ion-card-subtitle>Debt Relation • #{{ debt().id }}</ion-card-subtitle>
+          <ion-card-title>{{ lenderBudgetName() }} lends to {{ receiverBudgetName() }}</ion-card-title>
+        </div>
+        <ion-badge [color]="statusBadgeColor()">
+          <ion-icon
+            [name]="isSettled() ? 'checkmark-circle-outline' : 'swap-horizontal-outline'"
+            style="vertical-align: middle; margin-right: 4px;">
+          </ion-icon>
+          {{ statusBadgeLabel() }}
+        </ion-badge>
+      </div>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="hero-balance-section">
+        <span class="hero-caption">Outstanding Debt Balance</span>
+        <div class="hero-amount" [ngClass]="heroColorClass()">
+          {{ debt().amount | currency }}
+        </div>
+        <div class="hero-dates">
+          <span>
+            <ion-icon name="calendar-outline"></ion-icon>
+            Created {{ debt().createDate | date: 'mediumDate' }}
+          </span>
+          @if (debt().updateDate) {
+            <span>
+              • Updated {{ debt().updateDate | date: 'mediumDate' }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-box">
+          <span class="summary-label">Borrower (Receiver)</span>
+          <strong class="summary-value text-expense">{{ receiverBudgetName() }}</strong>
+          @if (receiverStats(); as rStats) {
+            <span class="summary-sub">
+              Balance: {{ rStats.realBalance | currency }} • {{ TransactionUtils.getStatusLabel(rStats.budget.active) }}
+            </span>
+          } @else if (debt().receiverBudget) {
+            <span class="summary-sub">
+              Balance: {{ debt().receiverBudget!.balance | currency }} • {{ TransactionUtils.getStatusLabel(debt().receiverBudget!.active) }}
+            </span>
+          } @else {
+            <span class="summary-sub">Budget #{{ debt().receiverBudgetId }}</span>
+          }
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-box ion-text-end">
+          <span class="summary-label">Lender</span>
+          <strong class="summary-value text-income">{{ lenderBudgetName() }}</strong>
+          @if (lenderStats(); as lStats) {
+            <span class="summary-sub">
+              Balance: {{ lStats.realBalance | currency }} • {{ TransactionUtils.getStatusLabel(lStats.budget.active) }}
+            </span>
+          } @else if (debt().lenderBudget) {
+            <span class="summary-sub">
+              Balance: {{ debt().lenderBudget!.balance | currency }} • {{ TransactionUtils.getStatusLabel(debt().lenderBudget!.active) }}
+            </span>
+          } @else {
+            <span class="summary-sub">Budget #{{ debt().lenderBudgetId }}</span>
+          }
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  @if (canPerformBorrowerActions()) {
+    <div class="action-buttons-row ion-padding-horizontal ion-margin-bottom">
+      @if (!isSettled()) {
+        <ion-button
+          expand="block"
+          shape="round"
+          color="primary"
+          (click)="payTriggered.emit()">
+          <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+          Pay Debt
+        </ion-button>
+      }
+
+      <ion-button
+        expand="block"
+        shape="round"
+        fill="outline"
+        color="secondary"
+        (click)="borrowMoreTriggered.emit()">
+        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+        Borrow More Funds
+      </ion-button>
+    </div>
+  }
+
+  <div class="ion-padding-horizontal ion-padding-top">
+    <div class="section-header" style="margin-bottom: 6px;">
+      <span class="section-title">Transaction Perspective</span>
+    </div>
+    <ion-segment
+      [value]="selectedTransactionsBudgetId()"
+      (ionChange)="onBudgetSegmentChange($event)"
+      mode="ios"
+      class="compact-segment">
+      <ion-segment-button [value]="debt().receiverBudgetId">
+        <ion-label>Borrower: {{ receiverBudgetName() }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="debt().lenderBudgetId">
+        <ion-label>Lender: {{ lenderBudgetName() }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  @if (selectedTransactionsBudgetId() > 0) {
+    <app-executed-transactions
+      [budgetId]="selectedTransactionsBudgetId()"
+      [debtId]="debt().id"
+      [reloadTrigger]="transactionsReloadTrigger()"
+      sectionTitle="Historical Debt Transactions"
+      (transactionsUpdated)="transactionsUpdated.emit()">
+    </app-executed-transactions>
+  }
+</ion-content>
