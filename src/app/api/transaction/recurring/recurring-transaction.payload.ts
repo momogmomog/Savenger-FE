@@ -10,5 +10,6 @@ export interface RecurringTransactionPayload {
   includeInBalance: boolean;
   comment: string | null;
   startFrom: Date | null;
+  debtId: number | null;
   tagIds: number[];
 }

@@ -1,20 +1,7 @@
-ion-input.recurrence-picker {
-  --padding-start: 0;
-  cursor: pointer;
-
-
+.recurring-transaction-form {
+  display: block;
 }
 
-.recurrence-picker-container {
-  &.ng-invalid  {
-    ion-input, ion-textarea {
-      border-bottom: 1px var(--color-control-invalid, #f8bd4b) solid;
-    }
-
-    &.ng-dirty {
-      ion-input, ion-textarea  {
-        border-bottom: 1px var(--color-control-invalid-dirty, darkred) solid;
-      }
-    }
-  }
+.section-header {
+  padding: 0 4px 6px 4px;
 }

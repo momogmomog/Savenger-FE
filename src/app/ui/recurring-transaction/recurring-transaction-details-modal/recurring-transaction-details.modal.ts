@@ -39,6 +39,7 @@ export class RecurringTransactionDetailsModalPayload {
         (executeTriggered)="onExecute()"
         (deleteTriggered)="onDelete()"
         (prepaymentClicked)="onOpenPrepayment($event)"
+        (debtClicked)="onOpenDebt($event)"
         (transactionsUpdated)="onTransactionsUpdated()"
       ></app-recurring-transaction-details>
     }
@@ -146,6 +147,17 @@ export class RecurringTransactionDetailsModal
       await this.modalPresetsService.openPrepaymentDetails(prepaymentId);
 
     if (!ObjectUtils.isNil(updatedPrepayment)) {
+      await this.refreshRecurringTransaction();
+    }
+  }
+
+  async onOpenDebt(debtId: number): Promise<void> {
+    const updatedDebt = await this.modalPresetsService.openDebtDetails(
+      debtId,
+      this.transaction()?.budgetId,
+    );
+
+    if (!ObjectUtils.isNil(updatedDebt)) {
       await this.refreshRecurringTransaction();
     }
   }

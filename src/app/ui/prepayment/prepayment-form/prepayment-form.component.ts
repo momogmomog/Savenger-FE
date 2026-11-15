@@ -162,6 +162,7 @@ export class PrepaymentFormComponent implements OnInit {
         includeInBalance: FormUtil.requiredBool(false),
         comment: FormUtil.optionalString(),
         startFrom: FormUtil.optionalField<Date>(new Date()),
+        debtId: FormUtil.optionalNumber(),
         tagIds: new FormArray<FormControl<number>>([]),
       }),
     });
@@ -378,6 +379,7 @@ export class PrepaymentFormComponent implements OnInit {
           ...raw.recurringTransaction,
           type: TransactionType.EXPENSE,
           budgetId: bId,
+          debtId: null,
         },
       });
     } else {

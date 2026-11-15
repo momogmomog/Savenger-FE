@@ -11,9 +11,17 @@ import {
 } from '@angular/forms';
 import { TransactionType } from '../../../api/transaction/transaction.type';
 import { CategorySelectControlComponent } from '../../category/category-select-control/category-select-control.component';
+import { DebtSelectControlComponent } from '../../debt/debt-select-control/debt-select-control.component';
 import { ErrorMessageComponent } from '../../../shared/field-error/error-message/error-message.component';
 import { InputComponent } from '../../../shared/form-controls/input/input.component';
-import { IonButton, IonIcon, IonInput } from '@ionic/angular/standalone';
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonIcon,
+  IonInput,
+  IonText,
+} from '@ionic/angular/standalone';
 import { SelectComponent } from '../../../shared/form-controls/select/select.component';
 import { TagMultiselectControlComponent } from '../../tag/tag-multiselect-control/tag-multiselect-control.component';
 import { SelectOptions } from '../../../api/common/select-options';
@@ -23,9 +31,15 @@ import { RrulePickerModal } from '../../../shared/components/rrule-picker/rrule-
 import { RrulePickerModalPayload } from '../../../shared/components/rrule-picker/rrule-picker.modal.payload';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { addIcons } from 'ionicons';
-import { calendarClearOutline, chevronDownOutline } from 'ionicons/icons';
+import {
+  calendarClearOutline,
+  chevronDownOutline,
+  repeatOutline,
+  swapHorizontalOutline,
+} from 'ionicons/icons';
 import { CheckboxComponent } from '../../../shared/form-controls/checkbox/checkbox.component';
 import { DatePickerComponent } from '../../../shared/form-controls/date-picker/date-picker.component';
+import { RRuleUtils } from '../../../shared/util/rrule-utils';
 
 @Component({
   selector: 'app-recurring-transaction-form',
@@ -33,10 +47,14 @@ import { DatePickerComponent } from '../../../shared/form-controls/date-picker/d
   styleUrls: ['./recurring-transaction-form.component.scss'],
   imports: [
     CategorySelectControlComponent,
+    DebtSelectControlComponent,
     ErrorMessageComponent,
     FormsModule,
     InputComponent,
     IonButton,
+    IonCard,
+    IonCardContent,
+    IonText,
     ReactiveFormsModule,
     SelectComponent,
     TagMultiselectControlComponent,
@@ -60,17 +78,23 @@ export class RecurringTransactionFormComponent implements OnInit {
   selectedRecurrenceText = signal<string | null>(null);
 
   constructor(private modalService: ModalService) {
-    addIcons({ calendarClearOutline, chevronDownOutline });
+    addIcons({
+      calendarClearOutline,
+      chevronDownOutline,
+      repeatOutline,
+      swapHorizontalOutline,
+    });
     this.form = new FormGroup({
       amount: FormUtil.requiredNumber(),
       autoExecute: FormUtil.requiredBool(false),
-      type: FormUtil.requiredField<TransactionType>(),
+      type: FormUtil.requiredField<TransactionType>(TransactionType.EXPENSE),
       budgetId: FormUtil.requiredNumber(),
       recurringRule: FormUtil.requiredString(),
       categoryId: FormUtil.requiredNumber(),
       comment: FormUtil.optionalString(),
       includeInBalance: FormUtil.requiredBool(false),
       startFrom: FormUtil.optionalField<Date>(new Date()),
+      debtId: FormUtil.optionalNumber(),
       tagIds: new FormArray<FormControl<number>>([]),
     });
   }
@@ -82,11 +106,18 @@ export class RecurringTransactionFormComponent implements OnInit {
     if (rTransaction) {
       const formValue = {
         ...rTransaction,
+        startFrom: rTransaction.startFrom
+          ? new Date(rTransaction.startFrom)
+          : new Date(),
       };
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       this.form.patchValue(formValue);
+
+      if (rTransaction.recurringRule) {
+        this.selectedRecurrenceText.set(
+          RRuleUtils.toHumanReadableText(rTransaction.recurringRule),
+        );
+      }
     }
 
     this.initTags.set(true);
