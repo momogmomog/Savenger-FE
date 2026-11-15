@@ -30,11 +30,7 @@ import {
 import { PaginatedListState } from '../../../shared/util/paginated-list.state';
 import { TransactionCardComponent } from '../transaction-card/transaction-card.component';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
-import { ModalService } from '../../../shared/modal/modal.service';
-import {
-  TransactionDetailsModal,
-  TransactionDetailsModalPayload,
-} from '../transaction-details-modal/transaction-details.modal';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 import { Budget } from '../../../api/budget/budget';
 
 export enum ExecutedTransactionsRevisedFilter {
@@ -69,7 +65,7 @@ export class ExecutedTransactionsComponent {
 
   private transactionService = inject(TransactionService);
   protected budgetSliderService = inject(BudgetSliderService);
-  private modalService = inject(ModalService);
+  private modalPresetsService = inject(ModalPresetsService);
 
   budgetId = input.required<number>();
   recurringTransactionId = input<number | null>(null);
@@ -184,9 +180,9 @@ export class ExecutedTransactionsComponent {
   }
 
   async onTransactionClick(transaction: Transaction): Promise<void> {
-    const resp = await this.modalService.openAndWait(
-      TransactionDetailsModal,
-      new TransactionDetailsModalPayload(transaction.id, this.resolveBudget()),
+    const resp = await this.modalPresetsService.openTransactionDetails(
+      transaction.id,
+      this.resolveBudget(),
     );
 
     resp.ifConfirmed(async (reload) => {

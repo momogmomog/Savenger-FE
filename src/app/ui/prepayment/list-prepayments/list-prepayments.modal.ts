@@ -41,10 +41,7 @@ import { ObjectUtils } from '../../../shared/util/object-utils';
 import { ModalService } from '../../../shared/modal/modal.service';
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { PrepaymentCardComponent } from '../prepayment-card/prepayment-card.component';
-import {
-  PrepaymentDetailsModal,
-  PrepaymentDetailsModalPayload,
-} from '../prepayment-details-modal/prepayment-details.modal';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 import { CreatePrepaymentModal } from '../create-prepayment-modal/create-prepayment.modal';
 import { CreatePrepaymentModalPayload } from '../create-prepayment-modal/create-prepayment.modal.payload';
 import { PrepaymentFilterModalComponent } from '../prepayment-filter-modal/prepayment-filter-modal.component';
@@ -91,6 +88,7 @@ export class ListPrepaymentsModal extends ModalContentBaseComponent<
   protected readonly TransactionUtils = TransactionUtils;
   private prepaymentService = inject(PrepaymentService);
   private modalService = inject(ModalService);
+  private modalPresetsService = inject(ModalPresetsService);
 
   pagination = new PaginatedListState<Prepayment>();
   prepaymentsList = this.pagination.items;
@@ -203,15 +201,13 @@ export class ListPrepaymentsModal extends ModalContentBaseComponent<
   }
 
   async onPrepaymentClick(prepayment: Prepayment): Promise<void> {
-    const resp = await this.modalService.openAndWait(
-      PrepaymentDetailsModal,
-      new PrepaymentDetailsModalPayload(prepayment.id, prepayment),
-      {
-        shellType: ShellType.BLANK,
-      },
-    );
+    const updatedPrepayment =
+      await this.modalPresetsService.openPrepaymentDetails(
+        prepayment.id,
+        prepayment,
+      );
 
-    if (!ObjectUtils.isNil(resp.result)) {
+    if (!ObjectUtils.isNil(updatedPrepayment)) {
       await this.onFilterChange();
       this.setDismissalData(true);
     }

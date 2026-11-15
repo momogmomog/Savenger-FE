@@ -12,10 +12,6 @@ import { EditTransactionModalPayload } from '../edit-transaction-modal/edit-tran
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 import { ObjectUtils } from '../../../shared/util/object-utils';
-import {
-  DebtDetailsModal,
-  DebtDetailsModalPayload,
-} from '../../debt/debt-details-modal/debt-details.modal';
 
 export class TransactionDetailsModalPayload {
   constructor(
@@ -135,13 +131,12 @@ export class TransactionDetailsModal
   }
 
   async onOpenDebt(debtId: number): Promise<void> {
-    const resp = await this.modalService.openAndWait(
-      DebtDetailsModal,
-      new DebtDetailsModalPayload(debtId, this.payload().budget.id),
-      { shellType: ShellType.BLANK },
+    const updatedDebt = await this.modalPresetsService.openDebtDetails(
+      debtId,
+      this.payload().budget.id,
     );
 
-    if (!ObjectUtils.isNil(resp.result)) {
+    if (!ObjectUtils.isNil(updatedDebt)) {
       this.setDismissalData(true);
       await this.loadTransaction();
     }

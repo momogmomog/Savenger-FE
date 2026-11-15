@@ -23,14 +23,9 @@ import { Debt } from '../../../api/debt/debt';
 import { DebtService } from '../../../api/debt/debt.service';
 import { DebtQuery, DebtQueryImpl } from '../../../api/debt/debt.query';
 import { PaginatedListState } from '../../../shared/util/paginated-list.state';
-import { ModalService } from '../../../shared/modal/modal.service';
-import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 import { ObjectUtils } from '../../../shared/util/object-utils';
 import { EmptyBudget } from '../../../api/budget/budget';
-import {
-  DebtDetailsModal,
-  DebtDetailsModalPayload,
-} from '../debt-details-modal/debt-details.modal';
 import { DebtCardComponent } from '../debt-card/debt-card.component';
 
 @Component({
@@ -53,7 +48,7 @@ import { DebtCardComponent } from '../debt-card/debt-card.component';
 })
 export class ListDebtsComponent {
   private debtService = inject(DebtService);
-  private modalService = inject(ModalService);
+  private modalPresetsService = inject(ModalPresetsService);
 
   budgetId = input.required<number>();
   debtReceivedAmount = input<number | null>(null);
@@ -140,13 +135,13 @@ export class ListDebtsComponent {
   }
 
   async onDebtClick(debt: Debt): Promise<void> {
-    const resp = await this.modalService.openAndWait(
-      DebtDetailsModal,
-      new DebtDetailsModalPayload(debt.id, this.budgetId(), debt),
-      { shellType: ShellType.BLANK },
+    const updatedDebt = await this.modalPresetsService.openDebtDetails(
+      debt.id,
+      this.budgetId(),
+      debt,
     );
 
-    if (!ObjectUtils.isNil(resp.result)) {
+    if (!ObjectUtils.isNil(updatedDebt)) {
       await this.onFilterChange();
       this.updateTriggered.emit();
     }

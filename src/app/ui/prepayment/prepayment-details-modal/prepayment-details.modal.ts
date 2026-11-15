@@ -16,10 +16,7 @@ import { EditPrepaymentModalPayload } from '../edit-prepayment-modal/edit-prepay
 import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { ObjectUtils } from '../../../shared/util/object-utils';
 import { FieldError } from '../../../shared/field-error/field-error';
-import {
-  RecurringTransactionDetailsModal,
-  RecurringTransactionDetailsModalPayload,
-} from '../../recurring-transaction/recurring-transaction-details-modal/recurring-transaction-details.modal';
+import { ModalPresetsService } from '../../../shared/modal/modal-presets.service';
 
 export class PrepaymentDetailsModalPayload {
   constructor(
@@ -66,6 +63,7 @@ export class PrepaymentDetailsModal
     private prepaymentService: PrepaymentService,
     private recurringTransactionService: RecurringTransactionService,
     private modalService: ModalService,
+    private modalPresetsService: ModalPresetsService,
     private budgetSliderService: BudgetSliderService,
   ) {
     super();
@@ -180,13 +178,13 @@ export class PrepaymentDetailsModal
   }
 
   async onOpenRecurringTransaction(rTx: RecurringTransaction): Promise<void> {
-    const resp = await this.modalService.openAndWait(
-      RecurringTransactionDetailsModal,
-      new RecurringTransactionDetailsModalPayload(rTx, this.getCategoryName()),
-      { shellType: ShellType.BLANK },
-    );
+    const updatedRTransaction =
+      await this.modalPresetsService.openRecurringTransactionDetails(
+        rTx,
+        this.getCategoryName(),
+      );
 
-    if (!ObjectUtils.isNil(resp.result)) {
+    if (!ObjectUtils.isNil(updatedRTransaction)) {
       await this.loadData();
       this.setDismissalData(this.prepayment()!);
       this.transactionsReloadTrigger.update((v) => v + 1);
