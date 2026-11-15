@@ -5,3 +5,56 @@
 .section-header {
   padding: 0 4px 6px 4px;
 }
+
+ion-card.form-card,
+ion-card.summary-preview-card {
+  margin: 0 0 12px 0;
+  border-radius: var(--card-border-radius-lg, 24px);
+  background: var(--ion-card-background);
+}
+
+.segment-wrapper {
+  margin-bottom: 12px;
+}
+
+.helper-text {
+  margin: 0 0 8px 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ion-color-medium);
+}
+
+.preview-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .preview-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .preview-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+    font-weight: 600;
+  }
+
+  .preview-value {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .preview-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--ion-color-step-150);
+  }
+}
+
+.submit-actions {
+  margin-top: 16px;
+}

@@ -1,7 +1,9 @@
 <form #recurringTransactionForm [formGroup]="form" (ngSubmit)="onFormSubmit()" class="recurring-transaction-form">
-  <app-field-error [errors]="errors()" fieldName=""></app-field-error>
-  <app-field-error [errors]="errors()" fieldName="id"></app-field-error>
-  <app-field-error [errors]="errors()" fieldName="budgetId"></app-field-error>
+  @if (!embedded()) {
+    <app-field-error [errors]="errors()" fieldName=""></app-field-error>
+    <app-field-error [errors]="errors()" fieldName="id"></app-field-error>
+    <app-field-error [errors]="errors()" fieldName="budgetId"></app-field-error>
+  }
 
   <div class="section-header">
     <ion-text color="medium">
@@ -92,26 +94,28 @@
 
   <div class="section-header ion-margin-top">
     <ion-text color="medium">
-      <small class="section-title">Debt payment & Metadata</small>
+      <small class="section-title">{{ showDebtSelector() ? 'Debt payment & Metadata' : 'Metadata' }}</small>
     </ion-text>
   </div>
 
   <ion-card class="form-card">
     <ion-card-content>
-      <p class="helper-text">
-        Optionally link this schedule to a debt borrowed by this budget to automatically repay it when executed.
-      </p>
+      @if (showDebtSelector()) {
+        <p class="helper-text">
+          Optionally link this schedule to a debt borrowed by this budget to automatically repay it when executed.
+        </p>
 
-      <div class="field-group ion-margin-top">
-        <app-debt-select-control
-          formControlName="debtId"
-          [receiverBudgetId]="budgetId()"
-          label="Debt to Repay (Optional)">
-        </app-debt-select-control>
-        <app-field-error [errors]="errors()" fieldName="debtId"></app-field-error>
-      </div>
+        <div class="field-group ion-margin-top ion-margin-bottom">
+          <app-debt-select-control
+            formControlName="debtId"
+            [receiverBudgetId]="budgetId()"
+            label="Debt to Repay (Optional)">
+          </app-debt-select-control>
+          <app-field-error [errors]="errors()" fieldName="debtId"></app-field-error>
+        </div>
+      }
 
-      <div class="field-group ion-margin-top">
+      <div class="field-group">
         <app-tag-multiselect-control
           [budgetId]="budgetId()"
           [form]="form"
@@ -131,14 +135,16 @@
     </ion-card-content>
   </ion-card>
 
-  <div class="submit-actions ion-margin-top ion-padding-bottom">
-    <ion-button
-      expand="block"
-      shape="round"
-      [form]="recurringTransactionForm"
-      type="submit"
-      [disabled]="!form.valid">
-      {{ recurringTransaction() ? 'Update Recurring Transaction' : 'Create Recurring Transaction' }}
-    </ion-button>
-  </div>
+  @if (!embedded()) {
+    <div class="submit-actions ion-margin-top ion-padding-bottom">
+      <ion-button
+        expand="block"
+        shape="round"
+        [form]="recurringTransactionForm"
+        type="submit"
+        [disabled]="!form.valid">
+        {{ recurringTransaction() ? 'Update Recurring Transaction' : 'Create Recurring Transaction' }}
+      </ion-button>
+    </div>
+  }
 </form>

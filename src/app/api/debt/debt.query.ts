@@ -10,6 +10,7 @@ export interface DebtQuery {
   lenderBudgetId: number | null;
   budgetIds: number[] | null;
   receiverName: string | null;
+  lenderName: string | null;
   amount: BetweenQuery<number> | null;
 }
 
@@ -24,6 +25,7 @@ export class DebtQueryImpl implements DebtQuery {
   lenderBudgetId: number | null = null;
   budgetIds: number[] | null = null;
   receiverName: string | null = null;
+  lenderName: string | null = null;
   amount: BetweenQuery<number> | null = null;
 
   constructor(budgetIds: number[] | null = null) {

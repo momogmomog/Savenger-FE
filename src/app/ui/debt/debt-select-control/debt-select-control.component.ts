@@ -42,17 +42,14 @@ export class DebtSelectControlComponent extends PaginatedSelectControlBase<
   }
 
   protected syncQueryInputs(): void {
+    this.query.amount = {
+      min: 0.0001,
+    };
     this.query.receiverBudgetId = this.receiverBudgetId();
   }
 
   protected applySearchQuery(query: string | null): void {
-    const trimmed = query?.trim();
-    if (trimmed && !isNaN(Number(trimmed))) {
-      const val = Number(trimmed);
-      this.query.amount = { min: val, max: val };
-    } else {
-      this.query.amount = null;
-    }
+    this.query.lenderName = query;
   }
 
   protected async fetchPage(): Promise<Page<Debt> | null> {

@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  FormArray,
   FormControl,
   FormGroup,
   FormsModule,
@@ -24,24 +23,13 @@ import {
   IonCard,
   IonCardContent,
   IonIcon,
-  IonInput,
   IonLabel,
   IonSegment,
   IonSegmentButton,
   IonText,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import {
-  addCircleOutline,
-  calendarClearOutline,
-  calendarOutline,
-  chevronDownOutline,
-  layersOutline,
-  linkOutline,
-  repeatOutline,
-  sparklesOutline,
-  walletOutline,
-} from 'ionicons/icons';
+import { addCircleOutline, linkOutline } from 'ionicons/icons';
 import { CurrencyPipe } from '@angular/common';
 import { DeepFormified, FormUtil } from '../../../shared/util/forms.util';
 import { CreatePrepaymentPayload } from '../../../api/prepayment/create-prepayment.payload';
@@ -49,18 +37,12 @@ import { FieldError } from '../../../shared/field-error/field-error';
 import { Prepayment } from '../../../api/prepayment/prepayment';
 import { RecurringTransaction } from '../../../api/transaction/recurring/recurring-transaction';
 import { TransactionType } from '../../../api/transaction/transaction.type';
-import { ModalService } from '../../../shared/modal/modal.service';
-import { RrulePickerModal } from '../../../shared/components/rrule-picker/rrule-picker.modal';
-import { RrulePickerModalPayload } from '../../../shared/components/rrule-picker/rrule-picker.modal.payload';
-import { ShellType } from '../../../shared/modal/shells/modal-shell.types';
 import { RRuleUtils } from '../../../shared/util/rrule-utils';
 import { ErrorMessageComponent } from '../../../shared/field-error/error-message/error-message.component';
 import { InputComponent } from '../../../shared/form-controls/input/input.component';
 import { DatePickerComponent } from '../../../shared/form-controls/date-picker/date-picker.component';
-import { CheckboxComponent } from '../../../shared/form-controls/checkbox/checkbox.component';
-import { CategorySelectControlComponent } from '../../category/category-select-control/category-select-control.component';
-import { TagMultiselectControlComponent } from '../../tag/tag-multiselect-control/tag-multiselect-control.component';
 import { RecurringTransactionSelectControlComponent } from '../../recurring-transaction/recurring-transaction-select-control/recurring-transaction-select-control.component';
+import { RecurringTransactionFormComponent } from '../../recurring-transaction/recurring-transaction-form/recurring-transaction-form.component';
 import { BudgetSliderService } from '../../budget/budget-slider/budget-slider.service';
 import { Budget } from '../../../api/budget/budget';
 
@@ -82,7 +64,6 @@ export enum PrepaymentScheduleMode {
     IonCard,
     IonCardContent,
     IonIcon,
-    IonInput,
     IonLabel,
     IonSegment,
     IonSegmentButton,
@@ -90,10 +71,8 @@ export enum PrepaymentScheduleMode {
     ErrorMessageComponent,
     InputComponent,
     DatePickerComponent,
-    CheckboxComponent,
-    CategorySelectControlComponent,
-    TagMultiselectControlComponent,
     RecurringTransactionSelectControlComponent,
+    RecurringTransactionFormComponent,
   ],
 })
 export class PrepaymentFormComponent implements OnInit {
@@ -113,10 +92,7 @@ export class PrepaymentFormComponent implements OnInit {
   scheduleMode = signal<PrepaymentScheduleMode>(
     PrepaymentScheduleMode.CREATE_NEW,
   );
-  initTags = signal<boolean>(false);
-  selectedRecurrenceText = signal<string | null>(null);
 
-  private customRecurrenceSelected = false;
   private customInstallmentAmountTyped = false;
 
   recurringTransactionErrors = computed(() =>
@@ -128,17 +104,10 @@ export class PrepaymentFormComponent implements OnInit {
       })),
   );
 
-  constructor(private modalService: ModalService) {
+  constructor() {
     addIcons({
-      calendarClearOutline,
-      chevronDownOutline,
-      layersOutline,
-      repeatOutline,
       addCircleOutline,
       linkOutline,
-      calendarOutline,
-      walletOutline,
-      sparklesOutline,
     });
 
     const defaultPaidUntil = new Date();
@@ -152,19 +121,7 @@ export class PrepaymentFormComponent implements OnInit {
       recurringTransactionId: new FormControl<number | null>(null, [
         Validators.required,
       ]),
-      recurringTransaction: new FormGroup({
-        type: FormUtil.requiredField<TransactionType>(TransactionType.EXPENSE),
-        amount: FormUtil.requiredNumber(),
-        recurringRule: FormUtil.requiredString(),
-        autoExecute: FormUtil.requiredBool(false),
-        categoryId: FormUtil.requiredNumber(),
-        budgetId: FormUtil.requiredNumber(),
-        includeInBalance: FormUtil.requiredBool(false),
-        comment: FormUtil.optionalString(),
-        startFrom: FormUtil.optionalField<Date>(new Date()),
-        debtId: FormUtil.optionalNumber(),
-        tagIds: new FormArray<FormControl<number>>([]),
-      }),
+      recurringTransaction: RecurringTransactionFormComponent.createFormGroup(),
     });
 
     effect(() => {
@@ -182,11 +139,6 @@ export class PrepaymentFormComponent implements OnInit {
           comment: rTx.comment,
           startFrom: rTx.startFrom ? new Date(rTx.startFrom) : new Date(),
         });
-        if (rTx.recurringRule) {
-          this.selectedRecurrenceText.set(
-            RRuleUtils.toHumanReadableText(rTx.recurringRule),
-          );
-        }
         this.setScheduleMode(PrepaymentScheduleMode.LINK_EXISTING);
       }
     });
@@ -220,8 +172,6 @@ export class PrepaymentFormComponent implements OnInit {
     }
 
     this.setupNewSchedulePrepopulationListeners();
-
-    this.initTags.set(true);
   }
 
   private getTargetBudget(): Budget | undefined {
@@ -239,7 +189,7 @@ export class PrepaymentFormComponent implements OnInit {
     rTxGroup.controls.startFrom.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        if (!this.customRecurrenceSelected) {
+        if (!rTxGroup.controls.recurringRule.dirty) {
           this.syncDefaultRecurrenceFromBudget();
         }
         this.recalculateInstallmentAmount();
@@ -286,10 +236,6 @@ export class PrepaymentFormComponent implements OnInit {
     if (generatedRule) {
       this.form.controls.recurringTransaction.controls.recurringRule.setValue(
         generatedRule,
-        { emitEvent: false },
-      );
-      this.selectedRecurrenceText.set(
-        RRuleUtils.toHumanReadableText(generatedRule),
       );
     }
   }
@@ -345,25 +291,6 @@ export class PrepaymentFormComponent implements OnInit {
     }
   }
 
-  async selectRecurrence(): Promise<void> {
-    const resp = await this.modalService.openAndWait(
-      RrulePickerModal,
-      RrulePickerModalPayload.fromFormGroup(
-        this.form.controls.recurringTransaction,
-        'recurringRule',
-      ),
-      { shellType: ShellType.HEADER, title: 'Pick Recurrence' },
-    );
-
-    resp.ifConfirmed((rRule) => {
-      if (rRule) {
-        this.customRecurrenceSelected = true;
-        this.selectedRecurrenceText.set(rRule.toText());
-        this.recalculateInstallmentAmount();
-      }
-    });
-  }
-
   onFormSubmit(): void {
     const raw = this.form.getRawValue();
     const bId = this.budgetId();
@@ -377,7 +304,6 @@ export class PrepaymentFormComponent implements OnInit {
         recurringTransactionId: null,
         recurringTransaction: {
           ...raw.recurringTransaction,
-          type: TransactionType.EXPENSE,
           budgetId: bId,
           debtId: null,
         },

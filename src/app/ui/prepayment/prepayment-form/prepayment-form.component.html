@@ -81,103 +81,14 @@
   }
 
   @if (scheduleMode() === PrepaymentScheduleMode.CREATE_NEW) {
-    <ion-card class="form-card" formGroupName="recurringTransaction">
-      <ion-card-content>
-        <p class="helper-text">
-          Configure the recurring installment expense that will gradually amortize the prepaid amount.
-        </p>
-
-        <div class="field-group ion-margin-top">
-          <app-input
-            type="number"
-            placeholder="Installment Amount (per billing)"
-            formControlName="amount"
-            [errors]="recurringTransactionErrors()">
-          </app-input>
-        </div>
-
-        <div class="field-group ion-margin-top">
-          <app-category-select-control
-            label="Expense Category"
-            formControlName="categoryId"
-            [budgetId]="budgetId()">
-          </app-category-select-control>
-          <app-field-error
-            [errors]="recurringTransactionErrors()"
-            fieldName="categoryId">
-          </app-field-error>
-        </div>
-
-        <div
-          class="field-group ion-margin-top recurrence-picker-container"
-          [class.ng-invalid]="form.controls.recurringTransaction.controls.recurringRule.invalid"
-          [class.ng-dirty]="form.controls.recurringTransaction.controls.recurringRule.touched">
-          <ion-input
-            label="Billing Recurrence"
-            label-placement="floating"
-            [readonly]="true"
-            [value]="selectedRecurrenceText()"
-            (click)="selectRecurrence()"
-            class="recurrence-picker"
-            [class.status-required]="form.controls.recurringTransaction.controls.recurringRule.invalid && !form.controls.recurringTransaction.controls.recurringRule.touched">
-            <ion-icon slot="start" class="ion-margin-end" name="calendar-clear-outline" aria-hidden="true"></ion-icon>
-            <ion-icon slot="end" name="chevron-down-outline" aria-hidden="true"></ion-icon>
-          </ion-input>
-          <app-field-error
-            [errors]="recurringTransactionErrors()"
-            fieldName="recurringRule">
-          </app-field-error>
-        </div>
-
-        <div class="field-group ion-margin-top">
-          <app-date-picker
-            [errors]="recurringTransactionErrors()"
-            label="Start Billing From"
-            formControlName="startFrom">
-          </app-date-picker>
-        </div>
-
-        <div class="field-group ion-margin-top checkbox-row">
-          <app-checkbox
-            label="Auto Execute Installments"
-            formControlName="autoExecute">
-          </app-checkbox>
-          <app-field-error
-            [errors]="recurringTransactionErrors()"
-            fieldName="autoExecute">
-          </app-field-error>
-        </div>
-
-        <div class="field-group ion-margin-top checkbox-row">
-          <app-checkbox
-            label="Include Pending Installments in Balance"
-            formControlName="includeInBalance">
-          </app-checkbox>
-          <app-field-error
-            [errors]="recurringTransactionErrors()"
-            fieldName="includeInBalance">
-          </app-field-error>
-        </div>
-
-        <div class="field-group ion-margin-top">
-          <app-tag-multiselect-control
-            [budgetId]="budgetId()"
-            [form]="form.controls.recurringTransaction"
-            [shouldInitTags]="initTags()"
-            [existingTags]="associatedRecurringTransaction()?.tags">
-          </app-tag-multiselect-control>
-        </div>
-
-        <div class="field-group ion-margin-top">
-          <app-input
-            type="textarea"
-            placeholder="Installment Note / Comment (optional)"
-            formControlName="comment"
-            [errors]="recurringTransactionErrors()">
-          </app-input>
-        </div>
-      </ion-card-content>
-    </ion-card>
+    <app-recurring-transaction-form
+      [formGroup]="form.controls.recurringTransaction"
+      [budgetId]="budgetId()"
+      [errors]="recurringTransactionErrors()"
+      [recurringTransaction]="associatedRecurringTransaction() ?? undefined"
+      [showDebtSelector]="false"
+      [embedded]="true">
+    </app-recurring-transaction-form>
   }
 
   @if (form.controls.amount.value > 0 && scheduleMode() === PrepaymentScheduleMode.CREATE_NEW && form.controls.recurringTransaction.controls.amount.value > 0) {
